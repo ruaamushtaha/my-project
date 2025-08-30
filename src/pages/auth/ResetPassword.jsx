@@ -6,7 +6,7 @@ import { resetPasswordSchema } from "../../utils/validationForms";
 import AuthLayout from "../../components/layout/AuthLayout";
 import PasswordInput from "../../components/inputs/PasswordInput";
 import { getButtonState } from "../../utils/buttonState";
-import { showAlert } from "../../utils/SweetAlert"; // <-- SweetAlert2
+import { showAlert } from "../../utils/SweetAlert";
 
 import ResetHero from "../../assets/images/Reset password.svg";
 import PasswordStartIcon from "../../assets/icons/Group 22.svg";
@@ -31,11 +31,12 @@ export default function ResetPassword() {
         }}
       >
         {({ values, handleChange, handleBlur, errors, touched, isSubmitting }) => {
-          const btnState = getButtonState(!values.password || !values.confirmPassword);
+          const btnState = getButtonState(
+            !values.password || !values.confirmPassword
+          );
 
           return (
-            <Form className="space-y-4">
-
+            <Form className="w-full">
               {/* New Password */}
               <PasswordInput
                 value={values.password}
@@ -52,29 +53,37 @@ export default function ResetPassword() {
                 value={values.confirmPassword}
                 onChange={handleChange("confirmPassword")}
                 onBlur={handleBlur("confirmPassword")}
-                placeholder="تأكيد كلمة المرور الجديدة"
+                placeholder="تأكيد كلمة المرور"
                 startIcon={PasswordStartIcon}
                 endIcon={PasswordEndIcon}
-                error={touched.confirmPassword && errors.confirmPassword ? errors.confirmPassword : ""}
+                error={
+                  touched.confirmPassword && errors.confirmPassword
+                    ? errors.confirmPassword
+                    : ""
+                }
               />
 
               {/* Submit Button */}
               <button
                 type="submit"
                 disabled={btnState.disabled || isSubmitting}
-                className={`w-full h-12 text-white text-lg font-semibold rounded-full transition mb-2 ${btnState.className}`}
+                className={`w-full h-12 bg-primary text-white text-lg font-cairo font-medium rounded-full hover:bg-secondary transition mt-8 mb-2 ${btnState.className}`}
               >
-                {isSubmitting ? "جاري التعيين..." : "إعادة التعيين"}
+                {isSubmitting ? "جاري التعيين..." : "تعيين كلمة المرور"}
               </button>
 
               {/* Link to login page */}
-              <div className="text-center text-sm mt-2">
-                <span className="text-[#434343]">العودة إلى </span>
-                <Link to="/login" className="text-[#4682B4] hover:underline">
-                  تسجيل الدخول
+              <div className="text-center text-sm mb-8 font-cairo">
+                <span className="text-black font-semibold">
+                  العودة إلى تسجيل الدخول؟{" "}
+                </span>
+                <Link
+                  to="/login"
+                  className="text-primary hover:underline font-medium"
+                >
+                  سجّل الدخول.
                 </Link>
               </div>
-
             </Form>
           );
         }}
