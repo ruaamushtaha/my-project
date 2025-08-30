@@ -1,8 +1,5 @@
 import * as Yup from "yup";
 
-// Regex to allow English letters only
-const englishNameRegex = /^[A-Za-z]+$/;
-
 // Login form validation schema
 export const loginSchema = Yup.object().shape({
     email: Yup.string()
@@ -19,10 +16,6 @@ export const loginSchema = Yup.object().shape({
 
 // Register form validation schema
 export const registerSchema = Yup.object().shape({
-  name: Yup.string()
-    .required("الاسم مطلوب")
-    .min(3, "يجب أن يكون الاسم 3 أحرف على الأقل")
-    .matches(englishNameRegex, "الاسم يجب أن يكون باللغة الإنجليزية فقط"),
   email: Yup.string()
     .email("صيغة البريد الإلكتروني غير صحيحة")
     .required("البريد الإلكتروني مطلوب"),

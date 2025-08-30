@@ -1,22 +1,28 @@
-import React from "react";
+import React, { useState } from "react";
 import { Formik, Form } from "formik";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom"; // <--- أضف useNavigate
 import { resetPasswordSchema } from "../../utils/validationForms";
 
 import AuthLayout from "../../components/layout/AuthLayout";
-import PasswordInput from "../../components/inputs/PasswordInput";
+import { PasswordInput } from "../../components/inputs/FormInput";
 import { getButtonState } from "../../utils/buttonState";
 import { showAlert } from "../../utils/SweetAlert";
 
 import ResetHero from "../../assets/images/Reset password.svg";
-import PasswordStartIcon from "../../assets/icons/Group 22.svg";
-import PasswordEndIcon from "../../assets/icons/basil_eye-closed-solid.svg";
 
 export default function ResetPassword() {
   const { token } = useParams();
+  const navigate = useNavigate(); // <--- عرف navigate
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   return (
-    <AuthLayout expressiveImage={ResetHero} title="إعادة تعيين كلمة المرور">
+    <AuthLayout
+      expressiveImage={ResetHero}
+      title="إعادة تعيين كلمة المرور"
+      userPhotoClassName="mt-20"
+      titleClassName="mb-8"
+    >
       <Formik
         initialValues={{ password: "", confirmPassword: "" }}
         validationSchema={resetPasswordSchema}
@@ -26,6 +32,9 @@ export default function ResetPassword() {
           if (errorMessages.length === 0) {
             showAlert("success", "تم تغيير كلمة المرور بنجاح!");
             console.log("Reset password data:", { token, ...values });
+
+            // <-- بعد نجاح العملية، نذهب لصفحة النجاح
+            navigate("/reset-success");
           }
           setSubmitting(false);
         }}
@@ -43,8 +52,8 @@ export default function ResetPassword() {
                 onChange={handleChange("password")}
                 onBlur={handleBlur("password")}
                 placeholder="كلمة المرور الجديدة"
-                startIcon={PasswordStartIcon}
-                endIcon={PasswordEndIcon}
+                showPassword={showPassword}
+                toggleShowPassword={() => setShowPassword(!showPassword)}
                 error={touched.password && errors.password ? errors.password : ""}
               />
 
@@ -54,13 +63,9 @@ export default function ResetPassword() {
                 onChange={handleChange("confirmPassword")}
                 onBlur={handleBlur("confirmPassword")}
                 placeholder="تأكيد كلمة المرور"
-                startIcon={PasswordStartIcon}
-                endIcon={PasswordEndIcon}
-                error={
-                  touched.confirmPassword && errors.confirmPassword
-                    ? errors.confirmPassword
-                    : ""
-                }
+                showPassword={showConfirmPassword}
+                toggleShowPassword={() => setShowConfirmPassword(!showConfirmPassword)}
+                error={touched.confirmPassword && errors.confirmPassword ? errors.confirmPassword : ""}
               />
 
               {/* Submit Button */}
@@ -74,9 +79,7 @@ export default function ResetPassword() {
 
               {/* Link to login page */}
               <div className="text-center text-sm mb-8 font-cairo">
-                <span className="text-black font-semibold">
-                  العودة إلى تسجيل الدخول؟{" "}
-                </span>
+                <span className="text-black font-bold">العودة إلى تسجيل الدخول؟ </span>
                 <Link
                   to="/login"
                   className="text-primary hover:underline font-medium"

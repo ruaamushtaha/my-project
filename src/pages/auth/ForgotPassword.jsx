@@ -4,7 +4,7 @@ import { forgotPasswordSchema } from "../../utils/validationForms";
 import { Link } from "react-router-dom";
 
 import AuthLayout from "../../components/layout/AuthLayout";
-import TextInput from "../../components/inputs/TextInput";
+import { EmailInput} from "../../components/inputs/FormInput";
 import { getButtonState } from "../../utils/buttonState";
 import { showAlert } from "../../utils/SweetAlert";
 
@@ -16,6 +16,9 @@ export default function ForgotPassword() {
     <AuthLayout
       expressiveImage={ForgotHero}
       title="نسيت كلمة المرور؟"
+      //  titleClassName="mt-10"
+        userPhotoClassName="mt-28"
+
     >
       <Formik
         initialValues={{ email: "" }}
@@ -37,9 +40,10 @@ export default function ForgotPassword() {
           const btnState = getButtonState(!values.email);
 
           return (
-            <Form className="w-full">
+            
+            <Form className="w-full mt-10">
               {/* Email input */}
-              <TextInput
+              <EmailInput
                 value={values.email}
                 onChange={handleChange("email")}
                 onBlur={handleBlur("email")}
@@ -59,7 +63,7 @@ export default function ForgotPassword() {
 
               {/* Link to login page */}
               <div className="text-center text-sm font-cairo">
-                <span className="text-black font-medium">العودة إلى تسجيل الدخول؟ </span>
+                <span className="text-black font-bold">العودة إلى تسجيل الدخول؟ </span>
                 <Link
                   to="/login"
                   className="text-primary mr-2 font-medium hover:underline"
