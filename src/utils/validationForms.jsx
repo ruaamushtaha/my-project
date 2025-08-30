@@ -5,10 +5,9 @@ const englishNameRegex = /^[A-Za-z]+$/;
 
 // Login form validation schema
 export const loginSchema = Yup.object().shape({
-  name: Yup.string()
-    .required("الاسم مطلوب")
-    .min(3, "يجب أن يكون الاسم 3 أحرف على الأقل")
-    .matches(englishNameRegex, "الاسم يجب أن يكون باللغة الإنجليزية فقط"),
+    email: Yup.string()
+    .email('البريد الإلكتروني غير صالح')
+    .required('البريد الإلكتروني مطلوب'),
   password: Yup.string()
     .required("كلمة المرور مطلوبة")
     .min(6, "كلمة المرور يجب أن تكون 6 أحرف على الأقل")

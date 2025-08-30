@@ -16,7 +16,7 @@ export default function AuthLayout({ children, expressiveImage, title }) {
   }, [title]);
 
   return (
-    <div className="relative h-screen w-screen bg-white font-arabic overflow-hidden" dir="rtl">
+    <div className=" font-cairo relative h-screen w-screen bg-white font-arabic overflow-hidden" dir="rtl">
       {/* Top section - 10% */}
       <div className="h-[10%] w-full relative">
         {/* Logo on the right */}
@@ -43,13 +43,13 @@ export default function AuthLayout({ children, expressiveImage, title }) {
         </div>
 
         {/* Right side */}
-        <div className="w-1/2 flex flex-col items-center justify-start pt-20 overflow-y-auto">
+        <div className="w-1/2 flex flex-col items-center justify-start pt-10 overflow-y-auto">
           {/* User photo */}
           <img src={UserPhoto} alt="UserPhoto" className="w-28 h-28 rounded-full mb-8 mx-auto" />
 
           {/* Page title */}
           {title && (
-            <h1 className="text-3xl font-semibold text-[#434343] mb-12 text-center">{title}</h1>
+            <h1 className="text-3xl font-semibold text-[#434343] mb-10 text-center">{title}</h1>
           )}
 
           {/* Form/content area */}
