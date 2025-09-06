@@ -1,19 +1,25 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Formik, Form } from "formik";
 import { registerSchema } from "../../utils/validationForms";
 
-import AuthLayout from "../../components/layout/AuthLayout";
+import AuthLayout from "../../layouts/AuthLayout";
 import { EmailInput, PasswordInput } from "../../components/inputs/FormInput";
 
 import { getButtonState } from "../../utils/buttonState";
 import { showAlert } from "../../utils/SweetAlert";
 
 import RegisterHero from "../../assets/images/Sign up.svg";
+import { AuthContext } from "../../contexts/AuthContext";// Auth context
+// Api Axios
+import { registerService } from "../../services/authService";
 
 export default function Registration() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const { login } = useContext(AuthContext); // Get login function from context
+  const navigate = useNavigate();
 
   return (
     <AuthLayout
@@ -32,13 +38,27 @@ export default function Registration() {
         validationSchema={registerSchema}
         onSubmit={async (values, { setSubmitting, validateForm }) => {
           const errors = await validateForm();
-          const errorMessages = Object.values(errors);
-          if (errorMessages.length === 0) {
-            showAlert("success", "تم إنشاء الحساب بنجاح!");
-            console.log("Register data:", values);
+          if (Object.keys(errors).length === 0) {
+            try {
+              // استخدام خدمة التسجيل الجاهزة
+              const data = await registerService(values);
+        
+              // حفظ التوكن والدور
+              const token = data.token;
+              const role = data.role;
+        
+              login(token, role);
+        
+              showAlert("success", "تم إنشاء الحساب بنجاح!");
+              navigate(`/dashboard/${role}`);
+            } catch (error) {
+              showAlert("error", "حدث خطأ أثناء التسجيل");
+              console.error(error);
+            }
           }
           setSubmitting(false);
         }}
+        
       >
         {({ values, handleChange, handleBlur, errors, touched, isSubmitting }) => {
           const btnState = getButtonState(

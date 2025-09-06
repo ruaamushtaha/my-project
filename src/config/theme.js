@@ -1,5 +1,0 @@
-export const COLORS = {
-  PRIMARY: "#002147",
-  SECONDARY: "#4682B4",
-  TERTIARY: "#E5F5F9",
-};

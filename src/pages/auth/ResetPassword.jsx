@@ -3,12 +3,14 @@ import { Formik, Form } from "formik";
 import { useParams, Link, useNavigate } from "react-router-dom"; // <--- أضف useNavigate
 import { resetPasswordSchema } from "../../utils/validationForms";
 
-import AuthLayout from "../../components/layout/AuthLayout";
+import AuthLayout from "../../layouts/AuthLayout";
 import { PasswordInput } from "../../components/inputs/FormInput";
 import { getButtonState } from "../../utils/buttonState";
 import { showAlert } from "../../utils/SweetAlert";
 
 import ResetHero from "../../assets/images/Reset password.svg";
+// Api Axios
+import { resetPasswordService } from "../../services/authService";
 
 export default function ResetPassword() {
   const { token } = useParams();
@@ -28,16 +30,21 @@ export default function ResetPassword() {
         validationSchema={resetPasswordSchema}
         onSubmit={async (values, { setSubmitting, validateForm }) => {
           const errors = await validateForm();
-          const errorMessages = Object.values(errors);
-          if (errorMessages.length === 0) {
-            showAlert("success", "تم تغيير كلمة المرور بنجاح!");
-            console.log("Reset password data:", { token, ...values });
-
-            // <-- بعد نجاح العملية، نذهب لصفحة النجاح
-            navigate("/reset-success");
+          if (Object.keys(errors).length === 0) {
+            try {
+              //  استخدام خدمة resetPasswordService
+              await resetPasswordService(token, values);
+        
+              showAlert("success", "تم تغيير كلمة المرور بنجاح!");
+              navigate("/reset-success");
+            } catch (error) {
+              showAlert("error", "فشل إعادة تعيين كلمة المرور!");
+              console.error(error);
+            }
           }
           setSubmitting(false);
         }}
+        
       >
         {({ values, handleChange, handleBlur, errors, touched, isSubmitting }) => {
           const btnState = getButtonState(
