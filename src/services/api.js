@@ -1,220 +1,233 @@
-/**
- * API Service for handling HTTP requests
- * This service provides methods to interact with the backend API
- */
+import axios from 'axios';
+import toast from 'react-hot-toast';
 
-// Base URL for the API - should be moved to environment variables in production
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || '/api';
-
-/**
- * Helper function to handle API responses
- * @param {Response} response - The fetch response object
- * @returns {Promise<*>} - The parsed JSON response or throws an error
- */
-async function handleResponse(response) {
-  const contentType = response.headers.get('content-type');
-  
-  // Handle empty responses (like 204 No Content)
-  if (response.status === 204 || !contentType) {
-    return null;
-  }
-
-  const data = await response.json();
-  
-  if (!response.ok) {
-    // Handle API errors
-    const error = new Error(data.message || 'حدث خطأ في الاتصال بالخادم');
-    error.status = response.status;
-    error.data = data;
-    throw error;
-  }
-  
-  return data;
-}
-
-/**
- * Helper function to prepare request options
- * @param {string} method - HTTP method (GET, POST, etc.)
- * @param {Object} data - Request body data (for POST, PUT, PATCH)
- * @param {Object} options - Additional fetch options
- * @returns {Object} - Prepared fetch options
- */
-function prepareOptions(method, data = null, options = {}) {
-  const headers = new Headers({
+// Create axios instance
+const api = axios.create({
+  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:3001/api',
+  timeout: 10000,
+  headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
-    ...options.headers,
-  });
+  },
+});
 
-  // Add authorization header if token exists
-  const token = localStorage.getItem('authToken');
-  if (token) {
-    headers.set('Authorization', `Bearer ${token}`);
+// Request interceptor - add auth token
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('auth_token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    // Log requests in development
+    if (process.env.REACT_APP_DEBUG === 'true') {
+      console.log('🚀 API Request:', {
+        method: config.method?.toUpperCase(),
+        url: config.url,
+        data: config.data,
+        headers: config.headers,
+      });
+    }
+
+    return config;
+  },
+  (error) => {
+    console.error('❌ Request Error:', error);
+    return Promise.reject(error);
   }
+);
 
-  const fetchOptions = {
-    method,
-    headers,
-    ...options,
-  };
+// Response interceptor - handle common errors
+api.interceptors.response.use(
+  (response) => {
+    // Log successful responses in development
+    if (process.env.REACT_APP_DEBUG === 'true') {
+      console.log('✅ API Response:', {
+        status: response.status,
+        url: response.config.url,
+        data: response.data,
+      });
+    }
+    return response;
+  },
+  (error) => {
+    const { response, request, message } = error;
 
-  // Add body for methods that require it
-  if (data && ['POST', 'PUT', 'PATCH'].includes(method.toUpperCase())) {
-    fetchOptions.body = JSON.stringify(data);
-  }
+    // Log errors in development
+    if (process.env.REACT_APP_DEBUG === 'true') {
+      console.error('❌ API Error:', error);
+    }
 
-  return fetchOptions;
-}
-
-/**
- * API Service methods
- */
-const apiService = {
-  /**
-   * Perform a GET request
-   * @param {string} endpoint - API endpoint (without base URL)
-   * @param {Object} queryParams - Query parameters as an object
-   * @param {Object} options - Additional fetch options
-   * @returns {Promise<*>} - The response data
-   */
-  async get(endpoint, queryParams = {}, options = {}) {
-    // Convert query parameters to URLSearchParams
-    const queryString = new URLSearchParams();
-    Object.entries(queryParams).forEach(([key, value]) => {
-      if (value !== undefined && value !== null) {
-        queryString.append(key, value);
+    // Handle different error scenarios
+    if (response) {
+      // Server responded with error status
+      const { status, data } = response;
+      
+      switch (status) {
+        case 401:
+          // Unauthorized - redirect to login
+          localStorage.removeItem('auth_token');
+          localStorage.removeItem('user_data');
+          if (window.location.pathname !== '/login') {
+            toast.error('انتهت جلستك، يرجى تسجيل الدخول مرة أخرى');
+            window.location.href = '/login';
+          }
+          break;
+          
+        case 403:
+          toast.error('ليس لديك صلاحية للوصول إلى هذا المحتوى');
+          break;
+          
+        case 404:
+          toast.error('المحتوى المطلوب غير موجود');
+          break;
+          
+        case 422:
+          // Validation errors
+          if (data?.errors) {
+            Object.values(data.errors).forEach(error => {
+              if (Array.isArray(error)) {
+                error.forEach(msg => toast.error(msg));
+              } else {
+                toast.error(error);
+              }
+            });
+          } else {
+            toast.error(data?.message || 'خطأ في التحقق من البيانات');
+          }
+          break;
+          
+        case 429:
+          toast.error('تم تجاوز الحد المسموح من الطلبات، يرجى المحاولة لاحقاً');
+          break;
+          
+        case 500:
+          toast.error('خطأ في الخادم، يرجى المحاولة لاحقاً');
+          break;
+          
+        default:
+          toast.error(data?.message || `خطأ غير متوقع (${status})`);
       }
-    });
-    
-    const url = `${API_BASE_URL}${endpoint}${queryString.toString() ? `?${queryString}` : ''}`;
-    const response = await fetch(url, prepareOptions('GET', null, options));
-    return handleResponse(response);
-  },
+    } else if (request) {
+      // Request was made but no response received (network error)
+      toast.error('خطأ في الاتصال، تأكد من الاتصال بالإنترنت');
+    } else {
+      // Something else happened
+      toast.error(message || 'حدث خطأ غير متوقع');
+    }
 
-  /**
-   * Perform a POST request
-   * @param {string} endpoint - API endpoint (without base URL)
-   * @param {Object} data - Request body data
-   * @param {Object} options - Additional fetch options
-   * @returns {Promise<*>} - The response data
-   */
-  async post(endpoint, data = {}, options = {}) {
-    const url = `${API_BASE_URL}${endpoint}`;
-    const response = await fetch(url, prepareOptions('POST', data, options));
-    return handleResponse(response);
-  },
+    return Promise.reject(error);
+  }
+);
 
-  /**
-   * Perform a PUT request
-   * @param {string} endpoint - API endpoint (without base URL)
-   * @param {string|number} id - Resource ID
-   * @param {Object} data - Request body data
-   * @param {Object} options - Additional fetch options
-   * @returns {Promise<*>} - The response data
-   */
-  async put(endpoint, id, data = {}, options = {}) {
-    const url = `${API_BASE_URL}${endpoint}/${id}`;
-    const response = await fetch(url, prepareOptions('PUT', data, options));
-    return handleResponse(response);
-  },
+// API endpoints
+export const endpoints = {
+  // Authentication
+  login: '/auth/login',
+  logout: '/auth/logout',
+  refresh: '/auth/refresh',
+  register: '/auth/register',
+  
+  // Parent Profile
+  profile: '/parents/me',
+  updateProfile: '/parents/me',
+  updatePassword: '/parents/me/password',
+  uploadAvatar: '/uploads/avatar',
+  
+  // Children
+  children: '/parents/me/children',
+  addChild: '/parents/me/children',
+  updateChild: (id) => `/parents/me/children/${id}`,
+  removeChild: (id) => `/parents/me/children/${id}`,
+  
+  // Schools
+  schools: '/schools',
+  school: (id) => `/schools/${id}`,
+  schoolReviews: (id) => `/schools/${id}/reviews`,
+  schoolStats: (id) => `/schools/${id}/stats`,
+  
+  // Evaluations
+  evaluations: '/evaluations',
+  evaluation: (id) => `/evaluations/${id}`,
+  myEvaluations: '/parents/me/evaluations',
+  
+  // Complaints
+  complaints: '/complaints',
+  complaint: (id) => `/complaints/${id}`,
+  myComplaints: '/parents/me/complaints',
+  
+  // Notifications
+  notifications: '/notifications',
+  markNotificationRead: (id) => `/notifications/${id}/read`,
+  markAllNotificationsRead: '/notifications/mark-all-read',
+  
+  // Chat
+  chats: '/chats',
+  chat: (id) => `/chats/${id}`,
+  chatMessages: (id) => `/chats/${id}/messages`,
+  sendMessage: (id) => `/chats/${id}/messages`,
+  
+  // Uploads
+  upload: '/uploads',
+  uploadMultiple: '/uploads/multiple',
+  
+  // Settings
+  settings: '/parents/me/settings',
+  notificationSettings: '/parents/me/settings/notifications',
+  privacySettings: '/parents/me/settings/privacy',
+};
 
-  /**
-   * Perform a PATCH request
-   * @param {string} endpoint - API endpoint (without base URL)
-   * @param {string|number} id - Resource ID
-   * @param {Object} data - Request body data (only the fields to update)
-   * @param {Object} options - Additional fetch options
-   * @returns {Promise<*>} - The response data
-   */
-  async patch(endpoint, id, data = {}, options = {}) {
-    const url = `${API_BASE_URL}${endpoint}/${id}`;
-    const response = await fetch(url, prepareOptions('PATCH', data, options));
-    return handleResponse(response);
+// Helper functions for common API patterns
+export const apiHelpers = {
+  // GET with query params
+  get: (endpoint, params = {}) => {
+    const queryString = new URLSearchParams(params).toString();
+    const url = queryString ? `${endpoint}?${queryString}` : endpoint;
+    return api.get(url);
   },
-
-  /**
-   * Perform a DELETE request
-   * @param {string} endpoint - API endpoint (without base URL)
-   * @param {string|number} id - Resource ID to delete
-   * @param {Object} options - Additional fetch options
-   * @returns {Promise<*>} - The response data (usually empty)
-   */
-  async delete(endpoint, id, options = {}) {
-    const url = `${API_BASE_URL}${endpoint}/${id}`;
-    const response = await fetch(url, prepareOptions('DELETE', null, options));
-    return handleResponse(response);
-  },
-
-  /**
-   * Upload a file
-   * @param {string} endpoint - API endpoint (without base URL)
-   * @param {File} file - The file to upload
-   * @param {Object} additionalData - Additional form data to send with the file
-   * @param {Function} onProgress - Progress callback (receives progress percentage)
-   * @returns {Promise<*>} - The response data
-   */
-  async uploadFile(endpoint, file, additionalData = {}, onProgress = null) {
+  
+  // POST with data
+  post: (endpoint, data = {}) => api.post(endpoint, data),
+  
+  // PUT with data  
+  put: (endpoint, data = {}) => api.put(endpoint, data),
+  
+  // PATCH with data
+  patch: (endpoint, data = {}) => api.patch(endpoint, data),
+  
+  // DELETE
+  delete: (endpoint) => api.delete(endpoint),
+  
+  // Upload files
+  upload: (endpoint, files, onProgress = null) => {
     const formData = new FormData();
-    formData.append('file', file);
     
-    // Append additional data to formData
-    Object.entries(additionalData).forEach(([key, value]) => {
-      if (value !== undefined && value !== null) {
-        formData.append(key, value);
-      }
-    });
-
-    const xhr = new XMLHttpRequest();
+    if (Array.isArray(files)) {
+      files.forEach((file, index) => {
+        formData.append(`files[${index}]`, file);
+      });
+    } else {
+      formData.append('file', files);
+    }
     
-    return new Promise((resolve, reject) => {
-      xhr.open('POST', `${API_BASE_URL}${endpoint}`, true);
-      
-      // Add authorization header if token exists
-      const token = localStorage.getItem('authToken');
-      if (token) {
-        xhr.setRequestHeader('Authorization', `Bearer ${token}`);
-      }
-      
-      // Progress tracking
-      if (onProgress) {
-        xhr.upload.onprogress = (event) => {
-          if (event.lengthComputable) {
-            const percentComplete = Math.round((event.loaded / event.total) * 100);
-            onProgress(percentComplete);
-          }
-        };
-      }
-      
-      xhr.onload = () => {
-        if (xhr.status >= 200 && xhr.status < 300) {
-          try {
-            const response = xhr.responseText ? JSON.parse(xhr.responseText) : null;
-            resolve(response);
-          } catch (error) {
-            resolve(xhr.responseText || null);
-          }
-        } else {
-          let error;
-          try {
-            const errorData = xhr.responseText ? JSON.parse(xhr.responseText) : {};
-            error = new Error(errorData.message || 'فشل رفع الملف');
-            error.status = xhr.status;
-            error.data = errorData;
-          } catch (e) {
-            error = new Error('فشل رفع الملف');
-            error.status = xhr.status;
-          }
-          reject(error);
-        }
+    const config = {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    };
+    
+    if (onProgress) {
+      config.onUploadProgress = (progressEvent) => {
+        const percentCompleted = Math.round(
+          (progressEvent.loaded * 100) / progressEvent.total
+        );
+        onProgress(percentCompleted);
       };
-      
-      xhr.onerror = () => {
-        reject(new Error('حدث خطأ في الاتصال بالخادم'));
-      };
-      
-      xhr.send(formData);
-    });
+    }
+    
+    return api.post(endpoint, formData, config);
   },
 };
 
-export default apiService;
+// Export the axios instance as default
+export default api;

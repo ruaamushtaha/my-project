@@ -1,147 +1,244 @@
 // src/pages/public/Home/LandingPage.jsx
-import React from 'react';
-import { motion } from 'framer-motion';
-import { FaSearch, FaSchool, FaStar, FaUsers, FaChartLine } from 'react-icons/fa';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { FaSearch, FaSchool, FaStar, FaUsers, FaChartLine, FaMapMarkerAlt, FaArrowLeft, FaArrowRight } from 'react-icons/fa';
+
+// Animation variants
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.3
+    }
+  }
+};
+
+const itemVariants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      duration: 0.5
+    }
+  }
+};
+
+const slideInFromRight = {
+  hidden: { x: 50, opacity: 0 },
+  visible: { x: 0, opacity: 1, transition: { duration: 0.5 } }
+};
+
+const FeaturedSchools = ({ schools, currentIndex, onNext, onPrev }) => {
+  return (
+    <div className="relative">
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={currentIndex}
+          initial="hidden"
+          animate="visible"
+          exit="exit"
+          variants={{
+            hidden: { opacity: 0, x: 50 },
+            visible: { opacity: 1, x: 0, transition: { duration: 0.5 } },
+            exit: { opacity: 0, x: -50, transition: { duration: 0.3 } }
+          }}
+          className="bg-white rounded-xl shadow-lg overflow-hidden"
+        >
+          <div className="h-48 bg-blue-100"></div>
+          <div className="p-6">
+            <h3 className="text-xl font-bold mb-2">{schools[currentIndex].name}</h3>
+            <div className="flex items-center text-yellow-500 mb-2">
+              {[...Array(5)].map((_, i) => (
+                <FaStar 
+                  key={i} 
+                  className={i < Math.floor(schools[currentIndex].rating) ? "text-yellow-500" : "text-gray-300"} 
+                />
+              ))}
+              <span className="text-gray-600 mr-2">({schools[currentIndex].rating})</span>
+            </div>
+            <div className="flex items-center text-gray-600 mb-4">
+              <FaMapMarkerAlt className="ml-1" />
+              <span>{schools[currentIndex].location}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-gray-500">{schools[currentIndex].reviews} تقييم</span>
+              <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors">
+                عرض التفاصيل
+              </button>
+            </div>
+          </div>
+        </motion.div>
+      </AnimatePresence>
+      
+      <button 
+        onClick={onPrev}
+        className="absolute -right-12 top-1/2 transform -translate-y-1/2 bg-white p-2 rounded-full shadow-md hover:bg-gray-100 transition-colors"
+      >
+        <FaArrowLeft className="text-blue-600" />
+      </button>
+      <button 
+        onClick={onNext}
+        className="absolute -left-12 top-1/2 transform -translate-y-1/2 bg-white p-2 rounded-full shadow-md hover:bg-gray-100 transition-colors"
+      >
+        <FaArrowRight className="text-blue-600" />
+      </button>
+    </div>
+  );
+};
+
+const StatCard = ({ icon: Icon, number, label }) => (
+  <motion.div 
+    variants={itemVariants}
+    className="bg-white p-6 rounded-xl shadow-md text-center"
+    whileHover={{ scale: 1.05 }}
+    whileTap={{ scale: 0.98 }}
+  >
+    <div className="text-blue-600 text-3xl mb-2 flex justify-center">
+      <Icon />
+    </div>
+    <h3 className="text-2xl font-bold text-gray-800">{number}+</h3>
+    <p className="text-gray-600">{label}</p>
+  </motion.div>
+);
 
 const LandingPage = () => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [currentSchoolIndex, setCurrentSchoolIndex] = useState(0);
+  
+  const stats = [
+    { id: 1, icon: FaSchool, number: '500', label: 'مدرسة' },
+    { id: 2, icon: FaUsers, number: '50,000', label: 'طالب' },
+    { id: 3, icon: FaChartLine, number: '95', label: 'نسبة رضا أولياء الأمور' },
+  ];
+  
   const featuredSchools = [
     { id: 1, name: 'مدرسة النخبة', rating: 4.8, reviews: 124, location: 'الرياض' },
     { id: 2, name: 'مدرسة الأوائل', rating: 4.9, reviews: 98, location: 'جدة' },
     { id: 3, name: 'مدرسة الإبداع', rating: 4.7, reviews: 156, location: 'الدمام' },
   ];
 
+  const nextSchool = () => {
+    setCurrentSchoolIndex((prevIndex) => 
+      prevIndex === featuredSchools.length - 1 ? 0 : prevIndex + 1
+    );
+  };
+
+  const prevSchool = () => {
+    setCurrentSchoolIndex((prevIndex) =>
+      prevIndex === 0 ? featuredSchools.length - 1 : prevIndex - 1
+    );
+  };
+
+  // Auto-rotate featured schools
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSchoolIndex(prevIndex => 
+        prevIndex === featuredSchools.length - 1 ? 0 : prevIndex + 1
+      );
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [featuredSchools.length]);
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    // Handle search functionality
+    console.log('Searching for:', searchQuery);
+  };
+
   return (
-    <div className="bg-gray-50">
+    <div className="bg-gray-50 min-h-screen">
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-blue-900 to-blue-700 text-white py-20">
+      <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-20">
         <div className="container mx-auto px-4 flex flex-col md:flex-row items-center">
-          <div className="md:w-1/2 mb-10 md:mb-0">
+          <motion.div 
+            className="md:w-1/2 mb-10 md:mb-0"
+            initial="hidden"
+            animate="visible"
+            variants={containerVariants}
+          >
             <motion.h1 
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5 }}
+              variants={itemVariants}
               className="text-4xl md:text-5xl font-bold mb-6"
             >
-              منصة رؤى لتقييم المدارس
+              منصة تقييم المدارس
             </motion.h1>
             <motion.p 
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
+              variants={itemVariants}
               className="text-xl mb-8 text-blue-100"
             >
               اكتشف أفضل المدارس في منطقتك وقم بتقييم تجربتك التعليمية
             </motion.p>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
+            <motion.form
+              variants={itemVariants}
+              onSubmit={handleSearch}
               className="relative"
             >
               <input
                 type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="ابحث عن مدرسة..."
                 className="w-full md:w-3/4 px-6 py-4 rounded-full text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-400"
               />
-              <button className="absolute left-0 top-0 h-full px-6 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors">
+              <button 
+                type="submit"
+                className="absolute left-0 top-0 h-full px-6 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors flex items-center"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
                 <FaSearch className="ml-2" />
                 بحث
               </button>
+            </motion.form>
+          </motion.div>
+          
+          <motion.div 
+            className="md:w-1/2"
+            initial="hidden"
+            animate="visible"
+            variants={slideInFromRight}
+          >
+            <motion.div
+              className="bg-white p-6 rounded-xl shadow-xl text-gray-800"
+              whileHover={{ y: -5 }}
+              transition={{ type: 'spring', stiffness: 300 }}
+            >
+              <h3 className="text-2xl font-bold mb-4">المدارس المميزة</h3>
+              <FeaturedSchools 
+                schools={featuredSchools} 
+                currentIndex={currentSchoolIndex}
+                onNext={nextSchool}
+                onPrev={prevSchool}
+              />
             </motion.div>
-          </div>
-          <div className="md:w-1/2">
-            <motion.img
-              src="/images/hero-education.svg"
-              alt="التعليم"
-              className="w-full h-auto"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-            />
-          </div>
+          </motion.div>
         </div>
-      </section>
+      </div>
 
-      {/* Features Section */}
-      <section className="py-16 bg-white">
+      {/* Stats Section */}
+      <div className="py-16 bg-white">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">لماذا تختار منصتنا؟</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              {
-                icon: <FaSchool className="text-4xl text-blue-600 mb-4" />,
-                title: "مدارس معتمدة",
-                description: "أفضل المدارس المعتمدة في المملكة العربية السعودية"
-              },
-              {
-                icon: <FaStar className="text-4xl text-yellow-500 mb-4" />,
-                title: "تقييمات حقيقية",
-                description: "تقييمات حقيقية من أولياء الأمور والطلاب"
-              },
-              {
-                icon: <FaChartLine className="text-4xl text-green-500 mb-4" />,
-                title: "تتبع التقدم",
-                description: "تتبع تقدم المدارس وتحسنها مع مرور الوقت"
-              }
-            ].map((feature, index) => (
-              <motion.div
-                key={index}
-                className="bg-gray-50 p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                viewport={{ once: true }}
-              >
-                <div className="text-center">
-                  {feature.icon}
-                  <h3 className="text-xl font-semibold my-3">{feature.title}</h3>
-                  <p className="text-gray-600">{feature.description}</p>
-                </div>
-              </motion.div>
+          <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={containerVariants}
+            className="grid grid-cols-1 md:grid-cols-3 gap-8"
+          >
+            {stats.map((stat) => (
+              <StatCard 
+                key={stat.id}
+                icon={stat.icon}
+                number={stat.number}
+                label={stat.label}
+              />
             ))}
-          </div>
+          </motion.div>
         </div>
-      </section>
-
-      {/* Featured Schools */}
-      <section className="py-16 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">مدارس مميزة</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {featuredSchools.map((school, index) => (
-              <motion.div
-                key={school.id}
-                className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                viewport={{ once: true }}
-              >
-                <div className="h-48 bg-blue-100"></div>
-                <div className="p-6">
-                  <h3 className="text-xl font-bold mb-2">{school.name}</h3>
-                  <div className="flex items-center text-yellow-500 mb-2">
-                    {[...Array(5)].map((_, i) => (
-                      <FaStar key={i} className={i < Math.floor(school.rating) ? "text-yellow-500" : "text-gray-300"} />
-                    ))}
-                    <span className="text-gray-600 mr-2">({school.rating})</span>
-                  </div>
-                  <div className="flex items-center text-gray-600 mb-4">
-                    <FaMapMarkerAlt className="ml-1" />
-                    <span>{school.location}</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-500">{school.reviews} تقييم</span>
-                    <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors">
-                      عرض التفاصيل
-                    </button>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
+      </div>
 
       {/* CTA Section */}
       <section className="py-20 bg-blue-600 text-white">

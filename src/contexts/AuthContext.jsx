@@ -18,6 +18,16 @@ export const AuthProvider = ({ children }) => {
       setToken(savedToken);
       setUserRole(savedRole);
       setIsAuthenticated(true);
+    } else if (process.env.NODE_ENV === 'development') {
+      // Auto-login for development mode as parent
+      const devToken = 'dev-token-123';
+      const devRole = 'parent';
+      localStorage.setItem("token", devToken);
+      localStorage.setItem("role", devRole);
+      setToken(devToken);
+      setUserRole(devRole);
+      setIsAuthenticated(true);
+      console.log('🔧 Development mode: Auto-logged in as parent');
     }
   }, []);
 

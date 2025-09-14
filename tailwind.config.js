@@ -50,9 +50,17 @@ module.exports = {
   plugins: [
     require('@tailwindcss/forms'),
     require('@tailwindcss/typography'),
+    function({ addUtilities }) {
+      const newUtilities = {
+        '.rtl': {
+          direction: 'rtl',
+        },
+        '.ltr': {
+          direction: 'ltr',
+        },
+      }
+      addUtilities(newUtilities)
+    }
   ],
-  corePlugins: {
-    rtl: true,
-  },
 }
 

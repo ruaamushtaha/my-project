@@ -16,6 +16,10 @@ export const loginSchema = Yup.object().shape({
 
 // Register form validation schema
 export const registerSchema = Yup.object().shape({
+  username: Yup.string()
+  .required("اسم المستخدم مطلوب")
+  .min(4, "اسم المستخدم يجب أن يكون أكثر من 4 أحرف")
+  .matches(/^[A-Za-z0-9]+$/, "اسم المستخدم يجب أن يكون بالإنجليزية فقط"),
   email: Yup.string()
     .email("صيغة البريد الإلكتروني غير صحيحة")
     .required("البريد الإلكتروني مطلوب"),

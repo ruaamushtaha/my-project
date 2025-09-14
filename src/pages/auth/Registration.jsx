@@ -4,7 +4,7 @@ import { Formik, Form } from "formik";
 import { registerSchema } from "../../utils/validationForms";
 
 import AuthLayout from "../../layouts/AuthLayout";
-import { EmailInput, PasswordInput } from "../../components/inputs/FormInput";
+import { EmailInput, PasswordInput,UsernameInput } from "../../components/inputs/FormInput";
 
 import { getButtonState } from "../../utils/buttonState";
 import { showAlert } from "../../utils/SweetAlert";
@@ -70,6 +70,15 @@ export default function Registration() {
 
           return (
             <Form className="space-y-4 w-full">
+               {/* Username input */}
+               <UsernameInput
+  value={values.username}
+  onChange={handleChange("username")}
+  onBlur={handleBlur("username")}
+  placeholder="اسم المستخدم"
+  error={touched.username && errors.username ? errors.username : ""}
+/>
+
               {/* Email input */}
               <EmailInput
                 value={values.email}

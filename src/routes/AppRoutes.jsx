@@ -11,16 +11,18 @@ import PasswordResetSuccess from "../pages/auth/PasswordResetSuccess";
 
 // Public Pages
 import LandingPage from "../pages/public/Home/LandingPage";
-import AboutPage from '../pages/public/About/AboutPage';
-import ContactPage from '../pages/public/Contact/ContactPage';
-import ServicesPage from '../pages/public/Services/ServicesPage';
-import GoalsPage from '../pages/public/Goals/GoalsPage';
-import SchoolsPage from '../pages/public/Schools/SchoolsPage';
-import EvaluationPage from '../pages/public/Evaluation/EvaluationPage';
+// import AboutPage from '../pages/public/About/AboutPage';
+// import ContactPage from '../pages/public/Contact/ContactPage';
+// import ServicesPage from '../pages/public/Services/ServicesPage';
+// import GoalsPage from '../pages/public/Goals/GoalsPage';
+// import SchoolsPage from '../pages/public/Schools/SchoolsPage';
+// import EvaluationPage from '../pages/public/Evaluation/EvaluationPage';
 
-// Dashboard Components
-import AdminDashboard from "../pages/admin/AdminDashboard";
-import ParentsDashboard from "../pages/dashboard/parents/ParentsDashboard";
+// Dashboard Components - New System
+// import AdminDashboard from "../pages/admin/AdminDashboard";
+import Dashboard from "../pages/dashboard/parents/pages/Dashboard";
+import SchoolsPage from "../pages/dashboard/parents/pages/SchoolsPage";
+import EvaluationsPage from "../pages/dashboard/parents/pages/EvaluationsPage";
 import SupervisorDashboard from "../pages/dashboard/supervisor/SupervisorDashboard";
 import SchoolManagerDashboard from "../pages/dashboard/school-manager/SchoolManagerDashboard";
 
@@ -37,12 +39,12 @@ export default function AppRoutes() {
     <Routes>
       {/* Public routes */}
       <Route path="/" element={<LandingPage />} />
-      <Route path="/about" element={<AboutPage />} />
+      {/*<Route path="/about" element={<AboutPage />} />
       <Route path="/contact" element={<ContactPage />} />
       <Route path="/services" element={<ServicesPage />} />
       <Route path="/goals" element={<GoalsPage />} />
       <Route path="/schools" element={<SchoolsPage />} />
-      <Route path="/evaluation" element={<EvaluationPage />} />
+      <Route path="/evaluation" element={<EvaluationPage />} /> */}
 
       {/* Auth routes (without layout) */}
       <Route path="/login" element={<Login />} />
@@ -53,18 +55,21 @@ export default function AppRoutes() {
 
       {/* Protected Dashboards */}
       <Route element={<PrivateRoute isAuthenticated={isAuthenticated} allowedRoles={["admin"]} userRole={userRole} />}>
-        <Route path="/dashboard/admin" element={<AdminDashboard />} />
+       {/* <Route path="/dashboard/admin" element={<AdminDashboard />} />*/}
       </Route>
 
-      {/* Temporary routes for testing - remove in production */}
-      <Route path="/admin-demo" element={<AdminDashboard />} />
-      <Route path="/parents-demo" element={<ParentsDashboard />} />
+      {/* Demo routes for testing - New System */}
+      <Route path="/parents-demo" element={<Dashboard />} />
+      <Route path="/parents-schools-demo" element={<SchoolsPage />} />
+      <Route path="/parents-evaluations-demo" element={<EvaluationsPage />} />
       <Route path="/supervisor-demo" element={<SupervisorDashboard />} />
       <Route path="/school-manager-demo" element={<SchoolManagerDashboard />} />
       
 
       <Route element={<PrivateRoute isAuthenticated={isAuthenticated} allowedRoles={["parent"]} userRole={userRole} />}>
-        <Route path="/dashboard/parents" element={<ParentsDashboard />} />
+        <Route path="/dashboard/parents" element={<Dashboard />} />
+        <Route path="/dashboard/parents/schools" element={<SchoolsPage />} />
+        <Route path="/dashboard/parents/evaluations" element={<EvaluationsPage />} />
       </Route>
 
       <Route element={<PrivateRoute isAuthenticated={isAuthenticated} allowedRoles={["supervisor"]} userRole={userRole} />}>
