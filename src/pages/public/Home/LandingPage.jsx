@@ -1,4 +1,4 @@
-// src/pages/public/Home/LandingPage.jsx
+
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaSearch, FaSchool, FaStar, FaUsers, FaChartLine, FaMapMarkerAlt, FaArrowLeft, FaArrowRight } from 'react-icons/fa';
