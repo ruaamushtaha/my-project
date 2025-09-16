@@ -45,47 +45,45 @@ function App() {
       <ThemeProvider>
         <QueryProvider>
           <AuthProvider>
-            <BrowserRouter>
-              <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
-                {/* Toast Notifications */}
-                <Toaster
-                  position="top-center"
-                  reverseOrder={false}
-                  gutter={8}
-                  containerClassName=""
-                  containerStyle={{}}
-                  toastOptions={{
-                    className: '',
-                    duration: 4000,
-                    style: {
-                      background: 'var(--toast-bg, #ffffff)',
-                      color: 'var(--toast-color, #1f2937)',
-                      border: '1px solid var(--toast-border, #e5e7eb)',
-                      borderRadius: '0.5rem',
-                      padding: '12px 16px',
-                      fontSize: '14px',
-                      fontFamily: 'system-ui, -apple-system, sans-serif',
-                      boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+            <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
+              {/* Toast Notifications */}
+              <Toaster
+                position="top-center"
+                reverseOrder={false}
+                gutter={8}
+                containerClassName=""
+                containerStyle={{}}
+                toastOptions={{
+                  className: '',
+                  duration: 4000,
+                  style: {
+                    background: 'var(--toast-bg, #ffffff)',
+                    color: 'var(--toast-color, #1f2937)',
+                    border: '1px solid var(--toast-border, #e5e7eb)',
+                    borderRadius: '0.5rem',
+                    padding: '12px 16px',
+                    fontSize: '14px',
+                    fontFamily: 'system-ui, -apple-system, sans-serif',
+                    boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+                  },
+                  success: {
+                    iconTheme: {
+                      primary: '#10b981',
+                      secondary: '#ffffff',
                     },
-                    success: {
-                      iconTheme: {
-                        primary: '#10b981',
-                        secondary: '#ffffff',
-                      },
+                  },
+                  error: {
+                    iconTheme: {
+                      primary: '#ef4444',
+                      secondary: '#ffffff',
                     },
-                    error: {
-                      iconTheme: {
-                        primary: '#ef4444',
-                        secondary: '#ffffff',
-                      },
-                    },
-                  }}
-                />
-                
-                {/* Routes */}
-                <AppRoutes />
-              </div>
-            </BrowserRouter>
+                  },
+                }}
+              />
+              
+              {/* Routes */}
+              <AppRoutes />
+            </div>
           </AuthProvider>
         </QueryProvider>
       </ThemeProvider>

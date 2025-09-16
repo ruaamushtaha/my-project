@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { AuthContext } from '../contexts/AuthContext';
 
 const PrivateRoute = ({ allowedRoles, redirectPath = '/login' }) => {
-  const { isAuthenticated, userRole } = useAuth();
+  const { isAuthenticated, userRole } = useContext(AuthContext);
   const location = useLocation();
 
   if (!isAuthenticated) {

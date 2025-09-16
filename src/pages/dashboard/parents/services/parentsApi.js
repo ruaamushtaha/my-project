@@ -273,12 +273,47 @@ const MOCK_DATA = {
  * Fetch parent profile data
  * @returns {Promise<Object>} بيانات ملف ولي الأمر
  */
-export const getParentProfile = async () => {
-  await simulateDelay(500);
-  return {
-    success: true,
-    data: MOCK_DATA.parentProfile
-  };
+export const parentsAPI = {
+  // إدارة الملف الشخصي
+  getParentProfile: () => api.get('/parents/profile'),
+  updateParentProfile: (data) => api.put('/parents/profile', data),
+  updateProfileImage: (formData) => api.post('/parents/profile/image', formData),
+  
+  // إدارة التفضيلات
+  getPreferences: () => api.get('/parents/preferences'),
+  updatePreferences: (preferences) => api.put('/parents/preferences', preferences),
+  updateTheme: (theme) => api.put('/parents/preferences/theme', { theme }),
+  
+  // إدارة الإشعارات
+  getNotifications: () => api.get('/parents/notifications'),
+  markNotificationRead: (notificationId) => api.put(`/parents/notifications/${notificationId}/read`),
+  markAllNotificationsRead: () => api.put('/parents/notifications/read-all'),
+  updateNotificationSettings: (settings) => api.put('/parents/notifications/settings', settings),
+  
+  // إحصائيات لوحة التحكم
+  getDashboardStats: () => api.get('/parents/dashboard/stats'),
+  
+  // إدارة المدارس
+  getSchools: (filters) => api.get('/schools', { params: filters }),
+  getSchoolDetails: (schoolId) => api.get(`/schools/${schoolId}`),
+  rateSchool: (schoolId, rating) => api.post(`/schools/${schoolId}/rate`, rating),
+  getSchoolReviews: (schoolId) => api.get(`/schools/${schoolId}/reviews`),
+  addSchoolReview: (schoolId, review) => api.post(`/schools/${schoolId}/reviews`, review),
+  
+  // إدارة التقييمات
+  getEvaluations: () => api.get('/parents/evaluations'),
+  getEvaluationDetails: (evaluationId) => api.get(`/parents/evaluations/${evaluationId}`),
+  submitEvaluation: (evaluationData) => api.post('/parents/evaluations', evaluationData),
+  updateEvaluation: (evaluationId, data) => api.put(`/parents/evaluations/${evaluationId}`, data),
+  
+  // للتطوير فقط - محاكاة البيانات
+  async getMockProfile() {
+    await simulateDelay(800);
+    return {
+      success: true,
+      data: MOCK_DATA.parentProfile
+    };
+  }
 };
 
 /**
