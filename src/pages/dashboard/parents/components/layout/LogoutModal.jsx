@@ -3,11 +3,11 @@
 // مكون نموذج تأكيد تسجيل الخروج
 // =============================================================================
 
-import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '../ui';
-import { useAuth } from '../../../../contexts/AuthContext';
+import { AuthContext } from '../../../../../contexts/AuthContext';
 
 /**
  * مكون نموذج تأكيد تسجيل الخروج
@@ -15,12 +15,12 @@ import { useAuth } from '../../../../contexts/AuthContext';
  */
 export const LogoutModal = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
-  const { logout } = useAuth();
+  const { logout } = useContext(AuthContext);
 
   const handleConfirm = async () => {
     try {
       // Call the logout function from AuthContext
-      await logout();
+      logout();
       
       // Close modal
       onClose();

@@ -4,6 +4,7 @@ import Footer from "../components/Footer";
 import StatisticsSection from "./components/StatisticsSection";
 import ParentsRate from "./components/ParentsRate";
 import EvaluationCriteria from "./components/EvaluationCriteria";
+import headerimg from '../../../assets/images/headerimg1.png';
 
 // Create Context for Ratings data and state management
 const RatingsContext = createContext();
@@ -309,7 +310,20 @@ const RatingsContent = () => {
   return (
     <div className="font-cairo bg-white text-black" dir="rtl">
       {/* Header */}
-      <Header title={data?.pageInfo?.title || "التقييمات"} />
+
+ {/* الهيدر مع الخلفية */}
+      <div className="relative h-[210px]">
+        <img 
+          src={headerimg} 
+          alt="خلفية الهيدر" 
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-cyan-600/50 to-cyan-950/10"></div>
+        <Header title={data?.pageInfo?.title || "التقييمات"} variant="default" />
+      </div>
+
+
+      {/* <Header title={data?.pageInfo?.title || "التقييمات"} /> */}
 
       {/* Statistics Section */}
       <StatisticsSection data={data?.statistics} />

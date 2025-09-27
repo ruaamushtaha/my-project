@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import ServicesSection from "./components/ServicesSection";
+import headerimg from '../../../assets/images/headerimg1.png';
 
 export default function Services() {
   const [isButtonHovered, setIsButtonHovered] = useState(false);
@@ -14,7 +15,19 @@ export default function Services() {
   return (
     <div className="font-cairo bg-white text-black" dir="rtl">
       {/* Header */}
-      <Header title="الخدمات" />
+
+{/* الهيدر مع الخلفية */}
+      <div className="relative h-[210px]">
+        <img 
+          src={headerimg} 
+          alt="خلفية الهيدر" 
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-cyan-600/50 to-cyan-950/10"></div>
+        <Header title="الخدمات" variant="default" />
+      </div>
+
+      {/* <Header title="الخدمات" /> */}
 
       {/* Main Services Section */}
       <ServicesSection />

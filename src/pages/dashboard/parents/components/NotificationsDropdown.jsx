@@ -14,15 +14,21 @@ const NotificationsDropdown = ({
 
   if (!isOpen) return null;
 
-  // Filter notifications based on type
+  // Filter notifications based on type and archived status
   const filteredNotifications = notifications.filter(notification => {
-    if (filter === 'all') return !notification.archived;
-    return notification.type === filter && !notification.archived;
+    // Check if notification has archived property, if not, treat as not archived
+    const isArchived = notification.archived || false;
+    if (filter === 'all') return !isArchived;
+    return notification.type === filter && !isArchived;
   });
 
-  // Get counts for each type
-  const achievementCount = notifications.filter(n => n.type === 'achievement' && !n.archived).length;
-  const improvementCount = notifications.filter(n => n.type === 'improvement' && !n.archived).length;
+  // Get counts for each type (excluding archived)
+  const achievementCount = notifications.filter(n => 
+    n.type === 'achievement' && !(n.archived || false)
+  ).length;
+  const improvementCount = notifications.filter(n => 
+    n.type === 'improvement' && !(n.archived || false)
+  ).length;
 
   return (
     <motion.div

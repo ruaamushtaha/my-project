@@ -27,7 +27,10 @@ const NotificationsPage = () => {
 
   // Get notifications related to parent's children schools only
   const schoolRelatedNotifications = useMemo(() => {
-    if (!parentProfile || !parentProfile.children) return [];
+    // If there's no parent profile or children, show all notifications
+    if (!parentProfile || !parentProfile.children || parentProfile.children.length === 0) {
+      return allNotifications;
+    }
     
     // Get school IDs of parent's children
     const parentSchoolIds = parentProfile.children.map(child => child.school.id);
@@ -58,8 +61,8 @@ const NotificationsPage = () => {
       );
     }
     
-    // Exclude archived notifications
-    result = result.filter(n => !n.archived);
+    // Exclude archived notifications (treat undefined as not archived)
+    result = result.filter(n => !(n.archived || false));
     
     return result;
   }, [schoolRelatedNotifications, currentFilter, searchTerm]);

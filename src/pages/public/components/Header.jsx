@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import Logo from "../../../assets/icons/LOGO.svg";
-import headerImg from "../../../assets/images/headerimg1.png";
 import { motion, AnimatePresence } from "framer-motion";
 
-export default function Header({ title = "" }) {
+export default function Header({ 
+  title = "", 
+  variant = "default",
+  showTitle = true 
+}) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
@@ -20,29 +23,27 @@ export default function Header({ title = "" }) {
 
   return (
     <header
-      className="relative h-[210px] bg-cover bg-center text-white font-cairo font-arabic"
-      style={{ backgroundImage: `url(${headerImg})` }}
+      className={`relative text-white font-cairo font-arabic ${
+        variant === 'transparent' 
+          ? 'absolute w-full top-0 z-50 bg-transparent' 
+          : 'h-[210px] bg-gradient-to-b from-blue-950/90 to-blue-950/50'
+      }`}
       dir="rtl"
     >
-      <div className="absolute inset-0 bg-gradient-to-b from-blue-950/90 to-blue-950/50 z-0"></div>
-
-      {/*  nav bar*/}
-      <nav className="relative z-10 px-4 md:px-6 lg:px-12 py-4 md:py-6">
+      {/* شريط التنقل */}
+      <nav className={`relative z-10 ${
+        variant === 'transparent' ? 'px-4 py-6' : 'px-4 md:px-6 lg:px-12 py-4 md:py-6'
+      }`}>
         <div className="flex items-center justify-between gap-2 md:gap-4">
-          {/*  logo */}
+          
           <div className="flex items-center gap-2 md:gap-3">
             <img src={Logo} alt="شعار المنصة" className="w-10 h-10 md:w-16 md:h-16" />
+          
           </div>
 
-          {/* Desktop Navigation Links */}
           <ul className="hidden md:flex gap-1 md:gap-4 lg:gap-6 text-xs md:text-sm lg:text-base font-medium">
             {navItems.map(({ to, label }) => (
-              <motion.li
-                key={to}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="relative"
-              >
+              <motion.li key={to} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="relative group">
                 <NavLink
                   to={to}
                   className={({ isActive }) =>
@@ -58,12 +59,11 @@ export default function Header({ title = "" }) {
             ))}
           </ul>
 
-          {/* Auth Buttons - Improved styling */}
           <div className="flex gap-1 md:gap-2">
             <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
               <NavLink
                 to="/login"
-                className="px-3 py-2 md:px-4 md:py-2.5 text-xs md:text-sm font-medium text-white bg-primary rounded-lg hover:from-blue-700 hover:to-blue-600 transition-all duration-300 flex items-center gap-1 md:gap-2 shadow-lg shadow-blue-500/20"
+                className="px-3 py-2 md:px-4 md:py-2.5 text-xs md:text-sm font-medium text-white bg-primary rounded-lg hover:bg-blue-700 transition-all duration-300 flex items-center gap-1 md:gap-2 shadow-lg shadow-blue-500/20"
               >
                 تسجيل الدخول
               </NavLink>
@@ -72,17 +72,13 @@ export default function Header({ title = "" }) {
             <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
               <NavLink
                 to="/register"
-                className="px-3 py-2 md:px-4 md:py-2.5 text-xs md:text-sm font-medium text-white bg-transparent border-2 border-white/30 rounded-lg hover:bg-white/10 transition-all duration-300 flex items-center gap-1 md:gap-2"
+                className="px-3 py-2 md:px-4 md:py-2.5 text-xs md:text-sm font-medium bg-transparent border-2 border-white/30 text-white rounded-lg hover:bg-white/10 transition-all duration-300 flex items-center gap-1 md:gap-2"
               >
                 إنشاء حساب
               </NavLink>
             </motion.div>
 
-            {/* Mobile menu button */}
-            <button 
-              onClick={toggleMenu} 
-              className="md:hidden text-white self-center"
-            >
+            <button onClick={toggleMenu} className="md:hidden text-white self-center p-1">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
               </svg>
@@ -90,7 +86,6 @@ export default function Header({ title = "" }) {
           </div>
         </div>
 
-        {/* Mobile Navigation */}
         <AnimatePresence>
           {isMenuOpen && (
             <motion.div
@@ -145,12 +140,13 @@ export default function Header({ title = "" }) {
         </AnimatePresence>
       </nav>
 
-      {/* title */}
-      <div className="absolute inset-0 flex items-center justify-center z-10 mt-10 md:mt-14">
-        <h1 className="text-xl md:text-2xl font-bold px-4 py-2 md:px-6 md:py-3">
-          {title}
-        </h1>
-      </div>
+      {showTitle && variant === "default" && (
+        <div className="absolute inset-0 flex items-center justify-center z-10 mt-10 md:mt-14">
+          <h1 className="text-xl md:text-2xl lg:text-3xl font-bold px-4 py-2 md:px-6 md:py-3 text-center">
+            {title}
+          </h1>
+        </div>
+      )}
     </header>
   );
 }

@@ -8,7 +8,6 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   FaBars, 
-  FaSearch, 
   FaBell, 
   FaUser, 
   FaMoon, 
@@ -17,7 +16,6 @@ import {
   FaCog,
   FaHome,
   FaChevronLeft,
-  FaGlobe,
   FaComments
 } from 'react-icons/fa';
 import { Button } from '../ui';
@@ -26,12 +24,10 @@ import { LogoutModal } from './LogoutModal';
 import NotificationsDropdown from '../../components/NotificationsDropdown';
 
 /**
- * مكون الهيدر المتطور مع البحث والإشعارات
- * Enhanced Header component with search and notifications
+ * مكون الهيدر المتطور مع الإشعارات والدردشة
+ * Enhanced Header component with notifications and chat
  */
-const Header = ({ title, subtitle, breadcrumbs = [], onMenuClick }) => {
-  const [searchOpen, setSearchOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+const ParentsHeader = ({ title, subtitle, breadcrumbs = [], onMenuClick }) => {
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const [logoutModalOpen, setLogoutModalOpen] = useState(false);
@@ -40,16 +36,6 @@ const Header = ({ title, subtitle, breadcrumbs = [], onMenuClick }) => {
   const { profile, loading: profileLoading } = useParentProfile();
   const { notifications, unreadCount } = useNotifications();
   const { settings, toggleTheme, updateSetting } = useUISettings();
-
-  // Handle search
-  const handleSearch = (e) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      console.log('البحث عن:', searchQuery);
-      // Here you would implement search functionality
-      // يمكنك هنا تنفيذ وظيفة البحث
-    }
-  };
 
   // Close dropdowns when clicking outside
   React.useEffect(() => {
@@ -75,6 +61,14 @@ const Header = ({ title, subtitle, breadcrumbs = [], onMenuClick }) => {
     }
   }, [notificationsOpen, profileMenuOpen]);
 
+  // Get greeting based on time of day
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'صباح الخير';
+    if (hour < 18) return 'مساء الخير';
+    return 'مساء الخير';
+  };
+
   return (
     <>
       <motion.header
@@ -86,7 +80,7 @@ const Header = ({ title, subtitle, breadcrumbs = [], onMenuClick }) => {
       <div className="max-w-7xl mx-auto px-4 lg:px-6">
         <div className="flex items-center justify-between h-16 lg:h-20">
           
-          {/* Left Section - Menu & Title */}
+          {/* Left Section - Menu & Greeting */}
           <div className="flex items-center space-x-4 space-x-reverse flex-1">
             {/* Mobile Menu Button */}
             <Button
@@ -98,84 +92,21 @@ const Header = ({ title, subtitle, breadcrumbs = [], onMenuClick }) => {
               <FaBars />
             </Button>
 
-            {/* Breadcrumbs & Title */}
+            {/* Greeting */}
             <div className="min-w-0 flex-1">
-              {/* Breadcrumbs */}
-              {breadcrumbs.length > 0 && (
-                <nav className="flex items-center space-x-2 space-x-reverse text-sm text-gray-500 dark:text-gray-400 mb-1">
-                  <FaHome />
-                  {breadcrumbs.map((crumb, index) => (
-                    <React.Fragment key={index}>
-                      <FaChevronLeft className="w-3 h-3 transform rotate-180" />
-                      <span 
-                        className={`
-                          ${index === breadcrumbs.length - 1 
-                            ? 'text-primary-600 dark:text-primary-400 font-medium' 
-                            : 'hover:text-gray-700 dark:hover:text-gray-300 cursor-pointer'
-                          }
-                        `}
-                      >
-                        {crumb}
-                      </span>
-                    </React.Fragment>
-                  ))}
-                </nav>
-              )}
-              
-              {/* Page Title */}
-              {title && (
-                <div>
-                  <h1 className="text-lg lg:text-xl font-bold text-gray-900 dark:text-white truncate">
-                    {title}
-                  </h1>
-                  {subtitle && (
-                    <p className="text-sm text-gray-600 dark:text-gray-400 truncate">
-                      {subtitle}
-                    </p>
-                  )}
-                </div>
+              <h1 className="text-lg lg:text-xl font-bold text-gray-900 dark:text-white truncate">
+                {getGreeting()}، {profileLoading ? '...' : (profile?.fullName?.split(' ')[0] || 'ولي الأمر')}
+              </h1>
+              {subtitle && (
+                <p className="text-sm text-gray-600 dark:text-gray-400 truncate">
+                  {subtitle}
+                </p>
               )}
             </div>
           </div>
 
-          {/* Center Section - Search */}
-          <div className="hidden md:flex flex-1 max-w-lg mx-8">
-            <motion.form
-              className="relative w-full"
-              onSubmit={handleSearch}
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.2 }}
-            >
-              <div className="relative">
-                <FaSearch className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="البحث في المدارس والتقييمات..."
-                  className="w-full pr-10 pl-4 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl
-                           bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white
-                           focus:border-primary-500 focus:ring-2 focus:ring-primary-200 dark:focus:ring-primary-800
-                           transition-all duration-200 text-right font-arabic"
-                />
-              </div>
-            </motion.form>
-          </div>
-
           {/* Right Section - Actions */}
           <div className="flex items-center space-x-2 space-x-reverse">
-            
-            {/* Mobile Search Button */}
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setSearchOpen(!searchOpen)}
-              className="md:hidden"
-            >
-              <FaSearch />
-            </Button>
-
             {/* Chat Icon */}
             <Button
               variant="ghost"
@@ -186,17 +117,7 @@ const Header = ({ title, subtitle, breadcrumbs = [], onMenuClick }) => {
               <FaComments />
             </Button>
 
-            {/* Language Toggle */}
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => updateSetting('language', settings.language === 'ar' ? 'en' : 'ar')}
-              title="تغيير اللغة"
-            >
-              <FaGlobe />
-            </Button>
-
-            {/* Theme Toggle */}
+            {/* Theme Toggle - Show Sun icon when in Light mode, Moon icon when in Dark mode */}
             <Button
               variant="ghost"
               size="sm"
@@ -311,19 +232,6 @@ const Header = ({ title, subtitle, breadcrumbs = [], onMenuClick }) => {
                         <FaCog className="text-gray-400" />
                         <span className="text-gray-700 dark:text-gray-300">الإعدادات</span>
                       </button>
-                      
-                      <button 
-                        className="w-full flex items-center space-x-3 space-x-reverse px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-right"
-                        onClick={() => {
-                          setProfileMenuOpen(false);
-                          toggleTheme();
-                        }}
-                      >
-                        {settings.theme === 'light' ? <FaSun className="text-gray-400" /> : <FaMoon className="text-gray-400" />}
-                        <span className="text-gray-700 dark:text-gray-300">
-                          {settings.theme === 'light' ? 'الوضع المضيء' : 'الوضع المظلم'}
-                        </span>
-                      </button>
                     </div>
 
                     <div className="border-t border-gray-200 dark:border-gray-600 py-2">
@@ -345,33 +253,6 @@ const Header = ({ title, subtitle, breadcrumbs = [], onMenuClick }) => {
           </div>
         </div>
       </div>
-
-      {/* Mobile Search Bar */}
-      <AnimatePresence>
-        {searchOpen && (
-          <motion.div
-            className="md:hidden border-t border-gray-200 dark:border-gray-700 p-4"
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-          >
-            <form onSubmit={handleSearch} className="relative">
-              <FaSearch className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="البحث..."
-                className="w-full pr-10 pl-4 py-2.5 border border-gray-200 dark:border-gray-600 rounded-xl
-                         bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white
-                         focus:border-primary-500 focus:ring-2 focus:ring-primary-200 dark:focus:ring-primary-800
-                         transition-all duration-200 text-right font-arabic"
-                autoFocus
-              />
-            </form>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </motion.header>
       
       <LogoutModal 
@@ -382,4 +263,4 @@ const Header = ({ title, subtitle, breadcrumbs = [], onMenuClick }) => {
   );
 };
 
-export default Header;
+export default ParentsHeader;

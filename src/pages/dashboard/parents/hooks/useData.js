@@ -6,6 +6,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { parentsAPI } from '../services/parentsApi';
 import { handleAPIError } from '../services/api';
+import { fetchParentProfile } from '../services/profileApi';
 
 /**
  * هوك لإدارة بيانات ولي الأمر
@@ -20,7 +21,7 @@ export const useParentProfile = () => {
     try {
       setLoading(true);
       setError(null);
-      const data = await parentsAPI.getParentProfile();
+      const data = await fetchParentProfile();
       setProfile(data);
     } catch (err) {
       setError(handleAPIError(err));
@@ -203,7 +204,7 @@ export const useNotifications = () => {
       const data = await notificationsAPI.fetchForParent('parent_001'); // Mock parent ID
       
       // Filter notifications to only show those related to parent's children schools
-      if (parentProfile && parentProfile.children) {
+      if (parentProfile && parentProfile.children && parentProfile.children.length > 0) {
         const childSchoolIds = parentProfile.children.map(child => child.school.id);
         const filteredNotifications = data.filter(notification => 
           !notification.schoolId || childSchoolIds.includes(notification.schoolId)
@@ -323,14 +324,14 @@ export const useNotifications = () => {
 
   // Filter archived notifications
   const getArchivedNotifications = useCallback(() => {
-    return notifications.filter(n => n.archived);
+    return notifications.filter(n => n.archived || false);
   }, [notifications]);
 
   // Get counts for each type
   const getTypeCounts = useMemo(() => {
-    const achievementCount = notifications.filter(n => n.type === 'achievement' && !n.archived).length;
-    const improvementCount = notifications.filter(n => n.type === 'improvement' && !n.archived).length;
-    const totalCount = notifications.filter(n => !n.archived).length;
+    const achievementCount = notifications.filter(n => n.type === 'achievement' && !(n.archived || false)).length;
+    const improvementCount = notifications.filter(n => n.type === 'improvement' && !(n.archived || false)).length;
+    const totalCount = notifications.filter(n => !(n.archived || false)).length;
     return { achievement: achievementCount, improvement: improvementCount, total: totalCount };
   }, [notifications]);
 

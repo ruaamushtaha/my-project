@@ -7,6 +7,7 @@ import BestSchools from "./components/BestSchools";
 import SchoolsOnArea from "./components/SchoolsOnArea";
 import StatisticsSection from "./components/StatisticsSection";
 import AddedSchools from "./components/AddedSchools";
+import headerimg from '../../../assets/images/headerimg1.png';
 
 // Mock API service for simulating backend data
 const schoolsApiService = {
@@ -332,7 +333,19 @@ const SchoolsContent = () => {
   return (
     <div className="font-cairo bg-white text-black" dir="rtl">
       {/* Header */}
-      <Header title={data?.pageInfo?.title || "المدارس"} />
+
+{/* الهيدر مع الخلفية */}
+      <div className="relative h-[210px]">
+        <img 
+          src={headerimg} 
+          alt="خلفية الهيدر" 
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-cyan-600/50 to-cyan-950/10"></div>
+        <Header title={data?.pageInfo?.title || "المدارس"} variant="default" />
+      </div>
+
+      {/* <Header title={data?.pageInfo?.title || "المدارس"} /> */}
 
       {/* Search Section */}
       <SearchSection data={data?.searchResults} />

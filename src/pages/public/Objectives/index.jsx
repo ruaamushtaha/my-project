@@ -5,6 +5,7 @@ import PrimaryGoal from "./components/PrimaryGoal";
 import SecondaryGoals from "./components/SecondaryGoals";
 import ImpactSection from "./components/ImpactSection";
 import VisionSection from "./components/VisionSection";
+import headerimg from '../../../assets/images/headerimg1.png';
 
 // Context for Objectives page data management
 const ObjectivesContext = createContext();
@@ -259,7 +260,20 @@ const ObjectivesContent = () => {
   return (
     <div className="font-cairo bg-white text-black" dir="rtl">
       {/* Header Section */}
-      <Header title={objectivesData.pageInfo.title} />
+
+ {/* الهيدر مع الخلفية */}
+      <div className="relative h-[210px]">
+        <img 
+          src={headerimg} 
+          alt="خلفية الهيدر" 
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-cyan-600/50 to-cyan-950/10"></div>
+        <Header title={objectivesData.pageInfo.title} variant="default" />
+      </div>
+
+
+      {/* <Header title={objectivesData.pageInfo.title} /> */}
 
       {/* Primary Goal Section */}
       <PrimaryGoal data={objectivesData.primaryGoal} />

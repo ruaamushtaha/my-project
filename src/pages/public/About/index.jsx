@@ -9,6 +9,7 @@ import StorySection from "./components/StorySection";
 import StatisticsSection from "./components/StatisticsSection";
 import PartnersSection from "./components/PartnersSection";
 import DevelopmentPlanSection from "./components/DevelopmentPlanSection";
+import headerimg from "../../../assets/images/headerimg1.png";
 
 // Context for About page data management
 const AboutContext = createContext();
@@ -307,7 +308,20 @@ const AboutContent = () => {
   return (
     <div className="font-cairo bg-white text-black" dir="rtl">
       {/* Header Section */}
-      <Header title={aboutData.pageInfo.title} />
+      
+
+ {/* الهيدر مع الخلفية */}
+      <div className="relative h-[210px]">
+        <img 
+          src={headerimg} 
+          alt="خلفية الهيدر" 
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-cyan-600/50 to-cyan-950/10"></div>
+        <Header title={aboutData.pageInfo.title} variant="default" />
+      </div>
+
+      {/* <Header title={aboutData.pageInfo.title} /> */}
 
       {/* Goal and Vision Section */}
       <GoalVisionSection data={aboutData.goalVision} />

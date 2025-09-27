@@ -7,6 +7,7 @@ import Footer from '../components/Footer';
 
 import ContactForm from './components/ContactForm';
 import MapSection from './components/MapSection';
+import headerimg from '../../../assets/images/headerimg1.png';
 
 // Context for Contact page data
 const ContactContext = createContext();
@@ -177,7 +178,18 @@ const ContactContent = () => {
       transition={{ duration: 0.6 }}
     >
       {/* الهيدر */}
-      <Header title={contactData.pageInfo.title} />
+      {/* <Header title={contactData.pageInfo.title} /> */}
+
+  {/* الهيدر مع الخلفية */}
+      <div className="relative h-[210px]">
+        <img 
+          src={headerimg} 
+          alt="خلفية الهيدر" 
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-cyan-600/50 to-cyan-950/10"></div>
+        <Header title={contactData.pageInfo.title} variant="default" />
+      </div>
 
       {/* المحتوى الرئيسي */}
       <main className="flex-grow relative overflow-hidden">
