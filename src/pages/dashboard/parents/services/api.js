@@ -49,7 +49,7 @@ api.interceptors.response.use(
  * Handle API errors and return appropriate error messages
  * معالجة أخطاء API وإرجاع رسائل الخطأ المناسبة
  */
-const handleAPIError = (error) => {
+export const handleAPIError = (error) => {
   if (!error.response) {
     return 'Network error. Please check your connection.';
   }

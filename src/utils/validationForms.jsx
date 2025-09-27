@@ -57,3 +57,27 @@ export const resetPasswordSchema = Yup.object().shape({
     .oneOf([Yup.ref("password"), null], "كلمتا المرور غير متطابقتين")
     .required("تأكيد كلمة المرور مطلوب"),
 });
+
+// Contact form validation schema
+export const contactFormSchema = Yup.object().shape({
+  name: Yup.string()
+    .required('الاسم مطلوب')
+    .min(2, 'الاسم يجب أن يكون أكثر من حرفين')
+    .max(50, 'الاسم يجب أن يكون أقل من 50 حرف')
+    .matches(/^[\u0600-\u06FFa-zA-Z\s]+$/, 'الاسم يجب أن يحتوي على أحرف فقط'),
+  
+  email: Yup.string()
+    .email('صيغة البريد الإلكتروني غير صحيحة')
+    .required('البريد الإلكتروني مطلوب')
+    .matches(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'يجب إدخال بريد إلكتروني صحيح'),
+  
+  address: Yup.string()
+    .required('العنوان مطلوب')
+    .min(5, 'العنوان يجب أن يكون أكثر من 5 أحرف')
+    .max(100, 'العنوان يجب أن يكون أقل من 100 حرف'),
+  
+  message: Yup.string()
+    .required('الرسالة مطلوبة')
+    .min(10, 'الرسالة يجب أن تكون أكثر من 10 أحرف')
+    .max(1000, 'الرسالة يجب أن تكون أقل من 1000 حرف')
+});

@@ -22,7 +22,6 @@ import {
   FaGraduationCap
 } from 'react-icons/fa';
 
-import Layout from '../components/layout/Layout';
 import { Card, Button, Badge, ProgressBar, Modal, Alert } from '../components/ui';
 import { useSchools, useEvaluations } from '../hooks/useData';
 
@@ -442,7 +441,7 @@ const EvaluationsPage = () => {
   const [showSchoolModal, setShowSchoolModal] = useState(false);
   const [ratings, setRatings] = useState({});
   const [showDetails, setShowDetails] = useState(false);
-  const [successMessage, setSuccessMessage] = useState('');
+  const [successMessage, setSuccessMessage] = '';
 
   const { mySchools, loading: schoolsLoading } = useSchools({ myChildren: true });
   const { submitEvaluation, loading: submitting } = useEvaluations();
@@ -483,22 +482,16 @@ const EvaluationsPage = () => {
 
   if (schoolsLoading) {
     return (
-      <Layout title="تقييم المدارس" subtitle="جاري تحميل بياناتك...">
-        <div className="text-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500 mx-auto mb-4"></div>
-          <p>جاري تحميل مدارس أطفالك...</p>
-        </div>
-      </Layout>
+      <div className="text-center py-12">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500 mx-auto mb-4"></div>
+        <p>جاري تحميل مدارس أطفالك...</p>
+      </div>
     );
   }
 
   if (!selectedSchool) {
     return (
-      <Layout
-        title="تقييم المدارس"
-        subtitle="اختر مدرسة لبدء التقييم"
-        breadcrumbs={['الرئيسية', 'التقييمات']}
-      >
+      <>
         {/* School Selection */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -582,72 +575,53 @@ const EvaluationsPage = () => {
             </Card>
           )}
         </motion.div>
-      </Layout>
+      </>
     );
   }
 
   return (
-    <Layout
-      title={`تقييم ${selectedSchool.name}`}
-      subtitle={selectedSchool.type + ' - ' + selectedSchool.location}
-      breadcrumbs={['الرئيسية', 'التقييمات', selectedSchool.name]}
-    >
-      {/* Success Message */}
-      <AnimatePresence>
-        {successMessage && (
-          <motion.div
-            initial={{ opacity: 0, y: -50 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -50 }}
-            className="mb-6"
-          >
-            <Alert
-              type="success"
-              title="تم حفظ التقييم بنجاح!"
-              message={successMessage}
-              onClose={() => setSuccessMessage('')}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-        
-        {/* Evaluation Form */}
-        <div className="lg:col-span-3 space-y-6">
-          
-          {/* Controls */}
+    <div className="container mx-auto p-4">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2 space-y-6">
+          {/* Header */}
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex items-center justify-between"
           >
-            <div className="flex items-center gap-4">
-              <Button
-                variant="outline"
-                onClick={() => setSelectedSchool(null)}
-              >
-                العودة للقائمة
-              </Button>
-              
-              <Button
-                variant="ghost"
-                onClick={() => setShowDetails(!showDetails)}
-                className={showDetails ? 'bg-primary-50 text-primary-600' : ''}
-              >
-                <FaEye className="ml-2" />
-                {showDetails ? 'إخفاء التفاصيل' : 'عرض التفاصيل'}
-              </Button>
-            </div>
-            
-            <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm" icon={<FaHistory />}>
-                تاريخ التقييمات
-              </Button>
-              <Button variant="outline" size="sm" icon={<FaDownload />}>
-                تصدير
-              </Button>
-            </div>
+            <Card>
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                  <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                    تقييم المدرسة
+                  </h1>
+                  <p className="text-gray-600 dark:text-gray-400">
+                    قدم تقييمك الشامل لمدرسة طفلك لمساعدتنا في تحسين جودة التعليم
+                  </p>
+                </div>
+                
+                <div className="flex items-center gap-3">
+                  <select
+                    value={selectedSchool.id}
+                    onChange={(e) => setSelectedSchool(mySchools.find(s => s.id === e.target.value))}
+                    className="px-4 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  >
+                    {mySchools.map(school => (
+                      <option key={school.id} value={school.id}>
+                        {school.name}
+                      </option>
+                    ))}
+                  </select>
+                  
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowSchoolModal(true)}
+                  >
+                    <FaHistory className="ml-2" />
+                    التاريخ
+                  </Button>
+                </div>
+              </div>
+            </Card>
           </motion.div>
 
           {/* Rating Sliders */}
@@ -686,7 +660,7 @@ const EvaluationsPage = () => {
           />
         </div>
       </div>
-    </Layout>
+    </div>
   );
 };
 

@@ -5,36 +5,30 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { 
   FaSchool,
   FaStar,
   FaSearch,
-  FaFilter,
   FaMapMarkerAlt,
   FaUsers,
   FaGraduationCap,
   FaEye,
   FaHeart,
   FaRegHeart,
-  FaSort,
   FaTh,
   FaList,
-  FaChevronDown,
-  FaTrophy,
-  FaPhone,
-  FaEnvelope,
-  FaGlobe
+  FaChartLine
 } from 'react-icons/fa';
 
-import Layout from '../components/layout/Layout';
-import { Card, Button, Badge, Input, Dropdown, Loading, Modal } from '../components/ui';
-import { useSchools, useSearch } from '../hooks/useData';
+import { Card, Button, Badge, Input, Loading } from '../components/ui';
+import { useSchools, useParentProfile } from '../hooks/useData';
 
 /**
  * مكون بطاقة المدرسة المتطورة
  * Enhanced School Card Component
  */
-const SchoolCard = ({ school, index, viewMode, onViewDetails, onToggleFavorite, isFavorite }) => {
+const SchoolCard = ({ school, index, viewMode, onViewDetails, onCompareSchools, onCompareDirectorateSchools, onToggleFavorite, isFavorite }) => {
   const getRatingColor = (rating) => {
     if (rating >= 4.5) return 'text-purple-500 bg-purple-100';
     if (rating >= 3.5) return 'text-green-500 bg-green-100';
@@ -66,7 +60,7 @@ const SchoolCard = ({ school, index, viewMode, onViewDetails, onToggleFavorite, 
                   alt={school.name}
                   className="w-16 h-16 rounded-xl object-cover border-2 border-gray-100"
                 />
-                {school.isMyChild && (
+                {school.hasMyChild && (
                   <div className="absolute -top-2 -right-2 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
                     <FaGraduationCap className="text-white text-xs" />
                   </div>
@@ -79,7 +73,7 @@ const SchoolCard = ({ school, index, viewMode, onViewDetails, onToggleFavorite, 
                   <h3 className="text-lg font-bold text-gray-900 dark:text-white truncate">
                     {school.name}
                   </h3>
-                  <Badge variant={school.isMyChild ? 'success' : 'gray'} size="sm">
+                  <Badge variant={school.hasMyChild ? 'success' : 'gray'} size="sm">
                     {school.type}
                   </Badge>
                 </div>
@@ -113,7 +107,7 @@ const SchoolCard = ({ school, index, viewMode, onViewDetails, onToggleFavorite, 
               </div>
 
               {/* Actions */}
-              <div className="flex items-center gap-2">
+              <div className="flex flex-col gap-2">
                 <Button
                   variant="ghost"
                   size="sm"
@@ -123,14 +117,36 @@ const SchoolCard = ({ school, index, viewMode, onViewDetails, onToggleFavorite, 
                   {isFavorite ? <FaHeart /> : <FaRegHeart />}
                 </Button>
 
-                <Button
-                  variant="primary"
-                  size="sm"
-                  onClick={() => onViewDetails(school)}
-                >
-                  <FaEye className="ml-2" />
-                  التفاصيل
-                </Button>
+                <div className="flex gap-2">
+                  <div className="flex flex-col gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => onCompareSchools(school)}
+                    >
+                      <FaChartLine className="ml-1" />
+                      مقارنة
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => onCompareDirectorateSchools(school)}
+                      className="text-xs"
+                    >
+                      <FaChartLine className="ml-1" />
+                      مقارنة المديرية
+                    </Button>
+                  </div>
+                  
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    onClick={() => onViewDetails(school)}
+                  >
+                    <FaEye className="ml-1" />
+                    التفاصيل
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
@@ -163,7 +179,7 @@ const SchoolCard = ({ school, index, viewMode, onViewDetails, onToggleFavorite, 
         </button>
 
         {/* My Child Badge */}
-        {school.isMyChild && (
+        {school.hasMyChild && (
           <div className="absolute top-4 right-4 z-10">
             <Badge variant="success" size="sm">
               مدرسة طفلي
@@ -223,14 +239,42 @@ const SchoolCard = ({ school, index, viewMode, onViewDetails, onToggleFavorite, 
               </div>
             </div>
 
-            {/* Action Button */}
+            {/* Action Buttons */}
+            <div className="flex gap-2">
+              <Button 
+                variant="outline" 
+                className="flex-1"
+                onClick={() => onCompareSchools(school)}
+              >
+                <FaChartLine className="ml-1" />
+                مقارنة
+              </Button>
+              
+              <Button 
+                variant="primary" 
+                className="flex-1"
+                onClick={() => onViewDetails(school)}
+              >
+                <FaEye className="ml-1" />
+                التفاصيل
+              </Button>
+            </div>
+            
             <Button 
-              variant="outline" 
-              className="w-full group-hover:bg-primary-500 group-hover:text-white group-hover:border-primary-500 transition-all duration-300"
+              variant="ghost" 
+              className="w-full"
+              onClick={() => onCompareDirectorateSchools(school)}
+            >
+              <FaChartLine className="ml-1" />
+              مقارنة مدارس {school.location}
+            </Button>
+            
+            <Button 
+              variant="ghost" 
+              className="w-full"
               onClick={() => onViewDetails(school)}
             >
-              <FaEye className="ml-2" />
-              عرض التفاصيل
+              تقييم المدرسة
             </Button>
           </div>
         </div>
@@ -240,261 +284,50 @@ const SchoolCard = ({ school, index, viewMode, onViewDetails, onToggleFavorite, 
 };
 
 /**
- * مكون فلاتر البحث المتقدم
- * Advanced Search Filters Component
- */
-const SearchFilters = ({ filters, onFiltersChange, onReset }) => {
-  const [showFilters, setShowFilters] = useState(false);
-
-  const schoolTypes = [
-    { value: 'all', label: 'جميع المراحل' },
-    { value: 'ابتدائية', label: 'ابتدائية' },
-    { value: 'متوسطة', label: 'متوسطة' },
-    { value: 'ثانوية', label: 'ثانوية' }
-  ];
-
-  const sortOptions = [
-    { value: 'name', label: 'الاسم' },
-    { value: 'overallRating', label: 'التقييم' },
-    { value: 'studentsCount', label: 'عدد الطلاب' },
-    { value: 'location', label: 'الموقع' }
-  ];
-
-  return (
-    <div className="space-y-4">
-      {/* Search Input */}
-      <div className="flex gap-4">
-        <div className="flex-1">
-          <Input
-            placeholder="البحث في المدارس..."
-            value={filters.search || ''}
-            onChange={(e) => onFiltersChange({ search: e.target.value })}
-            icon={<FaSearch />}
-          />
-        </div>
-        
-        <Button
-          variant="outline"
-          onClick={() => setShowFilters(!showFilters)}
-          className="flex items-center gap-2"
-        >
-          <FaFilter />
-          فلاتر
-          <FaChevronDown className={`transition-transform ${showFilters ? 'rotate-180' : ''}`} />
-        </Button>
-      </div>
-
-      {/* Advanced Filters */}
-      <AnimatePresence>
-        {showFilters && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            className="overflow-hidden"
-          >
-            <Card className="bg-gray-50 dark:bg-gray-800">
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <Dropdown
-                  label="نوع المدرسة"
-                  options={schoolTypes}
-                  value={filters.type || 'all'}
-                  onChange={(value) => onFiltersChange({ type: value })}
-                />
-
-                <Dropdown
-                  label="ترتيب حسب"
-                  options={sortOptions}
-                  value={filters.sortBy || 'name'}
-                  onChange={(value) => onFiltersChange({ sortBy: value })}
-                />
-
-                <div className="space-y-2">
-                  <label className="block text-sm font-semibold text-gray-700">التقييم الأدنى</label>
-                  <select 
-                    className="w-full px-3 py-2 border border-gray-200 rounded-lg"
-                    value={filters.minRating || ''}
-                    onChange={(e) => onFiltersChange({ minRating: e.target.value })}
-                  >
-                    <option value="">أي تقييم</option>
-                    <option value="4.5">4.5+ ممتاز</option>
-                    <option value="3.5">3.5+ جيد</option>
-                    <option value="3.0">3.0+ متوسط</option>
-                  </select>
-                </div>
-
-                <div className="flex items-end gap-2">
-                  <label className="flex items-center gap-2 text-sm">
-                    <input
-                      type="checkbox"
-                      checked={filters.myChildren || false}
-                      onChange={(e) => onFiltersChange({ myChildren: e.target.checked })}
-                      className="rounded"
-                    />
-                    مدارس أطفالي فقط
-                  </label>
-                </div>
-              </div>
-
-              <div className="mt-4 flex justify-end gap-2">
-                <Button variant="ghost" size="sm" onClick={onReset}>
-                  إعادة تعيين
-                </Button>
-                <Button variant="primary" size="sm" onClick={() => setShowFilters(false)}>
-                  تطبيق الفلاتر
-                </Button>
-              </div>
-            </Card>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
-};
-
-/**
- * مكون تفاصيل المدرسة السريعة
- * Quick School Details Modal Component
- */
-const SchoolDetailsModal = ({ school, isOpen, onClose }) => {
-  if (!school) return null;
-
-  return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      title={school.name}
-      size="lg"
-    >
-      <div className="space-y-6">
-        {/* School Image */}
-        <div className="relative h-48 rounded-xl overflow-hidden">
-          <img src={school.image} alt={school.name} className="w-full h-full object-cover" />
-          <div className="absolute top-4 right-4">
-            <Badge variant={school.isMyChild ? 'success' : 'gray'}>
-              {school.isMyChild ? 'مدرسة طفلي' : school.type}
-            </Badge>
-          </div>
-        </div>
-
-        {/* School Info */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <h3 className="font-bold text-gray-900 dark:text-white mb-3">معلومات أساسية</h3>
-            <div className="space-y-3 text-sm">
-              <div className="flex items-center gap-2">
-                <FaMapMarkerAlt className="text-primary-500" />
-                <span>{school.location}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <FaUsers className="text-primary-500" />
-                <span>{school.studentsCount} طالب</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <FaGraduationCap className="text-primary-500" />
-                <span>{school.teachersCount} معلم</span>
-              </div>
-              {school.contact && (
-                <>
-                  <div className="flex items-center gap-2">
-                    <FaPhone className="text-primary-500" />
-                    <span>{school.contact.phone}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <FaEnvelope className="text-primary-500" />
-                    <span>{school.contact.email}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <FaGlobe className="text-primary-500" />
-                    <span>{school.contact.website}</span>
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
-
-          <div>
-            <h3 className="font-bold text-gray-900 dark:text-white mb-3">التقييم والإنجازات</h3>
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <span>التقييم العام</span>
-                <div className="flex items-center gap-2">
-                  <FaStar className="text-yellow-500" />
-                  <span className="font-bold">{school.overallRating}/5</span>
-                </div>
-              </div>
-              
-              {school.achievements && (
-                <div>
-                  <h4 className="font-semibold mb-2">الإنجازات</h4>
-                  <ul className="space-y-1 text-sm text-gray-600">
-                    {school.achievements.map((achievement, index) => (
-                      <li key={index} className="flex items-center gap-2">
-                        <FaTrophy className="text-yellow-500 text-xs" />
-                        {achievement}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Description */}
-        <div>
-          <h3 className="font-bold text-gray-900 dark:text-white mb-3">نبذة عن المدرسة</h3>
-          <p className="text-gray-600 dark:text-gray-400">{school.description}</p>
-        </div>
-
-        {/* Action Buttons */}
-        <div className="flex gap-3 pt-4 border-t border-gray-200 dark:border-gray-600">
-          <Button variant="primary" className="flex-1">
-            <FaStar className="ml-2" />
-            تقييم المدرسة
-          </Button>
-          <Button variant="outline" className="flex-1">
-            <FaEye className="ml-2" />
-            عرض الملف الكامل
-          </Button>
-        </div>
-      </div>
-    </Modal>
-  );
-};
-
-/**
  * الصفحة الرئيسية لإدارة المدارس
  * Main Schools Management Page
  */
 const SchoolsPage = () => {
-  const [filters, setFilters] = useState({});
+  const navigate = useNavigate();
   const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'list'
   const [selectedSchool, setSelectedSchool] = useState(null);
   const [favorites, setFavorites] = useState(new Set());
+  const [searchTerm, setSearchTerm] = useState('');
 
-  const { schools, loading, total, updateFilters, clearFilters } = useSchools(filters);
-  const { sortedItems: filteredSchools } = useSearch(
-    schools, 
-    ['name', 'location', 'description']
+  const { mySchools: schools, loading } = useSchools({ myChildren: true });
+  const { profile: parentProfile } = useParentProfile();
+
+  // Filter schools based on search term
+  const filteredSchools = schools.filter(school => 
+    school.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    school.location.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
-  // Handle filters change
-  const handleFiltersChange = (newFilters) => {
-    const updatedFilters = { ...filters, ...newFilters };
-    setFilters(updatedFilters);
-    updateFilters(updatedFilters);
-  };
-
-  // Handle filters reset
-  const handleFiltersReset = () => {
-    setFilters({});
-    clearFilters();
-  };
 
   // Handle view details
   const handleViewDetails = (school) => {
-    setSelectedSchool(school);
+    // Navigate to school profile page (to be implemented in School Manager Dashboard)
+    console.log('View details for school:', school);
+  };
+
+  // Handle compare schools
+  const handleCompareSchools = (school) => {
+    navigate('/dashboard/parents/schools/comparison', { state: { school } });
+  };
+
+  // Handle compare all schools in directorate
+  const handleCompareDirectorateSchools = (school) => {
+    // Get all schools in the same directorate
+    const directorateSchools = schools.filter(s => 
+      s.location === school.location && s.id !== school.id
+    );
+    
+    // Navigate to comparison page with all directorate schools
+    navigate('/dashboard/parents/schools/comparison', { 
+      state: { 
+        school,
+        directorateSchools
+      } 
+    });
   };
 
   // Handle toggle favorite
@@ -511,23 +344,36 @@ const SchoolsPage = () => {
   };
 
   return (
-    <Layout
-      title="إدارة المدارس"
-      subtitle={`${total} مدرسة متاحة`}
-      breadcrumbs={['الرئيسية', 'المدارس']}
-    >
-      {/* Search & Filters */}
+    <div className="container mx-auto p-4">
+      {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
         className="mb-8"
       >
-        <SearchFilters
-          filters={filters}
-          onFiltersChange={handleFiltersChange}
-          onReset={handleFiltersReset}
-        />
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
+              مدارس أطفالي
+            </h1>
+            <p className="text-gray-600 dark:text-gray-400 mt-2">
+              إدارة وعرض مدارس الأطفال المسجلين فيها
+            </p>
+          </div>
+        </div>
+
+        {/* Search Input */}
+        <div className="flex gap-4">
+          <div className="flex-1">
+            <Input
+              placeholder="البحث في مدارس أطفالي..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              icon={<FaSearch />}
+            />
+          </div>
+        </div>
       </motion.div>
 
       {/* Results Header */}
@@ -561,12 +407,6 @@ const SchoolsPage = () => {
               <FaList />
             </Button>
           </div>
-
-          {/* Sort */}
-          <Button variant="outline" size="sm">
-            <FaSort className="ml-2" />
-            ترتيب
-          </Button>
         </div>
       </motion.div>
 
@@ -593,6 +433,8 @@ const SchoolsPage = () => {
               index={index}
               viewMode={viewMode}
               onViewDetails={handleViewDetails}
+              onCompareSchools={handleCompareSchools}
+              onCompareDirectorateSchools={handleCompareDirectorateSchools}
               onToggleFavorite={handleToggleFavorite}
               isFavorite={favorites.has(school.id)}
             />
@@ -609,21 +451,11 @@ const SchoolsPage = () => {
             لا توجد مدارس
           </h3>
           <p className="text-gray-600 dark:text-gray-400 mb-6">
-            لم يتم العثور على مدارس تطابق معايير البحث الخاصة بك
+            لم يتم العثور على مدارس لطفلك
           </p>
-          <Button variant="primary" onClick={handleFiltersReset}>
-            إعادة تعيين الفلاتر
-          </Button>
         </motion.div>
       )}
-
-      {/* School Details Modal */}
-      <SchoolDetailsModal
-        school={selectedSchool}
-        isOpen={!!selectedSchool}
-        onClose={() => setSelectedSchool(null)}
-      />
-    </Layout>
+    </div>
   );
 };
 

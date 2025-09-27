@@ -46,12 +46,15 @@
     "yup": "^1.7.0",
     "zod": "^4.1.8"
   },
+  "overrides": {
+    "typescript": "4.9.5"
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "mock-server": "json-server --watch mock-server/db.json --port 3001 --host 0.0.0.0 --delay 500",
+    "mock-server": "json-server --watch mock-server/db.json --port 3001 --host 0.0.0.0",
     "dev": "concurrently \"npm run mock-server\" \"npm start\"",
     "lint": "eslint src --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "eslint src --ext .js,.jsx,.ts,.tsx --fix",
@@ -79,6 +82,7 @@
   "devDependencies": {
     "autoprefixer": "^10.4.14",
     "concurrently": "^9.2.1",
+    "cross-env": "^10.0.0",
     "json-server": "^1.0.0-beta.3",
     "msw": "^2.11.2",
     "postcss": "^8.4.21",

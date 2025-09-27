@@ -4,7 +4,8 @@
 // =============================================================================
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { parentsAPI, handleAPIError } from '../services/api';
+import { parentsAPI } from '../services/parentsApi';
+import { handleAPIError } from '../services/api';
 
 /**
  * هوك لإدارة بيانات ولي الأمر
@@ -125,8 +126,11 @@ export const useSchools = (initialFilters = {}) => {
 
   // My children's schools
   const mySchools = useMemo(() => {
-    return schools.filter(school => school.isMyChild);
-  }, [schools]);
+    if (filters.myChildren) {
+      return schools.filter(school => school.hasMyChild);
+    }
+    return schools;
+  }, [schools, filters.myChildren]);
 
   return {
     schools,
@@ -186,19 +190,34 @@ export const useNotifications = () => {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { profile: parentProfile } = useParentProfile();
 
   const fetchNotifications = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
-      const data = await parentsAPI.getNotifications();
-      setNotifications(data);
+      
+      // Import the notifications API
+      const { default: notificationsAPI } = await import('../services/notificationsApi');
+      
+      const data = await notificationsAPI.fetchForParent('parent_001'); // Mock parent ID
+      
+      // Filter notifications to only show those related to parent's children schools
+      if (parentProfile && parentProfile.children) {
+        const childSchoolIds = parentProfile.children.map(child => child.school.id);
+        const filteredNotifications = data.filter(notification => 
+          !notification.schoolId || childSchoolIds.includes(notification.schoolId)
+        );
+        setNotifications(filteredNotifications);
+      } else {
+        setNotifications(data);
+      }
     } catch (err) {
       setError(handleAPIError(err));
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [parentProfile]);
 
   useEffect(() => {
     fetchNotifications();
@@ -206,7 +225,9 @@ export const useNotifications = () => {
 
   const markAsRead = useCallback(async (notificationId) => {
     try {
-      await parentsAPI.markNotificationAsRead(notificationId);
+      const { default: notificationsAPI } = await import('../services/notificationsApi');
+      await notificationsAPI.markAsRead(notificationId);
+      
       setNotifications(prev => 
         prev.map(notif => 
           notif.id === notificationId 
@@ -219,17 +240,52 @@ export const useNotifications = () => {
     }
   }, []);
 
+  const markAsUnread = useCallback(async (notificationId) => {
+    try {
+      const { default: notificationsAPI } = await import('../services/notificationsApi');
+      await notificationsAPI.markAsUnread(notificationId);
+      
+      setNotifications(prev => 
+        prev.map(notif => 
+          notif.id === notificationId 
+            ? { ...notif, read: false }
+            : notif
+        )
+      );
+    } catch (err) {
+      setError(handleAPIError(err));
+    }
+  }, []);
+
+  const archiveNotification = useCallback(async (notificationId) => {
+    try {
+      const { default: notificationsAPI } = await import('../services/notificationsApi');
+      await notificationsAPI.archive(notificationId);
+      
+      setNotifications(prev => 
+        prev.map(notif => 
+          notif.id === notificationId 
+            ? { ...notif, archived: true }
+            : notif
+        )
+      );
+    } catch (err) {
+      setError(handleAPIError(err));
+    }
+  }, []);
+
   const markAllAsRead = useCallback(async () => {
     try {
-      const unreadIds = notifications.filter(n => !n.read).map(n => n.id);
-      await Promise.all(unreadIds.map(id => parentsAPI.markNotificationAsRead(id)));
+      const { default: notificationsAPI } = await import('../services/notificationsApi');
+      await notificationsAPI.markAllAsRead();
+      
       setNotifications(prev => 
         prev.map(notif => ({ ...notif, read: true }))
       );
     } catch (err) {
       setError(handleAPIError(err));
     }
-  }, [notifications]);
+  }, []);
 
   // Get unread count
   const unreadCount = useMemo(() => {
@@ -248,6 +304,36 @@ export const useNotifications = () => {
     }, {});
   }, [notifications]);
 
+  // Filter notifications by type
+  const filterByType = useCallback((type) => {
+    if (type === 'all') return notifications;
+    return notifications.filter(n => n.type === type);
+  }, [notifications]);
+
+  // Filter notifications by search term
+  const filterBySearch = useCallback((searchTerm) => {
+    if (!searchTerm) return notifications;
+    const term = searchTerm.toLowerCase();
+    return notifications.filter(n => 
+      n.schoolName.toLowerCase().includes(term) || 
+      n.title.toLowerCase().includes(term) || 
+      n.message.toLowerCase().includes(term)
+    );
+  }, [notifications]);
+
+  // Filter archived notifications
+  const getArchivedNotifications = useCallback(() => {
+    return notifications.filter(n => n.archived);
+  }, [notifications]);
+
+  // Get counts for each type
+  const getTypeCounts = useMemo(() => {
+    const achievementCount = notifications.filter(n => n.type === 'achievement' && !n.archived).length;
+    const improvementCount = notifications.filter(n => n.type === 'improvement' && !n.archived).length;
+    const totalCount = notifications.filter(n => !n.archived).length;
+    return { achievement: achievementCount, improvement: improvementCount, total: totalCount };
+  }, [notifications]);
+
   return {
     notifications,
     groupedNotifications,
@@ -255,7 +341,13 @@ export const useNotifications = () => {
     loading,
     error,
     markAsRead,
+    markAsUnread,
+    archiveNotification,
     markAllAsRead,
+    filterByType,
+    filterBySearch,
+    getArchivedNotifications,
+    getTypeCounts,
     refetch: fetchNotifications
   };
 };
@@ -358,6 +450,133 @@ export const useMessages = (schoolId) => {
 };
 
 /**
+ * هوك لإدارة المحادثات
+ * Hook for managing chat conversations
+ */
+export const useChat = () => {
+  const [conversations, setConversations] = useState([]);
+  const [activeConversation, setActiveConversation] = useState(null);
+  const [messages, setMessages] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const fetchMySchools = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      // In a real app, this would call an API
+      // For now, we'll use mock data
+      const mockSchools = [
+        {
+          id: 'school_001',
+          name: 'مدرسة الأمل الابتدائية',
+          type: 'ابتدائية',
+          location: 'الرياض - حي المروج',
+          manager: {
+            id: 'manager_001',
+            name: 'أ. عبدالرحمن السالم',
+            role: 'مدير المدرسة'
+          }
+        },
+        {
+          id: 'school_002',
+          name: 'مدرسة النجاح المتوسطة',
+          type: 'متوسطة',
+          location: 'الرياض - حي النرجس',
+          manager: {
+            id: 'manager_002',
+            name: 'أ. فاطمة الخالد',
+            role: 'مدير المدرسة'
+          }
+        }
+      ];
+      setConversations(mockSchools);
+    } catch (err) {
+      setError(handleAPIError(err));
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const fetchMessages = useCallback(async (schoolId) => {
+    try {
+      setLoading(true);
+      setError(null);
+      // In a real app, this would call an API
+      // For now, we'll use mock data
+      const mockMessages = [
+        {
+          id: 'msg_001',
+          from: 'manager',
+          text: 'أهلاً بك! أنا أ. عبدالرحمن السالم. كيف أستطيع مساعدتك؟',
+          timestamp: new Date(Date.now() - 30 * 60 * 1000).toISOString(),
+          read: true
+        },
+        {
+          id: 'msg_002',
+          from: 'parent',
+          text: 'أهلاً وسهلاً، أريد الاستفسار عن أداء طفلي في الفصل الدراسي الحالي',
+          timestamp: new Date(Date.now() - 25 * 60 * 1000).toISOString(),
+          read: true
+        },
+        {
+          id: 'msg_003',
+          from: 'manager',
+          text: 'بالطبع، يمكنني مساعدتك في ذلك. هل يمكنك تزويدي باسم الطالب ورقم الصف؟',
+          timestamp: new Date(Date.now() - 20 * 60 * 1000).toISOString(),
+          read: true
+        }
+      ];
+      setMessages(mockMessages);
+    } catch (err) {
+      setError(handleAPIError(err));
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const sendMessage = useCallback(async (schoolId, messageText) => {
+    try {
+      // In a real app, this would call an API
+      // For now, we'll simulate sending a message
+      const newMessage = {
+        id: `msg_${Date.now()}`,
+        from: 'parent',
+        text: messageText,
+        timestamp: new Date().toISOString(),
+        read: false
+      };
+      
+      setMessages(prev => [...prev, newMessage]);
+      return newMessage;
+    } catch (err) {
+      setError(handleAPIError(err));
+      throw err;
+    }
+  }, []);
+
+  const startConversation = useCallback((school) => {
+    setActiveConversation(school);
+    fetchMessages(school.id);
+  }, [fetchMessages]);
+
+  useEffect(() => {
+    fetchMySchools();
+  }, [fetchMySchools]);
+
+  return {
+    conversations,
+    activeConversation,
+    messages,
+    loading,
+    error,
+    startConversation,
+    sendMessage,
+    setActiveConversation
+  };
+};
+
+/**
  * هوك مخصص لإدارة Loading States المتعددة
  * Custom hook for managing multiple loading states
  */
@@ -453,12 +672,24 @@ export const useUISettings = () => {
       sidebarCollapsed: false,
       language: 'ar',
       animations: true,
-      compactMode: false
+      compactMode: false,
+      notifications: true,
+      emailNotifications: true,
+      smsNotifications: false,
+      desktopNotifications: true,
+      profileVisibility: 'everyone',
+      activityVisibility: 'friends',
+      searchIndexing: false,
+      marketingData: true
     };
   });
 
   useEffect(() => {
     localStorage.setItem('parentsUI_settings', JSON.stringify(settings));
+    
+    // Apply theme to document
+    document.documentElement.setAttribute('data-theme', settings.theme);
+    document.documentElement.classList.toggle('dark', settings.theme === 'dark');
   }, [settings]);
 
   const updateSetting = useCallback((key, value) => {

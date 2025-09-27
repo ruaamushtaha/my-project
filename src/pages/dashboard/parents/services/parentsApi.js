@@ -1,3 +1,5 @@
+import api from './api';
+
 // =============================================================================
 // Parents Dashboard API Services - Complete Implementation
 // خدمات API كاملة لداشبورد أولياء الأمور مع بيانات واقعية
@@ -13,16 +15,16 @@ const simulateDelay = (ms = 1000) => new Promise(resolve => setTimeout(resolve, 
  * بيانات وهمية واقعية لأولياء الأمور والأطفال
  * Realistic mock data for parents and children
  */
-const MOCK_DATA = {
+const getDefaultMockData = () => ({
   // بيانات ولي الأمر
   parentProfile: {
     id: 'parent_001',
     fullName: 'أحمد محمد السعد',
     email: 'ahmed.alsaad@gmail.com',
-    phone: '+966501234567',
+    phone: '+96650124567',
     address: 'الرياض، حي المروج، شارع الأمير سلطان',
     region: 'منطقة الرياض',
-    profileImage: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
+    profileImage: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face&default=1',
     dateJoined: '2023-09-15',
     preferences: {
       notifications: true,
@@ -46,7 +48,7 @@ const MOCK_DATA = {
         location: 'الرياض - حي المروج'
       },
       age: 12,
-      profileImage: 'https://images.unsplash.com/photo-1544717297-fa95b6ee9643?w=150&h=150&fit=crop&crop=face',
+      profileImage: 'https://images.unsplash.com/photo-1544717302-de2939b7ef71?w=150&h=150&fit=crop&crop=face',
       academicYear: '2024-2025',
       studentId: 'STU001234'
     },
@@ -108,7 +110,8 @@ const MOCK_DATA = {
         administration: 4.4,
         cleanliness: 4.5,
         safety: 4.8,
-        communication: 4.2
+        communication: 4.2,
+        activities: 3.8
       },
       workingHours: {
         start: '07:00',
@@ -157,7 +160,8 @@ const MOCK_DATA = {
         administration: 4.1,
         cleanliness: 4.2,
         safety: 4.5,
-        communication: 4.0
+        communication: 4.0,
+        activities: 3.9
       },
       workingHours: {
         start: '07:30',
@@ -192,7 +196,7 @@ const MOCK_DATA = {
         'قاعات محاضرات مجهزة',
         'مكتبة إلكترونية',
         'كافتيريا حديثة',
-        'مواقف واسعة'
+        'مقاعد واسعة'
       ],
       achievements: [
         'أعلى نسبة قبول جامعي في المنطقة 2024',
@@ -206,7 +210,8 @@ const MOCK_DATA = {
         administration: 4.6,
         cleanliness: 4.8,
         safety: 4.9,
-        communication: 4.5
+        communication: 4.5,
+        activities: 4.6
       },
       workingHours: {
         start: '07:00',
@@ -215,58 +220,329 @@ const MOCK_DATA = {
       },
       tuitionFees: 22000,
       hasMyChild: false
+    },
+    {
+      id: 'school_004',
+      name: 'مدرسة الياسمين الابتدائية',
+      type: 'ابتدائية',
+      location: 'الرياض - حي النرجس',
+      address: 'شارع النرجس، الرياض 12234',
+      phone: '+966112345681',
+      email: 'info@alyasmin-primary.edu.sa',
+      website: 'www.alyasmin-primary.edu.sa',
+      principalName: 'أ. محمد علي',
+      establishedYear: 2010,
+      studentsCount: 350,
+      teachersCount: 20,
+      classroomsCount: 15,
+      image: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=400&h=250&fit=crop',
+      overallRating: 3.9,
+      ratingsCount: 95,
+      description: 'مدرسة الياسمين الابتدائية تقدم تعليماً متميزاً في بيئة محفزة وآمنة.',
+      facilities: [
+        'مختبرات علوم',
+        'مكتبة',
+        'ملعب رياضي',
+        'قاعة متعددة الأغراض',
+        'مقصف'
+      ],
+      achievements: [
+        'المركز الثاني في مسابقة الرياضيات على مستوى المنطقة 2024',
+        'أفضل مدرسة في التفاعل مع المجتمع 2023'
+      ],
+      ratings: {
+        educationQuality: 3.7,
+        facilities: 3.6,
+        teachers: 3.7,
+        administration: 3.9,
+        cleanliness: 3.6,
+        safety: 4.2,
+        communication: 3.8,
+        activities: 3.9
+      },
+      workingHours: {
+        start: '07:30',
+        end: '14:00',
+        breakTime: '10:00-10:30'
+      },
+      tuitionFees: 12000,
+      hasMyChild: false
+    },
+    {
+      id: 'school_005',
+      name: 'مدرسة الأمل المتوسطة',
+      type: 'متوسطة',
+      location: 'الرياض - حي النرجس',
+      address: 'شارع الملك فهد، الرياض 12234',
+      phone: '+966112345682',
+      email: 'contact@alamal-middle.edu.sa',
+      website: 'www.alamal-middle.edu.sa',
+      principalName: 'أ. سارة أحمد',
+      establishedYear: 2008,
+      studentsCount: 280,
+      teachersCount: 25,
+      classroomsCount: 12,
+      image: 'https://images.unsplash.com/photo-1562774053-701939374585?w=400&h=250&fit=crop',
+      overallRating: 4.5,
+      ratingsCount: 112,
+      description: 'مدرسة الأمل المتوسطة تركز على تطوير المهارات الأكاديمية والاجتماعية للطلاب.',
+      facilities: [
+        'معامل حاسوب',
+        'مختبرات فيزياء وكيمياء',
+        'مكتبة شاملة',
+        'صالة رياضية',
+        'مسرح المدرسة',
+        'مقصف'
+      ],
+      achievements: [
+        'أفضل برنامج للأنشطة اللاصفية 2024',
+        'المركز الأول في مسابقة العلوم على مستوى الإدارة'
+      ],
+      ratings: {
+        educationQuality: 4.8,
+        facilities: 4.2,
+        teachers: 4.8,
+        administration: 4.6,
+        cleanliness: 4.2,
+        safety: 4.7,
+        communication: 4.5,
+        activities: 4.6
+      },
+      workingHours: {
+        start: '07:00',
+        end: '14:30',
+        breakTime: '10:00-10:30'
+      },
+      tuitionFees: 16000,
+      hasMyChild: false
     }
   ],
 
   // الإشعارات
   notifications: [
     {
-      id: 'notif_001',
-      title: 'تم الرد على تقييمك',
-      message: 'شكرًا لتقييمك مدرسة الأمل الابتدائية. تم أخذ ملاحظاتك بعين الاعتبار.',
-      type: 'evaluation',
-      priority: 'medium',
-      timestamp: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
+      id: 'n-001',
+      schoolId: 'school_001',
+      schoolName: 'مدرسة الأمل الابتدائية',
+      directorate: 'مديرية شرق غزة',
+      type: 'achievement',
+      title: 'فوز في مسابقة الرياضيات',
+      message: 'مدرسة الأمل الابتدائية حصلت على جائزة المركز الأول في مسابقة الرياضيات على مستوى المحافظة.',
+      date: '2025-09-20T10:30:00Z',
+      timestamp: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
       read: false,
-      actionUrl: '/evaluations'
+      actionUrl: '/dashboard/parents/schools'
     },
     {
-      id: 'notif_002',
-      title: 'تحديث درجات محمد',
-      message: 'تم رفع درجات الطالب محمد أحمد في مادة الرياضيات للفصل الدراسي الحالي.',
-      type: 'grades',
-      priority: 'high',
-      timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-      read: false,
-      actionUrl: '/academic-reports'
-    },
-    {
-      id: 'notif_003',
-      title: 'اجتماع أولياء الأمور',
-      message: 'يسعدنا دعوتكم لحضور اجتماع أولياء الأمور يوم الخميس القادم في تمام الساعة 4:00 مساءً.',
-      type: 'meeting',
-      priority: 'high',
+      id: 'n-002',
+      schoolId: 'school_002',
+      schoolName: 'مدرسة النجاح المتوسطة',
+      directorate: 'مديرية شرق غزة',
+      type: 'improvement',
+      title: 'تحسين المرافق العامة',
+      message: 'مدرسة النجاح المتوسطة قامت بتحسين المرافق العامة: ترميم الفناء وتجديد دورات المياه.',
+      date: '2025-09-18T09:00:00Z',
       timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+      read: false,
+      actionUrl: '/dashboard/parents/schools'
+    },
+    {
+      id: 'n-003',
+      schoolId: 'school_001',
+      schoolName: 'مدرسة الأمل الابتدائية',
+      directorate: 'مديرية شرق غزة',
+      type: 'achievement',
+      title: 'الحصول على جائزة التميز',
+      message: 'مدرسة الأمل الابتدائية حصلت على جائزة التميز كأفضل مدرسة ابتدائية لعام 2025.',
+      date: '2025-09-15T14:00:00Z',
+      timestamp: new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString(),
       read: true,
-      actionUrl: '/events'
+      actionUrl: '/dashboard/parents/schools'
+    },
+    {
+      id: 'n-004',
+      schoolId: 'school_002',
+      schoolName: 'مدرسة النجاح المتوسطة',
+      directorate: 'مديرية شرق غزة',
+      type: 'improvement',
+      title: 'تطوير مختبر العلوم',
+      message: 'مدرسة النجاح المتوسطة قامت بتطوير مختبر العلوم بإضافة معدات ومختبرات جديدة.',
+      date: '2025-09-10T11:30:00Z',
+      timestamp: new Date(Date.now() - 72 * 60 * 60 * 1000).toISOString(),
+      read: false,
+      actionUrl: '/dashboard/parents/schools'
+    },
+    {
+      id: 'n-005',
+      schoolId: 'school_001',
+      schoolName: 'مدرسة الأمل الابتدائية',
+      directorate: 'مديرية شرق غزة',
+      type: 'achievement',
+      title: 'النجاح في مسابقة القراءة',
+      message: 'فريق مدرسة الأمل الابتدائية حصل على المركز الثاني في مسابقة القراءة على مستوى المنطقة.',
+      date: '2025-09-05T16:45:00Z',
+      timestamp: new Date(Date.now() - 96 * 60 * 60 * 1000).toISOString(),
+      read: true,
+      actionUrl: '/dashboard/parents/schools'
+    },
+    {
+      id: 'n-006',
+      schoolId: 'school_002',
+      schoolName: 'مدرسة النجاح المتوسطة',
+      directorate: 'مديرية شرق غزة',
+      type: 'improvement',
+      title: 'تحديث المكتبة',
+      message: 'مدرسة النجاح المتوسطة قامت بتحديث مكتبتها بإضافة أكثر من 300 كتاب جديد.',
+      date: '2025-08-28T09:15:00Z',
+      timestamp: new Date(Date.now() - 120 * 60 * 60 * 1000).toISOString(),
+      read: false,
+      actionUrl: '/dashboard/parents/schools'
+    },
+    {
+      id: 'n-007',
+      schoolId: 'school_001',
+      schoolName: 'مدرسة الأمل الابتدائية',
+      directorate: 'مديرية شرق غزة',
+      type: 'achievement',
+      title: 'الحصول على جائزة الابتكار',
+      message: 'مدرسة الأمل الابتدائية حصلت على جائزة الابتكار في التعليم للعام الدراسي 2024-2025.',
+      date: '2025-08-20T13:20:00Z',
+      timestamp: new Date(Date.now() - 144 * 60 * 60 * 1000).toISOString(),
+      read: true,
+      actionUrl: '/dashboard/parents/schools'
+    },
+    {
+      id: 'n-008',
+      schoolId: 'school_002',
+      schoolName: 'مدرسة النجاح المتوسطة',
+      directorate: 'مديرية شرق غزة',
+      type: 'improvement',
+      title: 'تحسين نظام الأمان',
+      message: 'مدرسة النجاح المتوسطة قامت بتحسين نظام الأمان بإضافة كاميرات مراقبة وتحديث نظام الدخول.',
+      date: '2025-08-15T10:00:00Z',
+      timestamp: new Date(Date.now() - 168 * 60 * 60 * 1000).toISOString(),
+      read: false,
+      actionUrl: '/dashboard/parents/schools'
+    }
+  ],
+
+  // الأنشطة الحديثة
+  recentActivities: [
+    {
+      id: 'act_001',
+      title: 'تقييم مدرسة الأمل',
+      description: 'لقد قمت بتقييم مدرسة الأمل الابتدائية',
+      type: 'evaluation',
+      timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+      read: true
+    },
+    {
+      id: 'act_002',
+      title: 'رسالة جديدة من المدرسة',
+      description: 'لقد تلقيت رسالة من إدارة مدرسة النجاح المتوسطة',
+      type: 'message',
+      timestamp: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
+      read: false
+    },
+    {
+      id: 'act_003',
+      title: 'إنجاز طفلك',
+      description: 'محمد حصل على المرتبة الأولى في مسابقة الرياضيات',
+      type: 'achievement',
+      timestamp: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+      read: true
+    },
+    {
+      id: 'act_004',
+      title: 'تحديث معلومات المدرسة',
+      description: 'تم تحديث معلومات مدرسة المستقبل الثانوية',
+      type: 'school',
+      timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+      read: true
+    },
+    {
+      id: 'act_005',
+      title: 'تحسن أكاديمي',
+      description: 'سجلت سارة تحسناً ملحوظاً في أدائها الأكاديمي',
+      type: 'achievement',
+      timestamp: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(),
+      read: false
+    },
+    {
+      id: 'act_006',
+      title: 'جائزة مدرس السنة',
+      description: 'أ. عبدالرحمن السالم حصل على جائزة مدرس السنة في مدرسة الأمل الابتدائية',
+      type: 'achievement',
+      timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+      read: false
     }
   ],
 
   // إحصائيات الداشبورد
   dashboardStats: {
-    totalEvaluations: 8,
-    pendingIssues: 2,
-    upcomingEvents: 3,
-    childrenCount: 2,
+    totalSchools: 2,
     averageRating: 4.35,
-    lastLoginDate: new Date().toISOString(),
-    monthlyActivity: {
-      evaluations: 3,
-      communications: 12,
-      eventAttendance: 2
+    activeEvaluations: 1,
+    pendingNotifications: 5,
+    recentActivities: []
+  }
+});
+const DEFAULT_MOCK_DATA = getDefaultMockData();
+
+// Load persisted data from localStorage or use default data
+const loadPersistedData = () => {
+  try {
+    const savedData = localStorage.getItem('parentDashboardMockData');
+    if (savedData) {
+      const parsedData = JSON.parse(savedData);
+      return parsedData;
     }
+    // Return a deep copy of default data to avoid reference issues
+    const defaultData = JSON.parse(JSON.stringify(DEFAULT_MOCK_DATA));
+    
+    // Load notification read states from localStorage if available
+    const storedNotifications = localStorage.getItem('parentNotifications');
+    if (storedNotifications) {
+      const parsedNotifications = JSON.parse(storedNotifications);
+      // Merge read states with default notifications
+      defaultData.notifications = defaultData.notifications.map(notification => {
+        const storedNotification = parsedNotifications.find(n => n.id === notification.id);
+        return storedNotification ? { ...notification, read: storedNotification.read } : notification;
+      });
+    }
+    
+    return defaultData;
+  } catch (error) {
+    console.warn('Failed to load persisted mock data, using defaults:', error);
+    // Return a deep copy of default data to avoid reference issues
+    return JSON.parse(JSON.stringify(DEFAULT_MOCK_DATA));
   }
 };
+
+// Save data to localStorage
+const savePersistedData = (data) => {
+  try {
+    localStorage.setItem('parentDashboardMockData', JSON.stringify(data));
+    
+    // Also save notification states separately for easier access
+    const notificationStates = data.notifications.map(n => ({ id: n.id, read: n.read }));
+    localStorage.setItem('parentNotifications', JSON.stringify(notificationStates));
+  } catch (error) {
+    console.warn('Failed to save mock data to localStorage:', error);
+  }
+};
+
+// Reset mock data to defaults
+export const resetMockData = () => {
+  MOCK_DATA = getDefaultMockData();
+  savePersistedData(MOCK_DATA);
+  console.log('Mock data has been reset to defaults');
+};
+
+// Initialize MOCK_DATA with persisted data
+let MOCK_DATA = loadPersistedData();
+console.log('Final MOCK_DATA profile image:', MOCK_DATA.parentProfile.profileImage);
+console.log('Full MOCK_DATA:', MOCK_DATA);
 
 /**
  * استدعاء بيانات ملف ولي الأمر
@@ -275,43 +551,373 @@ const MOCK_DATA = {
  */
 export const parentsAPI = {
   // إدارة الملف الشخصي
-  getParentProfile: () => api.get('/parents/profile'),
-  updateParentProfile: (data) => api.put('/parents/profile', data),
-  updateProfileImage: (formData) => api.post('/parents/profile/image', formData),
-  
-  // إدارة التفضيلات
-  getPreferences: () => api.get('/parents/preferences'),
-  updatePreferences: (preferences) => api.put('/parents/preferences', preferences),
-  updateTheme: (theme) => api.put('/parents/preferences/theme', { theme }),
-  
-  // إدارة الإشعارات
-  getNotifications: () => api.get('/parents/notifications'),
-  markNotificationRead: (notificationId) => api.put(`/parents/notifications/${notificationId}/read`),
-  markAllNotificationsRead: () => api.put('/parents/notifications/read-all'),
-  updateNotificationSettings: (settings) => api.put('/parents/notifications/settings', settings),
-  
-  // إحصائيات لوحة التحكم
-  getDashboardStats: () => api.get('/parents/dashboard/stats'),
-  
-  // إدارة المدارس
-  getSchools: (filters) => api.get('/schools', { params: filters }),
-  getSchoolDetails: (schoolId) => api.get(`/schools/${schoolId}`),
-  rateSchool: (schoolId, rating) => api.post(`/schools/${schoolId}/rate`, rating),
-  getSchoolReviews: (schoolId) => api.get(`/schools/${schoolId}/reviews`),
-  addSchoolReview: (schoolId, review) => api.post(`/schools/${schoolId}/reviews`, review),
-  
-  // إدارة التقييمات
-  getEvaluations: () => api.get('/parents/evaluations'),
-  getEvaluationDetails: (evaluationId) => api.get(`/parents/evaluations/${evaluationId}`),
-  submitEvaluation: (evaluationData) => api.post('/parents/evaluations', evaluationData),
-  updateEvaluation: (evaluationId, data) => api.put(`/parents/evaluations/${evaluationId}`, data),
-  
-  // للتطوير فقط - محاكاة البيانات
-  async getMockProfile() {
+  getParentProfile: async () => {
     await simulateDelay(800);
+    return MOCK_DATA.parentProfile;
+  },
+  
+  updateParentProfile: async (data) => {
+    await simulateDelay(800);
+    MOCK_DATA.parentProfile = { ...MOCK_DATA.parentProfile, ...data };
+    savePersistedData(MOCK_DATA); // Save to localStorage
     return {
       success: true,
+      message: 'تم تحديث البيانات بنجاح',
       data: MOCK_DATA.parentProfile
+    };
+  },
+  
+  updateProfileImage: async (formData) => {
+    await simulateDelay(800);
+    // Simulate image upload with a clearly different image
+    const timestamp = Date.now();
+    const imageUrl = `https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face&t=${timestamp}`;
+    MOCK_DATA.parentProfile.profileImage = imageUrl;
+    savePersistedData(MOCK_DATA); // Save to localStorage
+    return {
+      success: true,
+      message: 'تم تحديث الصورة بنجاح',
+      data: { profileImage: imageUrl }
+    };
+  },
+  
+  // إدارة التفضيلات
+  getPreferences: async () => {
+    await simulateDelay(500);
+    return MOCK_DATA.parentProfile.preferences;
+  },
+  
+  updatePreferences: async (preferences) => {
+    await simulateDelay(500);
+    MOCK_DATA.parentProfile.preferences = { ...MOCK_DATA.parentProfile.preferences, ...preferences };
+    savePersistedData(MOCK_DATA); // Save to localStorage
+    return {
+      success: true,
+      message: 'تم تحديث التفضيلات بنجاح',
+      data: MOCK_DATA.parentProfile.preferences
+    };
+  },
+  
+  updateTheme: async (theme) => {
+    await simulateDelay(300);
+    MOCK_DATA.parentProfile.preferences.theme = theme;
+    savePersistedData(MOCK_DATA); // Save to localStorage
+    return {
+      success: true,
+      message: 'تم تحديث السمة بنجاح',
+      data: { theme }
+    };
+  },
+  
+  // إدارة الإشعارات
+  getNotifications: async () => {
+    await simulateDelay(600);
+    return MOCK_DATA.notifications;
+  },
+  
+  markNotificationRead: async (notificationId) => {
+    await simulateDelay(300);
+    const notification = MOCK_DATA.notifications.find(n => n.id === notificationId);
+    if (notification) {
+      notification.read = true;
+      savePersistedData(MOCK_DATA); // Save to localStorage
+      
+      // Also update the separate notifications storage
+      const storedNotifications = JSON.parse(localStorage.getItem('parentNotifications') || '[]');
+      const updatedNotifications = storedNotifications.map(n => 
+        n.id === notificationId ? { ...n, read: true } : n
+      );
+      localStorage.setItem('parentNotifications', JSON.stringify(updatedNotifications));
+    }
+    return {
+      success: true,
+      message: 'تم وضع علامة مقروء على الإشعار'
+    };
+  },
+  
+  markAllNotificationsRead: async () => {
+    await simulateDelay(500);
+    MOCK_DATA.notifications.forEach(n => n.read = true);
+    savePersistedData(MOCK_DATA); // Save to localStorage
+    
+    // Also update the separate notifications storage
+    const storedNotifications = JSON.parse(localStorage.getItem('parentNotifications') || '[]');
+    const updatedNotifications = storedNotifications.map(n => ({ ...n, read: true }));
+    localStorage.setItem('parentNotifications', JSON.stringify(updatedNotifications));
+    
+    return {
+      success: true,
+      message: 'تم وضع علامة مقروء على جميع الإشعارات'
+    };
+  },
+  
+  updateNotificationSettings: async (settings) => {
+    await simulateDelay(500);
+    MOCK_DATA.parentProfile.preferences = { ...MOCK_DATA.parentProfile.preferences, ...settings };
+    savePersistedData(MOCK_DATA); // Save to localStorage
+    return {
+      success: true,
+      message: 'تم تحديث إعدادات الإشعارات بنجاح',
+      data: MOCK_DATA.parentProfile.preferences
+    };
+  },
+  
+  // إحصائيات لوحة التحكم
+  getDashboardStats: async () => {
+    await simulateDelay(700);
+    // Update dashboard stats with recent activities
+    const stats = {
+      ...MOCK_DATA.dashboardStats,
+      recentActivities: MOCK_DATA.recentActivities
+    };
+    return stats;
+  },
+  
+  // إدارة المدارس
+  getSchools: async (filters = {}) => {
+    await simulateDelay(800);
+    let filteredSchools = [...MOCK_DATA.schools];
+
+    // Apply filters
+    if (filters.myChildren) {
+      filteredSchools = filteredSchools.filter(school => school.hasMyChild);
+    }
+
+    if (filters.search) {
+      const term = filters.search.toLowerCase();
+      filteredSchools = filteredSchools.filter(school => 
+        school.name.toLowerCase().includes(term) || 
+        school.location.toLowerCase().includes(term)
+      );
+    }
+
+    return {
+      schools: filteredSchools,
+      total: filteredSchools.length
+    };
+  },
+  
+  getSchoolDetails: async (schoolId) => {
+    await simulateDelay(600);
+    const school = MOCK_DATA.schools.find(s => s.id === schoolId);
+    
+    if (!school) {
+      throw new Error('المدرسة غير موجودة');
+    }
+
+    return school;
+  },
+  
+  rateSchool: async (schoolId, rating) => {
+    await simulateDelay(1000);
+    const school = MOCK_DATA.schools.find(s => s.id === schoolId);
+    
+    if (!school) {
+      throw new Error('المدرسة غير موجودة');
+    }
+
+    // Simulate rating submission
+    return {
+      success: true,
+      message: 'تم إرسال تقييمك بنجاح',
+      data: { schoolId, rating }
+    };
+  },
+  
+  getSchoolReviews: async (schoolId) => {
+    await simulateDelay(700);
+    // Simulate reviews
+    const reviews = [
+      {
+        id: 'rev_001',
+        parentId: 'parent_001',
+        parentName: 'أحمد محمد',
+        rating: 5,
+        comment: 'مدرسة ممتازة، المعلمين متعاونون جداً',
+        timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString()
+      },
+      {
+        id: 'rev_002',
+        parentId: 'parent_002',
+        parentName: 'فاطمة علي',
+        rating: 4,
+        comment: 'بيئة تعليمية جيدة جداً',
+        timestamp: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString()
+      }
+    ];
+
+    return reviews;
+  },
+  
+  addSchoolReview: async (schoolId, review) => {
+    await simulateDelay(1000);
+    // Simulate review submission
+    const newReview = {
+      id: `rev_${Date.now()}`,
+      parentId: MOCK_DATA.parentProfile.id,
+      parentName: MOCK_DATA.parentProfile.fullName.split(' ')[0],
+      ...review,
+      timestamp: new Date().toISOString()
+    };
+
+    return {
+      success: true,
+      message: 'تم إضافة تقييمك بنجاح',
+      data: newReview
+    };
+  },
+  
+  // إدارة التقييمات
+  getEvaluations: async () => {
+    await simulateDelay(700);
+    // Simulate evaluations
+    const evaluations = [
+      {
+        id: 'eval_001',
+        schoolId: 'school_001',
+        schoolName: 'مدرسة الأمل الابتدائية',
+        ratings: {
+          educationQuality: 5,
+          facilities: 4,
+          teachers: 5,
+          administration: 4,
+          cleanliness: 4,
+          safety: 5,
+          communication: 4
+        },
+        overallRating: 4.4,
+        comment: 'مدرسة ممتازة والمعلمون متعاونون جداً',
+        timestamp: '2024-01-15T10:30:00Z',
+        status: 'approved'
+      },
+      {
+        id: 'eval_002',
+        schoolId: 'school_002',
+        schoolName: 'مدرسة النجاح المتوسطة',
+        ratings: {
+          educationQuality: 4,
+          facilities: 4,
+          teachers: 4,
+          administration: 4,
+          cleanliness: 4,
+          safety: 4,
+          communication: 3
+        },
+        overallRating: 3.9,
+        comment: 'مدرسة جيدة لكن يحتاج تحسين التواصل مع أولياء الأمور',
+        timestamp: '2024-01-10T14:20:00Z',
+        status: 'approved'
+      }
+    ];
+
+    return evaluations;
+  },
+  
+  getEvaluationDetails: async (evaluationId) => {
+    await simulateDelay(600);
+    // Simulate evaluation details
+    const evaluation = {
+      id: evaluationId,
+      schoolId: 'school_001',
+      schoolName: 'مدرسة الأمل الابتدائية',
+      ratings: {
+        educationQuality: 5,
+        facilities: 4,
+        teachers: 5,
+        administration: 4,
+        cleanliness: 4,
+        safety: 5,
+        communication: 4
+      },
+      overallRating: 4.4,
+      comment: 'مدرسة ممتازة والمعلمون متعاونون جداً',
+      timestamp: '2024-01-15T10:30:00Z',
+      status: 'approved',
+      response: {
+        managerName: 'أ. عبدالرحمن السالم',
+        responseText: 'شكرًا لتقييمكم الإيجابي. نحن نسعى دائمًا لتحسين تجربة التعليم لأبنائكم.',
+        timestamp: '2024-01-16T09:15:00Z'
+      }
+    };
+
+    return evaluation;
+  },
+  
+  submitEvaluation: async (evaluationData) => {
+    await simulateDelay(1000);
+    // Simulate evaluation submission
+    const newEvaluation = {
+      id: `eval_${Date.now()}`,
+      ...evaluationData,
+      timestamp: new Date().toISOString(),
+      status: 'submitted'
+    };
+
+    return {
+      success: true,
+      message: 'تم إرسال تقييمك بنجاح. شكرًا لمساهمتك في تحسين التعليم.',
+      data: newEvaluation
+    };
+  },
+  
+  updateEvaluation: async (evaluationId, data) => {
+    await simulateDelay(800);
+    // Simulate evaluation update
+    return {
+      success: true,
+      message: 'تم تحديث التقييم بنجاح',
+      data: { evaluationId, ...data }
+    };
+  },
+  
+  // إدارة الرسائل
+  getMessages: async (schoolId) => {
+    await simulateDelay(600);
+    // Simulate messages
+    const messages = [
+      {
+        id: 'msg_001',
+        from: 'manager',
+        text: 'أهلاً بك! أنا أ. عبدالرحمن السالم. كيف أستطيع مساعدتك؟',
+        timestamp: new Date(Date.now() - 30 * 60 * 1000).toISOString(),
+        read: true
+      },
+      {
+        id: 'msg_002',
+        from: 'parent',
+        text: 'أهلاً وسهلاً، أريد الاستفسار عن أداء طفلي في الفصل الدراسي الحالي',
+        timestamp: new Date(Date.now() - 25 * 60 * 1000).toISOString(),
+        read: true
+      },
+      {
+        id: 'msg_003',
+        from: 'manager',
+        text: 'بالطبع، يمكنني مساعدتك في ذلك. هل يمكنك تزويدي باسم الطالب ورقم الصف؟',
+        timestamp: new Date(Date.now() - 20 * 60 * 1000).toISOString(),
+        read: true
+      }
+    ];
+
+    return messages;
+  },
+  
+  sendMessage: async (schoolId, message) => {
+    await simulateDelay(500);
+    // Simulate message sending
+    const newMessage = {
+      messageId: `msg_${Date.now()}`,
+      timestamp: new Date().toISOString()
+    };
+
+    // Simulate auto-reply
+    setTimeout(() => {
+      // This would be handled by a real-time system in production
+    }, 1000);
+
+    return {
+      success: true,
+      message: 'تم إرسال الرسالة بنجاح',
+      data: newMessage
     };
   }
 };
@@ -326,6 +932,7 @@ export const updateParentProfile = async (profileData) => {
   await simulateDelay(800);
   // محاكاة تحديث البيانات
   MOCK_DATA.parentProfile = { ...MOCK_DATA.parentProfile, ...profileData };
+  savePersistedData(MOCK_DATA); // Save to localStorage
   return {
     success: true,
     message: 'تم تحديث البيانات بنجاح',
@@ -365,7 +972,7 @@ export const getMyChildrenSchools = async () => {
  * استدعاء جميع المدارس المتاحة
  * Fetch all available schools
  * @param {Object} filters - فلاتر البحث
- * @returns {Promise<Object>} قائمة المدارس مع الفلاتر
+ * @returns {Promise<Object>} قائمة المدارس مع الفلاترز
  */
 export const getAllSchools = async (filters = {}) => {
   await simulateDelay(800);
@@ -595,9 +1202,15 @@ export const markAllNotificationsAsRead = async () => {
 export const getDashboardStats = async () => {
   await simulateDelay(500);
   
+  // Update dashboard stats with recent activities
+  const stats = {
+    ...MOCK_DATA.dashboardStats,
+    recentActivities: MOCK_DATA.recentActivities
+  };
+  
   return {
     success: true,
-    data: MOCK_DATA.dashboardStats
+    data: stats
   };
 };
 
@@ -652,22 +1265,4 @@ export const getUpcomingEvents = async () => {
     success: true,
     data: events
   };
-};
-
-// تصدير جميع الوظائف
-export default {
-  getParentProfile,
-  updateParentProfile,
-  getChildren,
-  getMyChildrenSchools,
-  getAllSchools,
-  getSchoolDetails,
-  evaluateSchool,
-  getMyEvaluations,
-  getNotifications,
-  markNotificationAsRead,
-  markAllNotificationsAsRead,
-  getDashboardStats,
-  searchSchools,
-  getUpcomingEvents
 };

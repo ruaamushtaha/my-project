@@ -347,7 +347,7 @@ export const Loading = ({
         <motion.div
           className={`${sizes[size]} border-4 border-primary-200 border-t-primary-500 rounded-full`}
           animate={{ rotate: 360 }}
-          transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+          transition={{ duration: 1, repeat: Infinity, repeatType: "loop", ease: 'linear' }}
         />
         {text && <p className="text-gray-600 font-medium">{text}</p>}
       </div>
@@ -362,7 +362,7 @@ export const Loading = ({
             key={i}
             className="w-2 h-2 bg-primary-500 rounded-full"
             animate={{ scale: [1, 1.2, 1], opacity: [0.7, 1, 0.7] }}
-            transition={{ duration: 0.8, repeat: Infinity, delay: i * 0.2 }}
+            transition={{ duration: 0.8, repeat: Infinity, repeatType: "loop", delay: i * 0.2 }}
           />
         ))}
         {text && <p className="text-gray-600 font-medium mr-3">{text}</p>}
@@ -619,21 +619,147 @@ export const Skeleton = ({
   height = '1rem',
   rounded = 'rounded' 
 }) => {
+  // Disabled animation to prevent errors
   return (
-    <motion.div
+    <div
       className={`
-        bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 
+        bg-gray-200 
         ${rounded} ${className}
       `}
       style={{ width, height }}
-      animate={{ 
-        backgroundPosition: ['200% 0', '-200% 0']
-      }}
-      transition={{
-        duration: 1.5,
-        ease: 'linear',
-        repeat: Infinity
-      }}
     />
+  );
+};
+
+/**
+ * مكون منطقة النص المحسن
+ * Enhanced Textarea component
+ */
+export const TextArea = ({ 
+  label, 
+  error, 
+  hint,
+  icon,
+  className = '',
+  containerClassName = '',
+  required = false,
+  rows = 4,
+  ...props 
+}) => {
+  return (
+    <motion.div 
+      className={`space-y-2 ${containerClassName}`}
+      initial={{ opacity: 0, x: -10 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.2 }}
+    >
+      {label && (
+        <label className="block text-sm font-semibold text-gray-700">
+          {label}
+          {required && <span className="text-danger mr-1">*</span>}
+        </label>
+      )}
+      
+      <div className="relative">
+        {icon && (
+          <div className="absolute inset-y-0 right-0 pr-3 flex items-start pt-3 pointer-events-none">
+            <span className="text-gray-400">{icon}</span>
+          </div>
+        )}
+        
+        <textarea
+          rows={rows}
+          className={`
+            w-full px-4 py-3 border-2 border-gray-200 rounded-xl
+            focus:border-primary-500 focus:ring-2 focus:ring-primary-200
+            transition-all duration-200 text-right font-arabic resize-none
+            ${error ? 'border-danger focus:border-danger focus:ring-red-200' : ''}
+            ${icon ? 'pr-10' : ''}
+            ${className}
+          `}
+          {...props}
+        />
+      </div>
+      
+      {error && (
+        <motion.p 
+          className="text-sm text-danger flex items-center gap-1"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          <FaExclamationTriangle className="text-xs" />
+          {error}
+        </motion.p>
+      )}
+      
+      {hint && !error && (
+        <p className="text-sm text-gray-500">{hint}</p>
+      )}
+    </motion.div>
+  );
+};
+
+/**
+ * مكون قائمة الاختيار المحسن
+ * Enhanced Select component
+ */
+export const Select = ({ 
+  label,
+  error,
+  hint,
+  className = '',
+  containerClassName = '',
+  required = false,
+  children,
+  ...props 
+}) => {
+  return (
+    <motion.div 
+      className={`space-y-2 ${containerClassName}`}
+      initial={{ opacity: 0, x: -10 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.2 }}
+    >
+      {label && (
+        <label className="block text-sm font-semibold text-gray-700">
+          {label}
+          {required && <span className="text-danger mr-1">*</span>}
+        </label>
+      )}
+      
+      <div className="relative">
+        <select
+          className={`
+            w-full px-4 py-3 border-2 border-gray-200 rounded-xl
+            focus:border-primary-500 focus:ring-2 focus:ring-primary-200
+            transition-all duration-200 text-right font-arabic
+            appearance-none bg-white
+            ${error ? 'border-danger focus:border-danger focus:ring-red-200' : ''}
+            ${className}
+          `}
+          {...props}
+        >
+          {children}
+        </select>
+        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <FaChevronDown className="text-gray-400" />
+        </div>
+      </div>
+      
+      {error && (
+        <motion.p 
+          className="text-sm text-danger flex items-center gap-1"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          <FaExclamationTriangle className="text-xs" />
+          {error}
+        </motion.p>
+      )}
+      
+      {hint && !error && (
+        <p className="text-sm text-gray-500">{hint}</p>
+      )}
+    </motion.div>
   );
 };

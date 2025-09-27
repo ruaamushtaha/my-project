@@ -20,48 +20,16 @@ const ComingSoon = ({ page = "هذه الميزة" }) => {
         transition={{ duration: 0.6 }}
         className="text-center max-w-md"
       >
-        {/* Animated Icon */}
-        <motion.div
-          className="relative mb-8"
-          animate={{ 
-            rotate: [0, 360],
-            scale: [1, 1.1, 1]
-          }}
-          transition={{ 
-            duration: 3,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-        >
+        {/* Animated Icon - SIMPLIFIED */}
+        <div className="relative mb-8">
           <div className="w-24 h-24 mx-auto bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-2xl">
             <FaTools className="text-3xl text-white" />
           </div>
           
-          {/* Floating particles */}
-          <motion.div
-            className="absolute -top-2 -right-2 w-4 h-4 bg-yellow-400 rounded-full"
-            animate={{
-              y: [-10, 10, -10],
-              opacity: [0.5, 1, 0.5]
-            }}
-            transition={{
-              duration: 2,
-              repeat: Infinity
-            }}
-          />
-          <motion.div
-            className="absolute -bottom-2 -left-2 w-3 h-3 bg-green-400 rounded-full"
-            animate={{
-              y: [10, -10, 10],
-              opacity: [0.5, 1, 0.5]
-            }}
-            transition={{
-              duration: 2.5,
-              repeat: Infinity,
-              delay: 0.5
-            }}
-          />
-        </motion.div>
+          {/* Static particles */}
+          <div className="absolute -top-2 -right-2 w-4 h-4 bg-yellow-400 rounded-full opacity-70" />
+          <div className="absolute -bottom-2 -left-2 w-3 h-3 bg-green-400 rounded-full opacity-70" />
+        </div>
 
         {/* Title */}
         <motion.h1

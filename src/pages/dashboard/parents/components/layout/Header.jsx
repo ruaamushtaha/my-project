@@ -4,6 +4,7 @@
 // =============================================================================
 
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   FaBars, 
@@ -16,10 +17,13 @@ import {
   FaCog,
   FaHome,
   FaChevronLeft,
-  FaGlobe
+  FaGlobe,
+  FaComments
 } from 'react-icons/fa';
 import { Button } from '../ui';
 import { useParentProfile, useNotifications, useUISettings } from '../../hooks/useData';
+import { LogoutModal } from './LogoutModal';
+import NotificationsDropdown from '../../components/NotificationsDropdown';
 
 /**
  * مكون الهيدر المتطور مع البحث والإشعارات
@@ -30,6 +34,8 @@ const Header = ({ title, subtitle, breadcrumbs = [], onMenuClick }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+  const [logoutModalOpen, setLogoutModalOpen] = useState(false);
+  const navigate = useNavigate();
 
   const { profile, loading: profileLoading } = useParentProfile();
   const { notifications, unreadCount } = useNotifications();
@@ -47,9 +53,20 @@ const Header = ({ title, subtitle, breadcrumbs = [], onMenuClick }) => {
 
   // Close dropdowns when clicking outside
   React.useEffect(() => {
-    const handleClickOutside = () => {
-      setNotificationsOpen(false);
-      setProfileMenuOpen(false);
+    const handleClickOutside = (event) => {
+      if (notificationsOpen || profileMenuOpen) {
+        // Check if click is outside both dropdowns
+        const notificationsDropdown = document.querySelector('.notifications-dropdown');
+        const profileDropdown = document.querySelector('.profile-dropdown');
+        
+        const isOutsideNotifications = notificationsDropdown && !notificationsDropdown.contains(event.target);
+        const isOutsideProfile = profileDropdown && !profileDropdown.contains(event.target);
+        
+        if (isOutsideNotifications && isOutsideProfile) {
+          setNotificationsOpen(false);
+          setProfileMenuOpen(false);
+        }
+      }
     };
 
     if (notificationsOpen || profileMenuOpen) {
@@ -59,12 +76,13 @@ const Header = ({ title, subtitle, breadcrumbs = [], onMenuClick }) => {
   }, [notificationsOpen, profileMenuOpen]);
 
   return (
-    <motion.header
-      className="sticky top-0 z-50 bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg border-b border-gray-200 dark:border-gray-700"
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-    >
+    <>
+      <motion.header
+        className="sticky top-0 z-50 bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg border-b border-gray-200 dark:border-gray-700"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+      >
       <div className="max-w-7xl mx-auto px-4 lg:px-6">
         <div className="flex items-center justify-between h-16 lg:h-20">
           
@@ -158,6 +176,16 @@ const Header = ({ title, subtitle, breadcrumbs = [], onMenuClick }) => {
               <FaSearch />
             </Button>
 
+            {/* Chat Icon */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate('/dashboard/parents/chat')}
+              title="المحادثة"
+            >
+              <FaComments />
+            </Button>
+
             {/* Language Toggle */}
             <Button
               variant="ghost"
@@ -173,9 +201,9 @@ const Header = ({ title, subtitle, breadcrumbs = [], onMenuClick }) => {
               variant="ghost"
               size="sm"
               onClick={toggleTheme}
-              title={settings.theme === 'light' ? 'الوضع المظلم' : 'الوضع المضيء'}
+              title={settings.theme === 'light' ? 'الوضع المضيء' : 'الوضع المظلم'}
             >
-              {settings.theme === 'light' ? <FaMoon /> : <FaSun />}
+              {settings.theme === 'light' ? <FaSun /> : <FaMoon />}
             </Button>
 
             {/* Notifications */}
@@ -186,6 +214,7 @@ const Header = ({ title, subtitle, breadcrumbs = [], onMenuClick }) => {
                 onClick={(e) => {
                   e.stopPropagation();
                   setNotificationsOpen(!notificationsOpen);
+                  setProfileMenuOpen(false);
                 }}
                 className="relative"
               >
@@ -204,59 +233,12 @@ const Header = ({ title, subtitle, breadcrumbs = [], onMenuClick }) => {
 
               {/* Notifications Dropdown */}
               <AnimatePresence>
-                {notificationsOpen && (
-                  <motion.div
-                    className="absolute left-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-600 overflow-hidden z-50"
-                    initial={{ opacity: 0, y: -10, scale: 0.95 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <div className="p-4 border-b border-gray-200 dark:border-gray-600">
-                      <div className="flex items-center justify-between">
-                        <h3 className="font-bold text-gray-900 dark:text-white">الإشعارات</h3>
-                        <span className="text-sm text-gray-500 dark:text-gray-400">
-                          {unreadCount} غير مقروء
-                        </span>
-                      </div>
-                    </div>
-                    
-                    <div className="max-h-80 overflow-y-auto">
-                      {notifications.slice(0, 5).map((notification) => (
-                        <motion.div
-                          key={notification.id}
-                          className={`p-4 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer ${
-                            !notification.read ? 'bg-blue-50 dark:bg-blue-900/20' : ''
-                          }`}
-                          whileHover={{ x: 5 }}
-                        >
-                          <div className="flex items-start space-x-3 space-x-reverse">
-                            <div className={`w-2 h-2 rounded-full mt-2 ${
-                              !notification.read ? 'bg-primary-500' : 'bg-gray-300 dark:bg-gray-600'
-                            }`} />
-                            <div className="flex-1 min-w-0">
-                              <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                                {notification.title}
-                              </p>
-                              <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
-                                {notification.message}
-                              </p>
-                              <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
-                                {new Date(notification.timestamp).toLocaleDateString('ar-SA')}
-                              </p>
-                            </div>
-                          </div>
-                        </motion.div>
-                      ))}
-                    </div>
-
-                    <div className="p-4 border-t border-gray-200 dark:border-gray-600">
-                      <Button variant="ghost" size="sm" className="w-full">
-                        عرض جميع الإشعارات
-                      </Button>
-                    </div>
-                  </motion.div>
-                )}
+                <NotificationsDropdown
+                  notifications={notifications}
+                  unreadCount={unreadCount}
+                  isOpen={notificationsOpen}
+                  onClose={() => setNotificationsOpen(false)}
+                />
               </AnimatePresence>
             </div>
 
@@ -272,10 +254,10 @@ const Header = ({ title, subtitle, breadcrumbs = [], onMenuClick }) => {
                 className="flex items-center space-x-2 space-x-reverse"
               >
                 <div className="w-8 h-8 rounded-full bg-primary-500 flex items-center justify-center text-white text-sm font-bold">
-                  {profileLoading ? '...' : (profile?.name?.charAt(0) || 'ا')}
+                  {profileLoading ? '...' : (profile?.fullName?.charAt(0) || 'ا')}
                 </div>
                 <span className="hidden lg:inline text-gray-700 dark:text-gray-300">
-                  {profileLoading ? '...' : profile?.name?.split(' ')[0]}
+                  {profileLoading ? '...' : profile?.fullName?.split(' ')[0]}
                 </span>
               </Button>
 
@@ -283,7 +265,7 @@ const Header = ({ title, subtitle, breadcrumbs = [], onMenuClick }) => {
               <AnimatePresence>
                 {profileMenuOpen && (
                   <motion.div
-                    className="absolute left-0 mt-2 w-64 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-600 overflow-hidden z-50"
+                    className="absolute left-0 mt-2 w-64 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-600 overflow-hidden z-50 profile-dropdown"
                     initial={{ opacity: 0, y: -10, scale: 0.95 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: -10, scale: 0.95 }}
@@ -293,11 +275,11 @@ const Header = ({ title, subtitle, breadcrumbs = [], onMenuClick }) => {
                     <div className="p-4 border-b border-gray-200 dark:border-gray-600">
                       <div className="flex items-center space-x-3 space-x-reverse">
                         <div className="w-12 h-12 rounded-full bg-primary-500 flex items-center justify-center text-white text-lg font-bold">
-                          {profile?.name?.charAt(0) || 'ا'}
+                          {profile?.fullName?.charAt(0) || 'ا'}
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="font-medium text-gray-900 dark:text-white truncate">
-                            {profile?.name || 'ولي الأمر'}
+                            {profile?.fullName || 'ولي الأمر'}
                           </p>
                           <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
                             {profile?.email || 'email@example.com'}
@@ -308,19 +290,50 @@ const Header = ({ title, subtitle, breadcrumbs = [], onMenuClick }) => {
 
                     {/* Menu Items */}
                     <div className="py-2">
-                      <button className="w-full flex items-center space-x-3 space-x-reverse px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-right">
+                      <button 
+                        className="w-full flex items-center space-x-3 space-x-reverse px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-right"
+                        onClick={() => {
+                          setProfileMenuOpen(false);
+                          navigate('/dashboard/parents/profile');
+                        }}
+                      >
                         <FaUser className="text-gray-400" />
                         <span className="text-gray-700 dark:text-gray-300">الملف الشخصي</span>
                       </button>
                       
-                      <button className="w-full flex items-center space-x-3 space-x-reverse px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-right">
+                      <button 
+                        className="w-full flex items-center space-x-3 space-x-reverse px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-right"
+                        onClick={() => {
+                          setProfileMenuOpen(false);
+                          navigate('/dashboard/parents/settings');
+                        }}
+                      >
                         <FaCog className="text-gray-400" />
                         <span className="text-gray-700 dark:text-gray-300">الإعدادات</span>
+                      </button>
+                      
+                      <button 
+                        className="w-full flex items-center space-x-3 space-x-reverse px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-right"
+                        onClick={() => {
+                          setProfileMenuOpen(false);
+                          toggleTheme();
+                        }}
+                      >
+                        {settings.theme === 'light' ? <FaSun className="text-gray-400" /> : <FaMoon className="text-gray-400" />}
+                        <span className="text-gray-700 dark:text-gray-300">
+                          {settings.theme === 'light' ? 'الوضع المضيء' : 'الوضع المظلم'}
+                        </span>
                       </button>
                     </div>
 
                     <div className="border-t border-gray-200 dark:border-gray-600 py-2">
-                      <button className="w-full flex items-center space-x-3 space-x-reverse px-4 py-3 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors text-right">
+                      <button 
+                        className="w-full flex items-center space-x-3 space-x-reverse px-4 py-3 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors text-right"
+                        onClick={() => {
+                          setProfileMenuOpen(false);
+                          setLogoutModalOpen(true);
+                        }}
+                      >
                         <FaSignOutAlt className="text-red-400" />
                         <span className="text-red-600 dark:text-red-400">تسجيل الخروج</span>
                       </button>
@@ -360,6 +373,12 @@ const Header = ({ title, subtitle, breadcrumbs = [], onMenuClick }) => {
         )}
       </AnimatePresence>
     </motion.header>
+      
+      <LogoutModal 
+        isOpen={logoutModalOpen} 
+        onClose={() => setLogoutModalOpen(false)} 
+      />
+    </>
   );
 };
 

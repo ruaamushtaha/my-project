@@ -1,50 +1,52 @@
-import React, { useContext } from "react";
-import { Routes, Route } from "react-router-dom";
-import { AuthContext } from "../contexts/AuthContext";
+import React from 'react';
+import { Routes, Route } from 'react-router-dom';
+import { AuthContext } from '../contexts/AuthContext';
 
 // Auth Components
-import Login from "../pages/auth/Login";
-import Register from "../pages/auth/Registration";
-import ForgotPassword from "../pages/auth/ForgotPassword";
-import ResetPassword from "../pages/auth/ResetPassword";
-import PasswordResetSuccess from "../pages/auth/PasswordResetSuccess";
+import Login from '../pages/auth/Login';
+import Register from '../pages/auth/Registration';
+import ForgotPassword from '../pages/auth/ForgotPassword';
+import ResetPassword from '../pages/auth/ResetPassword';
+import PasswordResetSuccess from '../pages/auth/PasswordResetSuccess';
 
 // Public Pages
-import LandingPage from "../pages/public/Home/LandingPage";
-// import AboutPage from '../pages/public/About/AboutPage';
-// import ContactPage from '../pages/public/Contact/ContactPage';
-// import ServicesPage from '../pages/public/Services/ServicesPage';
-// import GoalsPage from '../pages/public/Goals/GoalsPage';
-// import SchoolsPage from '../pages/public/Schools/SchoolsPage';
-// import EvaluationPage from '../pages/public/Evaluation/EvaluationPage';
+import LandingPage from '../pages/public/Home/LandingPage';
+import About from '../pages/public/About/index';
+import Objectives from '../pages/public/Objectives/index';
+import Ratings from '../pages/public/Ratings/index';
+import Schools from '../pages/public/Schools/index';
+import Services from '../pages/public/Services/index';
+import Contact from '../pages/public/Contact/index';
 
 // Dashboard Components - New System
-// import AdminDashboard from "../pages/admin/AdminDashboard";
-import Dashboard from "../pages/dashboard/parents/pages/Dashboard";
-import SchoolsPage from "../pages/dashboard/parents/pages/SchoolsPage";
-import EvaluationsPage from "../pages/dashboard/parents/pages/EvaluationsPage";
-import SupervisorDashboard from "../pages/dashboard/supervisor/SupervisorDashboard";
-import SchoolManagerDashboard from "../pages/dashboard/school-manager/SchoolManagerDashboard";
+import ParentsDashboardLayout from '../pages/dashboard/parents/ParentsDashboardLayout';
+import SupervisorDashboard from '../pages/dashboard/supervisor/SupervisorDashboard';
+import SchoolManagerDashboard from '../pages/dashboard/school-manager/SchoolManagerDashboard';
 
 // Error Page
-import NotFound from "../pages/error/NotFound404";
+import NotFound from '../pages/error/NotFound404';
 
 // Utils
-import PrivateRoute from "./PrivateRoute";
+import PrivateRoute from './PrivateRoute';
 
 export default function AppRoutes() {
-  const { isAuthenticated, userRole } = useContext(AuthContext);
-
   return (
     <Routes>
       {/* Public routes */}
       <Route path="/" element={<LandingPage />} />
-      {/*<Route path="/about" element={<AboutPage />} />
-      <Route path="/contact" element={<ContactPage />} />
-      <Route path="/services" element={<ServicesPage />} />
-      <Route path="/goals" element={<GoalsPage />} />
-      <Route path="/schools" element={<SchoolsPage />} />
-      <Route path="/evaluation" element={<EvaluationPage />} /> */}
+      <Route path="/about" element={<About />} />
+      <Route path="/About" element={<About />} />
+      <Route path="/objectives" element={<Objectives />} />
+      <Route path="/Objectives" element={<Objectives />} />
+      <Route path="/ratings" element={<Ratings />} />
+      <Route path="/Ratings" element={<Ratings />} />
+      <Route path="/schools" element={<Schools />} />
+      <Route path="/Schools" element={<Schools />} />
+      <Route path="/services" element={<Services />} />
+      <Route path="/Services" element={<Services />} />
+      <Route path="/contact" element={<Contact />} />
+      <Route path="/Contact" element={<Contact />} />
+      <Route path="/dashboard/parents/*" element={<ParentsDashboardLayout />} />
 
       {/* Auth routes (without layout) */}
       <Route path="/login" element={<Login />} />
@@ -54,33 +56,14 @@ export default function AppRoutes() {
       <Route path="/reset-success" element={<PasswordResetSuccess />} />
 
       {/* Protected Dashboards */}
-      <Route element={<PrivateRoute isAuthenticated={isAuthenticated} allowedRoles={["admin"]} userRole={userRole} />}>
-       {/* <Route path="/dashboard/admin" element={<AdminDashboard />} />*/}
-      </Route>
+      <Route path="/dashboard/supervisor" element={<PrivateRoute allowedRoles={['supervisor']} redirectPath="/login">
+        <SupervisorDashboard />
+      </PrivateRoute>} />
+      <Route path="/dashboard/school-manager" element={<PrivateRoute allowedRoles={['school-manager']} redirectPath="/login">
+        <SchoolManagerDashboard />
+      </PrivateRoute>} />
 
-      {/* Demo routes for testing - New System */}
-      <Route path="/parents-demo" element={<Dashboard />} />
-      <Route path="/parents-schools-demo" element={<SchoolsPage />} />
-      <Route path="/parents-evaluations-demo" element={<EvaluationsPage />} />
-      <Route path="/supervisor-demo" element={<SupervisorDashboard />} />
-      <Route path="/school-manager-demo" element={<SchoolManagerDashboard />} />
-      
-
-      <Route element={<PrivateRoute isAuthenticated={isAuthenticated} allowedRoles={["parent"]} userRole={userRole} />}>
-        <Route path="/dashboard/parents" element={<Dashboard />} />
-        <Route path="/dashboard/parents/schools" element={<SchoolsPage />} />
-        <Route path="/dashboard/parents/evaluations" element={<EvaluationsPage />} />
-      </Route>
-
-      <Route element={<PrivateRoute isAuthenticated={isAuthenticated} allowedRoles={["supervisor"]} userRole={userRole} />}>
-        <Route path="/dashboard/supervisor" element={<SupervisorDashboard />} />
-      </Route>
-
-      <Route element={<PrivateRoute isAuthenticated={isAuthenticated} allowedRoles={["school-manager"]} userRole={userRole} />}>
-        <Route path="/dashboard/school-manager" element={<SchoolManagerDashboard />} />
-      </Route>
-
-      {/* Catch-all / Errors */}
+      {/* 404 Route */}
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
