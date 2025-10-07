@@ -13,7 +13,6 @@ const Footer = () => {
   const footerLinks = [
     { id: 'privacy', label: 'الخصوصية', path: '/privacy' },
     { id: 'terms', label: 'الشروط والأحكام', path: '/terms' },
-    { id: 'support', label: 'الدعم', path: '/support' }
   ];
 
 
@@ -52,13 +51,6 @@ const Footer = () => {
               </motion.a>
             ))}
           </div>
-        </div>
-        
-        {/* Additional footer info */}
-        <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700 text-center">
-          <p className="text-xs text-gray-500 dark:text-gray-500">
-            نظام تقييم المدارس - يهدف إلى تحسين جودة التعليم من خلال الشفافية والتواصل
-          </p>
         </div>
       </div>
     </motion.footer>

@@ -8,6 +8,9 @@ import { parentsAPI } from '../services/parentsApi';
 import { handleAPIError } from '../services/api';
 import { fetchParentProfile } from '../services/profileApi';
 
+// Import our new hooks
+import { useReportsData, useCalendarData } from './useReports';
+
 /**
  * هوك لإدارة بيانات ولي الأمر
  * Hook for managing parent profile data
@@ -201,18 +204,10 @@ export const useNotifications = () => {
       // Import the notifications API
       const { default: notificationsAPI } = await import('../services/notificationsApi');
       
-      const data = await notificationsAPI.fetchForParent('parent_001'); // Mock parent ID
+      // Pass parent's children data to filter notifications properly
+      const data = await notificationsAPI.fetchForParent('parent_001', parentProfile?.children || []);
       
-      // Filter notifications to only show those related to parent's children schools
-      if (parentProfile && parentProfile.children && parentProfile.children.length > 0) {
-        const childSchoolIds = parentProfile.children.map(child => child.school.id);
-        const filteredNotifications = data.filter(notification => 
-          !notification.schoolId || childSchoolIds.includes(notification.schoolId)
-        );
-        setNotifications(filteredNotifications);
-      } else {
-        setNotifications(data);
-      }
+      setNotifications(data);
     } catch (err) {
       setError(handleAPIError(err));
     } finally {
@@ -318,7 +313,10 @@ export const useNotifications = () => {
     return notifications.filter(n => 
       n.schoolName.toLowerCase().includes(term) || 
       n.title.toLowerCase().includes(term) || 
-      n.message.toLowerCase().includes(term)
+      n.message.toLowerCase().includes(term) ||
+      (n.childName && n.childName.toLowerCase().includes(term)) ||
+      (n.subject && n.subject.toLowerCase().includes(term)) ||
+      (n.sender && n.sender.toLowerCase().includes(term))
     );
   }, [notifications]);
 
@@ -331,8 +329,18 @@ export const useNotifications = () => {
   const getTypeCounts = useMemo(() => {
     const achievementCount = notifications.filter(n => n.type === 'achievement' && !(n.archived || false)).length;
     const improvementCount = notifications.filter(n => n.type === 'improvement' && !(n.archived || false)).length;
+    const performanceCount = notifications.filter(n => n.type === 'performance' && !(n.archived || false)).length;
+    const principalCount = notifications.filter(n => n.type === 'principal' && !(n.archived || false)).length;
+    const chatCount = notifications.filter(n => n.type === 'chat' && !(n.archived || false)).length;
     const totalCount = notifications.filter(n => !(n.archived || false)).length;
-    return { achievement: achievementCount, improvement: improvementCount, total: totalCount };
+    return { 
+      achievement: achievementCount, 
+      improvement: improvementCount, 
+      performance: performanceCount,
+      principal: principalCount,
+      chat: chatCount,
+      total: totalCount 
+    };
   }, [notifications]);
 
   return {
@@ -700,8 +708,19 @@ export const useUISettings = () => {
     }));
   }, []);
 
-  const toggleTheme = useCallback(() => {
-    updateSetting('theme', settings.theme === 'light' ? 'dark' : 'light');
+  const toggleTheme = useCallback(async () => {
+    try {
+      // Import the theme API
+      const { default: themeAPI } = await import('../services/themeApi');
+      const result = await themeAPI.toggleTheme();
+      
+      if (result.success) {
+        updateSetting('theme', result.theme);
+      }
+    } catch (error) {
+      // Fallback to local state if API fails
+      updateSetting('theme', settings.theme === 'light' ? 'dark' : 'light');
+    }
   }, [settings.theme, updateSetting]);
 
   const toggleSidebar = useCallback(() => {
@@ -715,3 +734,6 @@ export const useUISettings = () => {
     toggleSidebar
   };
 };
+
+// Export our new hooks
+export { useReportsData, useCalendarData };

@@ -12,7 +12,9 @@ import {
   FaChevronRight,
   FaGraduationCap,
   FaBars,
-  FaExclamationTriangle
+  FaExclamationTriangle,
+  FaFileAlt,
+  FaCalendarAlt
 } from 'react-icons/fa';
 
 const navigationItems = [
@@ -27,6 +29,18 @@ const navigationItems = [
     label: 'المدارس',
     icon: FaSchool,
     path: '/dashboard/parents/schools',
+  },
+  {
+    id: 'reports',
+    label: 'التقارير',
+    icon: FaFileAlt,
+    path: '/dashboard/parents/reports',
+  },
+  {
+    id: 'calendar',
+    label: 'التقويم',
+    icon: FaCalendarAlt,
+    path: '/dashboard/parents/calendar',
   },
   {
     id: 'complaints',

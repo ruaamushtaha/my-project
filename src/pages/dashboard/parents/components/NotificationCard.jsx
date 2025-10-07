@@ -1,6 +1,18 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { FaTrophy, FaWrench, FaArchive, FaEye, FaCheck, FaTimes } from 'react-icons/fa';
+import { 
+  FaChartBar, 
+  FaTrophy, 
+  FaWrench, 
+  FaEnvelope, 
+  FaComments, 
+  FaArchive, 
+  FaEye, 
+  FaCheck, 
+  FaTimes,
+  FaUser
+} from 'react-icons/fa';
+import { getNotificationTypeConfig } from '../services/notificationsApi';
 
 const NotificationCard = ({ 
   notification, 
@@ -23,30 +35,14 @@ const NotificationCard = ({
 
   // Get type-specific styling
   const getTypeStyles = () => {
-    if (notification.type === 'achievement') {
-      return {
-        borderClass: 'border-r-4 border-yellow-500',
-        badgeClass: 'bg-yellow-100 text-yellow-800',
-        icon: <FaTrophy className="text-yellow-500" />,
-        bgColor: 'bg-yellow-50',
-        accentColor: 'bg-yellow-500'
-      };
-    } else if (notification.type === 'improvement') {
-      return {
-        borderClass: 'border-r-4 border-blue-500',
-        badgeClass: 'bg-blue-100 text-blue-800',
-        icon: <FaWrench className="text-blue-500" />,
-        bgColor: 'bg-blue-50',
-        accentColor: 'bg-blue-500'
-      };
-    }
-    // Default styling
+    const config = getNotificationTypeConfig(notification.type);
+    
     return {
-      borderClass: 'border-r-4 border-gray-300',
-      badgeClass: 'bg-gray-100 text-gray-800',
-      icon: null,
-      bgColor: 'bg-gray-50',
-      accentColor: 'bg-gray-500'
+      borderClass: `border-r-4 ${config.borderColor}`,
+      badgeClass: `${config.bgColor} ${config.color.replace('text-', 'text-').replace('-500', '-800')}`,
+      icon: React.createElement(config.icon, { className: config.color }),
+      bgColor: config.bgColor.replace('bg-', 'bg-').replace('-100', '-50'),
+      accentColor: config.color.replace('text-', 'bg-')
     };
   };
 
@@ -64,7 +60,7 @@ const NotificationCard = ({
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.3 }}
-      whileHover={{ y: -2 }}
+      whileHover={{ y: -2, boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)" }}
       layout
     >
       <div className="flex items-start justify-between">
@@ -80,44 +76,100 @@ const NotificationCard = ({
             )}
             <div className="flex items-center gap-2">
               {typeStyles.icon}
-              <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${typeStyles.badgeClass}`}>
-                {notification.type === 'achievement' ? 'إنجاز' : 'تحسين'}
-              </span>
+              <motion.span 
+                className={`inline-block px-2 py-1 rounded text-xs font-medium ${typeStyles.badgeClass}`}
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.1 }}
+              >
+                {getNotificationTypeConfig(notification.type).label}
+              </motion.span>
             </div>
           </div>
           
-          <h3 className={`font-bold ${notification.read ? 'text-gray-800' : 'text-gray-900'}`}>
+          <motion.h3 
+            className={`font-bold ${notification.read ? 'text-gray-800' : 'text-gray-900'}`}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
+          >
             {notification.title}
-          </h3>
+          </motion.h3>
           
-          <p className={`mt-1 text-sm ${notification.read ? 'text-gray-600' : 'text-gray-700'}`}>
+          <motion.p 
+            className={`mt-1 text-sm ${notification.read ? 'text-gray-600' : 'text-gray-700'}`}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+          >
             {notification.message}
-          </p>
+          </motion.p>
           
-          <div className="mt-3 flex items-center justify-between flex-wrap gap-2">
+          <motion.div 
+            className="mt-3 flex items-center justify-between flex-wrap gap-2"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4 }}
+          >
             <div className="flex flex-col">
-              <span className="text-xs font-medium text-gray-900 bg-gray-100 px-2 py-1 rounded">
+              <motion.span 
+                className="text-xs font-medium text-gray-900 bg-gray-100 px-2 py-1 rounded"
+                initial={{ opacity: 0, y: 5 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5 }}
+              >
                 {notification.schoolName}
-              </span>
+              </motion.span>
               {notification.directorate && (
-                <span className="text-xs text-gray-500 mt-1">
+                <motion.span 
+                  className="text-xs text-gray-500 mt-1"
+                  initial={{ opacity: 0, y: 5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.6 }}
+                >
                   {notification.directorate}
-                </span>
+                </motion.span>
+              )}
+              {/* Additional info for specific types */}
+              {notification.type === 'performance' && notification.childName && (
+                <motion.span 
+                  className="text-xs text-gray-500 mt-1"
+                  initial={{ opacity: 0, y: 5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.7 }}
+                >
+                  {notification.childName} - {notification.subject}: {notification.grade}
+                </motion.span>
+              )}
+              {(notification.type === 'principal' || notification.type === 'chat') && notification.sender && (
+                <motion.span 
+                  className="text-xs text-gray-500 mt-1"
+                  initial={{ opacity: 0, y: 5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.7 }}
+                >
+                  من: {notification.sender}
+                </motion.span>
               )}
             </div>
-            <span className="text-xs text-gray-500 whitespace-nowrap">
+            <motion.span 
+              className="text-xs text-gray-500 whitespace-nowrap"
+              initial={{ opacity: 0, y: 5 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.8 }}
+            >
               {formatDate(notification.timestamp)}
-            </span>
-          </div>
+            </motion.span>
+          </motion.div>
         </div>
       </div>
 
       {showActions && (
         <motion.div 
           className="mt-3 pt-3 border-t border-gray-100 flex gap-2 flex-wrap"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.1 }}
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: 'auto' }}
+          transition={{ delay: 0.9 }}
         >
           {!notification.read ? (
             <motion.button

@@ -3,15 +3,13 @@
 // مكون الهيدر المتطور لداشبورد أولياء الأمور
 // =============================================================================
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   FaBars, 
   FaBell, 
   FaUser, 
-  FaMoon, 
-  FaSun,
   FaSignOutAlt,
   FaCog,
   FaHome,
@@ -19,9 +17,11 @@ import {
   FaComments
 } from 'react-icons/fa';
 import { Button } from '../ui';
-import { useParentProfile, useNotifications, useUISettings } from '../../hooks/useData';
+import { useParentProfile } from '../../hooks/useData';
 import { LogoutModal } from './LogoutModal';
 import NotificationsDropdown from '../../components/NotificationsDropdown';
+import ThemeToggle from './ThemeToggle';
+import { fetchNotifications } from '../../services/notificationsApi';
 
 /**
  * مكون الهيدر المتطور مع الإشعارات والدردشة
@@ -31,11 +31,32 @@ const ParentsHeader = ({ title, subtitle, breadcrumbs = [], onMenuClick }) => {
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const [logoutModalOpen, setLogoutModalOpen] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
   const navigate = useNavigate();
 
   const { profile, loading: profileLoading } = useParentProfile();
-  const { notifications, unreadCount } = useNotifications();
-  const { settings, toggleTheme, updateSetting } = useUISettings();
+
+  // Fetch notifications and calculate unread count
+  useEffect(() => {
+    const loadNotifications = async () => {
+      try {
+        const data = await fetchNotifications();
+        setNotifications(data);
+        const unread = data.filter(n => !n.read).length;
+        setUnreadCount(unread);
+      } catch (err) {
+        console.error('Error fetching notifications:', err);
+      }
+    };
+
+    loadNotifications();
+    
+    // Set up interval to refresh notifications
+    const interval = setInterval(loadNotifications, 30000); // Refresh every 30 seconds
+    
+    return () => clearInterval(interval);
+  }, []);
 
   // Close dropdowns when clicking outside
   React.useEffect(() => {
@@ -117,15 +138,8 @@ const ParentsHeader = ({ title, subtitle, breadcrumbs = [], onMenuClick }) => {
               <FaComments />
             </Button>
 
-            {/* Theme Toggle - Show Sun icon when in Light mode, Moon icon when in Dark mode */}
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={toggleTheme}
-              title={settings.theme === 'light' ? 'الوضع المضيء' : 'الوضع المظلم'}
-            >
-              {settings.theme === 'light' ? <FaSun /> : <FaMoon />}
-            </Button>
+            {/* Theme Toggle */}
+            <ThemeToggle />
 
             {/* Notifications */}
             <div className="relative">
@@ -154,12 +168,14 @@ const ParentsHeader = ({ title, subtitle, breadcrumbs = [], onMenuClick }) => {
 
               {/* Notifications Dropdown */}
               <AnimatePresence>
-                <NotificationsDropdown
-                  notifications={notifications}
-                  unreadCount={unreadCount}
-                  isOpen={notificationsOpen}
-                  onClose={() => setNotificationsOpen(false)}
-                />
+                {notificationsOpen && (
+                  <NotificationsDropdown
+                    notifications={notifications}
+                    unreadCount={unreadCount}
+                    isOpen={notificationsOpen}
+                    onClose={() => setNotificationsOpen(false)}
+                  />
+                )}
               </AnimatePresence>
             </div>
 

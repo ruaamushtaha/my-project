@@ -19,7 +19,6 @@ import Services from '../pages/public/Services/index';
 import Contact from '../pages/public/Contact/index';
 import Privacy from '../pages/public/Privacy/index';
 import Terms from '../pages/public/Terms/index';
-import Support from '../pages/public/Support/index';
 
 // Dashboard Components - New System
 import ParentsDashboardLayout from '../pages/dashboard/parents/ParentsDashboardLayout';
@@ -53,8 +52,6 @@ export default function AppRoutes() {
       <Route path="/Privacy" element={<Privacy />} />
       <Route path="/terms" element={<Terms />} />
       <Route path="/Terms" element={<Terms />} />
-      <Route path="/support" element={<Support />} />
-      <Route path="/Support" element={<Support />} />
       <Route path="/dashboard/parents/*" element={<ParentsDashboardLayout />} />
 
       {/* Auth routes (without layout) */}

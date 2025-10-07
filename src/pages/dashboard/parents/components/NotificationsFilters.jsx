@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { FaSearch } from 'react-icons/fa';
+import { FaSearch, FaChartBar, FaTrophy, FaWrench, FaEnvelope, FaComments } from 'react-icons/fa';
 
 const NotificationsFilters = ({ 
   onFilterChange, 
@@ -10,6 +10,11 @@ const NotificationsFilters = ({
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
 
+  useEffect(() => {
+    // Reset search term when filter changes
+    setSearchTerm('');
+  }, [currentFilter]);
+
   const handleSearch = (e) => {
     const value = e.target.value;
     setSearchTerm(value);
@@ -18,6 +23,17 @@ const NotificationsFilters = ({
 
   const handleFilterChange = (filterType) => {
     onFilterChange(filterType);
+  };
+
+  // Ensure typeCounts has all required properties with default values
+  const safeTypeCounts = {
+    total: typeCounts?.total || 0,
+    performance: typeCounts?.performance || 0,
+    achievement: typeCounts?.achievement || 0,
+    improvement: typeCounts?.improvement || 0,
+    principal: typeCounts?.principal || 0,
+    chat: typeCounts?.chat || 0,
+    ...typeCounts
   };
 
   return (
@@ -60,9 +76,24 @@ const NotificationsFilters = ({
               ? 'bg-blue-500 text-white shadow-md'
               : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
           }`}
-          aria-label={`عرض الكل (${typeCounts.total})`}
+          aria-label={`عرض الكل (${safeTypeCounts.total})`}
         >
-          الكل ({typeCounts.total})
+          الكل ({safeTypeCounts.total})
+        </motion.button>
+
+        <motion.button
+          whileHover={{ y: -2 }}
+          whileTap={{ scale: 0.98 }}
+          onClick={() => handleFilterChange('performance')}
+          className={`px-4 py-2 rounded-full text-sm font-medium transition-colors flex items-center gap-2 ${
+            currentFilter === 'performance'
+              ? 'bg-blue-500 text-white shadow-md'
+              : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+          }`}
+          aria-label={`أداء (${safeTypeCounts.performance})`}
+        >
+          <FaChartBar />
+          <span>أداء ({safeTypeCounts.performance})</span>
         </motion.button>
 
         <motion.button
@@ -74,10 +105,10 @@ const NotificationsFilters = ({
               ? 'bg-yellow-500 text-white shadow-md'
               : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
           }`}
-          aria-label={`إنجازات (${typeCounts.achievement})`}
+          aria-label={`إنجازات (${safeTypeCounts.achievement})`}
         >
-          <span>🏆</span>
-          <span>إنجازات ({typeCounts.achievement})</span>
+          <FaTrophy />
+          <span>إنجازات ({safeTypeCounts.achievement})</span>
         </motion.button>
 
         <motion.button
@@ -86,13 +117,43 @@ const NotificationsFilters = ({
           onClick={() => handleFilterChange('improvement')}
           className={`px-4 py-2 rounded-full text-sm font-medium transition-colors flex items-center gap-2 ${
             currentFilter === 'improvement'
-              ? 'bg-blue-500 text-white shadow-md'
+              ? 'bg-green-500 text-white shadow-md'
               : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
           }`}
-          aria-label={`تحسينات (${typeCounts.improvement})`}
+          aria-label={`تحسينات (${safeTypeCounts.improvement})`}
         >
-          <span>🔧</span>
-          <span>تحسينات ({typeCounts.improvement})</span>
+          <FaWrench />
+          <span>تحسينات ({safeTypeCounts.improvement})</span>
+        </motion.button>
+
+        <motion.button
+          whileHover={{ y: -2 }}
+          whileTap={{ scale: 0.98 }}
+          onClick={() => handleFilterChange('principal')}
+          className={`px-4 py-2 rounded-full text-sm font-medium transition-colors flex items-center gap-2 ${
+            currentFilter === 'principal'
+              ? 'bg-purple-500 text-white shadow-md'
+              : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+          }`}
+          aria-label={`ردود (${safeTypeCounts.principal})`}
+        >
+          <FaEnvelope />
+          <span>ردود ({safeTypeCounts.principal})</span>
+        </motion.button>
+
+        <motion.button
+          whileHover={{ y: -2 }}
+          whileTap={{ scale: 0.98 }}
+          onClick={() => handleFilterChange('chat')}
+          className={`px-4 py-2 rounded-full text-sm font-medium transition-colors flex items-center gap-2 ${
+            currentFilter === 'chat'
+              ? 'bg-pink-500 text-white shadow-md'
+              : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+          }`}
+          aria-label={`محادثات (${safeTypeCounts.chat})`}
+        >
+          <FaComments />
+          <span>محادثات ({safeTypeCounts.chat})</span>
         </motion.button>
       </motion.div>
     </div>
