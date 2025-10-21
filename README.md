@@ -1,70 +1,247 @@
-# Getting Started with Create React App
+# نظام تقييم المدارس - School Evaluation System
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## 🎯 نظرة عامة على المشروع
 
-## Available Scripts
+نظام تقييم المدارس هو منصة شاملة تتيح لأولياء الأمور تقييم المدارس، تقديم الشكاوى، والتواصل مع إدارات المدارس. تم بناء النظام باستخدام React مع أحدث التقنيات لضمان أفضل تجربة مستخدم ممكنة.
 
-In the project directory, you can run:
+## ✨ المزايا الرئيسية
 
-### `npm start`
+### 📊 **لوحة تحكم متطورة**
+- إحصائيات مرئية وتفاعلية
+- بطاقات المدارس المحفوظة
+- النشاط الحديث للمستخدم
+- إجراءات سريعة
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### 🏫 **إدارة المدارس**
+- بحث متقدم مع فلاتر ذكية
+- عرض تفصيلي لكل مدرسة
+- تقييمات مرئية بالرسوم البيانية
+- إمكانية المقارنة بين المدارس
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### ⭐ **نظام التقييمات الشامل**
+- تقييم متعدد الأبعاد (جودة التعليم، المرافق، البيئة، الرسوم)
+- واجهة سهلة الاستخدام
+- حفظ وإدارة التقييمات
+- تقارير مفصلة
 
-### `npm test`
+### 📞 **نظام الشكاوى**
+- تقديم شكاوى مفصلة مع مرفقات
+- تتبع حالة الشكوى
+- تصنيف الشكاوى حسب الأولوية
+- نظام ردود متقدم
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### 💬 **نظام المراسلة**
+- دردشة مباشرة مع إدارات المدارس
+- إرسال الملفات والصور
+- مؤشرات الكتابة
+- إشعارات فورية
 
-### `npm run build`
+### 🌙 **دعم شامل للواجهة**
+- وضع مظلم/فاتح
+- دعم كامل للـ RTL
+- تصميم متجاوب
+- إمكانية الوصول (Accessibility)
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## 🛠️ التقنيات المستخدمة
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Frontend Framework
+- **React 19** - إطار العمل الأساسي
+- **React Router** - التنقل بين الصفحات
+- **Framer Motion** - الحركات والانتقالات
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### UI & Styling
+- **Tailwind CSS** - إطار عمل CSS
+- **Headless UI** - مكونات UI قابلة للوصول
+- **Heroicons** - الأيقونات
 
-### `npm run eject`
+### State Management
+- **TanStack Query (React Query)** - إدارة حالة الخادم
+- **React Context** - إدارة الحالة المحلية
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### Forms & Validation
+- **React Hook Form** - إدارة النماذج
+- **Zod** - التحقق من البيانات
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### API & HTTP
+- **Axios** - طلبات HTTP
+- **Socket.io Client** - الاتصال المباشر
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### Development Tools
+- **json-server** - خادم وهمي للتطوير
+- **MSW** - Mock Service Worker
+- **React Error Boundary** - معالجة الأخطاء
+- **React Hot Toast** - الإشعارات
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## 🚀 البدء مع المشروع
 
-## Learn More
+### المتطلبات الأساسية
+- Node.js 16+ 
+- npm أو yarn
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### التثبيت
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+1. **استنساخ المشروع**
+```bash
+git clone [repository-url]
+cd my-project
+```
 
-### Code Splitting
+2. **تثبيت التبعيات**
+```bash
+npm install
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+3. **إعداد متغيرات البيئة**
+ملف `.env` موجود بالفعل مع الإعدادات المطلوبة
 
-### Analyzing the Bundle Size
+### تشغيل المشروع
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+#### الوضع العادي (مع Mock Server)
+```bash
+npm run dev
+```
+سيشغل هذا الأمر:
+- React app على http://localhost:3000
+- Mock API server على http://localhost:3001
 
-### Making a Progressive Web App
+#### تشغيل React فقط
+```bash
+npm start
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+#### تشغيل Mock Server فقط
+```bash
+npm run mock-server
+```
 
-### Advanced Configuration
+## 🌐 الوصول للتطبيق
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+### المسارات المتاحة:
 
-### Deployment
+#### مسارات غير محمية (للتطوير)
+- `http://localhost:3000/parents-demo` - الداشبورد الرئيسية
+- `http://localhost:3000/parents-schools-demo` - إدارة المدارس  
+- `http://localhost:3000/parents-evaluations-demo` - نظام التقييمات
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+#### مسارات محمية (تتطلب تسجيل دخول)
+- `http://localhost:3000/dashboard/parents` - الداشبورد الرئيسية
+- `http://localhost:3000/dashboard/parents/schools` - إدارة المدارس
+- `http://localhost:3000/dashboard/parents/evaluations` - نظام التقييمات
 
-### `npm run build` fails to minify
+### المصادقة في وضع التطوير
+في وضع التطوير، سيتم تسجيل دخولك تلقائياً كولي أمر.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## 🔧 النصوص المتاحة
+
+| الأمر | الوصف |
+|-------|--------|
+| `npm start` | تشغيل React في وضع التطوير |
+| `npm run build` | بناء المشروع للإنتاج |
+| `npm test` | تشغيل الاختبارات |
+| `npm run mock-server` | تشغيل الخادم الوهمي |
+| `npm run dev` | تشغيل React + Mock Server |
+| `npm run lint` | فحص جودة الكود |
+| `npm run test:coverage` | اختبار مع تقرير التغطية |
+
+## 🎨 المزايا المنجزة
+
+✅ **البنية الأساسية**
+- إعداد React مع جميع التبعيات
+- نظام إدارة الحالة مع React Query
+- أنظمة المصادقة والحماية
+- معالجة الأخطاء والإشعارات
+
+✅ **الأنظمة الأساسية**
+- Dark Mode مع localStorage persistence
+- نظام Form validation مع Zod schemas
+- API layer كامل مع interceptors
+- Mock server مع بيانات واقعية
+
+✅ **التحسينات**
+- Error boundaries لمعالجة الأخطاء
+- Toast notifications
+- تصميم متجاوب مع RTL support
+- Loading states و optimistic updates
+
+## 🔌 API Documentation
+
+### Base URL
+```
+http://localhost:3001/api
+```
+
+### Authentication
+```
+POST /api/auth/login
+POST /api/auth/logout  
+POST /api/auth/register
+```
+
+### Profile
+```
+GET  /api/parents/me
+PUT  /api/parents/me
+PUT  /api/parents/me/password
+```
+
+### Schools
+```
+GET  /api/schools
+GET  /api/schools/:id
+GET  /api/schools/:id/reviews
+```
+
+### Evaluations
+```
+GET  /api/evaluations
+POST /api/evaluations
+GET  /api/parents/me/evaluations
+```
+
+### Complaints
+```
+GET  /api/complaints
+POST /api/complaints
+GET  /api/parents/me/complaints
+```
+
+### Notifications & Chat
+```
+GET    /api/notifications
+PATCH  /api/notifications/:id/read
+GET    /api/chats
+GET    /api/chats/:id/messages
+POST   /api/chats/:id/messages
+```
+
+## 🐛 استكشاف الأخطاء
+
+### الخادم الوهمي لا يعمل
+```bash
+npm install -g json-server
+# أو
+npx json-server --watch mock-server/db.json --port 3001
+```
+
+### مشاكل في التبعيات
+```bash
+rm -rf node_modules
+npm install --legacy-peer-deps
+```
+
+### مشاكل في المصادقة
+- تأكد من أن `REACT_APP_DEBUG=true`
+- امسح localStorage: `localStorage.clear()`
+- أعد تحميل الصفحة
+
+## 📄 ملاحظات التطوير
+
+- النظام يدعم وضع التطوير مع auto-login
+- Mock server يحتوي على بيانات واقعية شاملة
+- جميع النماذج محمية بـ Zod validation
+- دعم كامل للـ RTL والوضع المظلم
+- Error handling شامل مع fallback components
+
+---
+
+**تم بناء هذا المشروع بـ ❤️ لتحسين تجربة تقييم المدارس في المنطقة العربية**

@@ -1,0 +1,465 @@
+{
+  "parents": [
+    {
+      "id": 1,
+      "fullName": "أحمد محمد السعد",
+      "email": "ahmed.alsaad@email.com", 
+      "phone": "+966501234567",
+      "address": "الرياض، حي المروج",
+      "region": "الرياض",
+      "avatar": null,
+      "language": "ar",
+      "notifications": {
+        "email": true,
+        "sms": false,
+        "inApp": true,
+        "evaluationReminders": true,
+        "complaintUpdates": true,
+        "schoolNews": false,
+        "systemUpdates": true
+      },
+      "settings": {
+        "theme": "light",
+        "language": "ar",
+        "privacy": {
+          "profileVisible": true,
+          "showOnlineStatus": true,
+          "allowMessages": true,
+          "shareEvaluations": false
+        }
+      },
+      "createdAt": "2024-01-15T10:00:00Z",
+      "updatedAt": "2024-01-20T08:30:00Z"
+    }
+  ],
+  "children": [
+    {
+      "id": 1,
+      "parentId": 1,
+      "name": "محمد أحمد",
+      "grade": "الصف الثالث الابتدائي",
+      "school": "مدرسة الأمل",
+      "schoolId": 1,
+      "birthDate": "2015-03-10",
+      "gender": "male"
+    },
+    {
+      "id": 2,
+      "parentId": 1,
+      "name": "سارة أحمد",
+      "grade": "الصف الأول المتوسط", 
+      "school": "مدرسة النجاح",
+      "schoolId": 2,
+      "birthDate": "2012-08-15",
+      "gender": "female"
+    }
+  ],
+  "schools": [
+    {
+      "id": 1,
+      "name": "مدرسة النور الابتدائية",
+      "location": "حي الزهراء، الرياض",
+      "type": "primary",
+      "overallRating": 4.2,
+      "studentsCount": 450,
+      "teachersCount": 25,
+      "image": "https://via.placeholder.com/400x200/4f46e5/ffffff?text=مدرسة+النور",
+      "description": "مدرسة متميزة تهتم بالتعليم الحديث والأنشطة اللامنهجية",
+      "achievements": ["جائزة أفضل مدرسة 2023", "المركز الأول في مسابقة العلوم"],
+      "vision": "تقديم تعليم متميز وشامل لبناء جيل مبدع ومتطور",
+      "mission": "نسعى لتوفير بيئة تعليمية محفزة ومبتكرة",
+      "ratings": {
+        "educationQuality": 4.3,
+        "facilities": 4.1,
+        "environment": 4.4,
+        "feesValue": 4.0
+      },
+      "fees": "15000 ريال/سنة",
+      "distance": "2.5 كم",
+      "phone": "+966112345678",
+      "email": "info@alnoor.edu.sa",
+      "website": "https://alnoor.edu.sa",
+      "established": 1995,
+      "principalName": "أ. عبدالله الأحمد",
+      "address": "شارع الملك فهد، حي الزهراء، الرياض 12345",
+      "coordinates": {
+        "latitude": 24.7136,
+        "longitude": 46.6753
+      },
+      "facilities": [
+        "مختبرات علمية متطورة",
+        "مكتبة شاملة",
+        "ملاعب رياضية",
+        "قاعات كمبيوتر",
+        "كافيتيريا صحية"
+      ],
+      "programs": [
+        "برنامج الموهوبين",
+        "الأنشطة اللاصفية",
+        "النوادي العلمية",
+        "المسابقات الثقافية"
+      ],
+      "workingHours": {
+        "sunday": "07:30-14:30",
+        "monday": "07:30-14:30",
+        "tuesday": "07:30-14:30",
+        "wednesday": "07:30-14:30",
+        "thursday": "07:30-14:30",
+        "friday": "closed",
+        "saturday": "closed"
+      },
+      "createdAt": "2023-01-01T00:00:00Z",
+      "updatedAt": "2024-01-15T12:00:00Z"
+    },
+    {
+      "id": 2,
+      "name": "مدرسة الفجر المتوسطة",
+      "location": "حي النخيل، جدة",
+      "type": "middle",
+      "overallRating": 3.8,
+      "studentsCount": 320,
+      "teachersCount": 18,
+      "image": "https://via.placeholder.com/400x200/059669/ffffff?text=مدرسة+الفجر",
+      "description": "مدرسة تركز على التطوير الشخصي والأكاديمي للطلاب",
+      "achievements": ["شهادة الجودة التعليمية", "المركز الثاني في الرياضيات"],
+      "vision": "إعداد جيل قادر على مواجهة تحديات المستقبل",
+      "mission": "تطوير مهارات الطلاب الأكاديمية والاجتماعية",
+      "ratings": {
+        "educationQuality": 4.0,
+        "facilities": 3.7,
+        "environment": 3.9,
+        "feesValue": 3.6
+      },
+      "fees": "18000 ريال/سنة",
+      "distance": "3.2 كم",
+      "phone": "+966122345678",
+      "email": "info@alfajr.edu.sa",
+      "website": "https://alfajr.edu.sa",
+      "established": 2001,
+      "principalName": "أ. فاطمة الخالد",
+      "address": "شارع المدينة، حي النخيل، جدة 21411",
+      "coordinates": {
+        "latitude": 21.3891,
+        "longitude": 39.8579
+      },
+      "facilities": [
+        "مختبرات حاسوب",
+        "قاعة متعددة الأغراض",
+        "مكتبة رقمية",
+        "ملعب كرة قدم"
+      ],
+      "programs": [
+        "برنامج التفوق الأكاديمي",
+        "النشاطات الرياضية",
+        "المسرح المدرسي"
+      ],
+      "workingHours": {
+        "sunday": "07:00-14:00",
+        "monday": "07:00-14:00",
+        "tuesday": "07:00-14:00",
+        "wednesday": "07:00-14:00",
+        "thursday": "07:00-14:00",
+        "friday": "closed",
+        "saturday": "closed"
+      },
+      "createdAt": "2023-02-01T00:00:00Z",
+      "updatedAt": "2024-01-10T10:30:00Z"
+    },
+    {
+      "id": 3,
+      "name": "مدرسة الأمل الثانوية",
+      "location": "حي الملز، الرياض",
+      "type": "high",
+      "overallRating": 4.6,
+      "studentsCount": 280,
+      "teachersCount": 22,
+      "image": "https://via.placeholder.com/400x200/dc2626/ffffff?text=مدرسة+الأمل",
+      "description": "مدرسة ثانوية متقدمة بمناهج حديثة ومرافق متطورة",
+      "achievements": ["أفضل نتائج الثانوية العامة", "مدرسة صديقة للبيئة"],
+      "vision": "تخريج طلاب قادرين على الإبداع والتميز في الحياة الجامعية",
+      "mission": "تقديم تعليم ثانوي عالي الجودة مع التركيز على الإعداد الجامعي",
+      "ratings": {
+        "educationQuality": 4.8,
+        "facilities": 4.5,
+        "environment": 4.7,
+        "feesValue": 4.4
+      },
+      "fees": "22000 ريال/سنة",
+      "distance": "4.1 كم",
+      "phone": "+966113345678",
+      "email": "info@alamal.edu.sa",
+      "website": "https://alamal.edu.sa",
+      "established": 1988,
+      "principalName": "د. محمد العتيبي",
+      "address": "شارع التحلية، حي الملز، الرياض 12222",
+      "coordinates": {
+        "latitude": 24.6408,
+        "longitude": 46.7728
+      },
+      "facilities": [
+        "مختبرات متقدمة للفيزياء والكيمياء",
+        "مكتبة رقمية ضخمة",
+        "قاعات محاضرات مجهزة",
+        "مجمع رياضي كامل",
+        "مسرح للفعاليات"
+      ],
+      "programs": [
+        "برنامج الإعداد الجامعي",
+        "المسارات التخصصية",
+        "برنامج القيادة الطلابية",
+        "النوادي العلمية المتخصصة"
+      ],
+      "workingHours": {
+        "sunday": "07:30-15:00",
+        "monday": "07:30-15:00", 
+        "tuesday": "07:30-15:00",
+        "wednesday": "07:30-15:00",
+        "thursday": "07:30-15:00",
+        "friday": "closed",
+        "saturday": "closed"
+      },
+      "createdAt": "2023-01-15T00:00:00Z",
+      "updatedAt": "2024-01-18T14:15:00Z"
+    }
+  ],
+  "evaluations": [
+    {
+      "id": 1,
+      "parentId": 1,
+      "schoolId": 1,
+      "educationQuality": 4,
+      "facilities": 4,
+      "environment": 5,
+      "feesValue": 4,
+      "overallRating": 4.25,
+      "comment": "مدرسة ممتازة والمعلمين محترفين، بيئة تعليمية ممتازة",
+      "recommend": true,
+      "anonymous": false,
+      "status": "published",
+      "createdAt": "2024-01-15T12:00:00Z",
+      "updatedAt": "2024-01-15T12:00:00Z"
+    },
+    {
+      "id": 2,
+      "parentId": 1,
+      "schoolId": 3,
+      "educationQuality": 5,
+      "facilities": 4,
+      "environment": 5,
+      "feesValue": 4,
+      "overallRating": 4.5,
+      "comment": "مدرسة ثانوية رائعة، إعداد ممتاز للجامعة",
+      "recommend": true,
+      "anonymous": false,
+      "status": "published",
+      "createdAt": "2024-01-10T09:30:00Z",
+      "updatedAt": "2024-01-10T09:30:00Z"
+    }
+  ],
+  "complaints": [
+    {
+      "id": 1,
+      "parentId": 1,
+      "schoolId": 2,
+      "childId": 2,
+      "category": "transport",
+      "priority": "medium",
+      "title": "تأخير الحافلة المدرسية",
+      "description": "الحافلة المدرسية تتأخر يومياً لمدة 15-20 دقيقة مما يؤثر على حضور الطلاب",
+      "status": "in_progress",
+      "anonymous": false,
+      "attachments": [],
+      "responses": [
+        {
+          "id": 1,
+          "responderId": 10,
+          "responderName": "إدارة النقل المدرسي",
+          "message": "تم استلام شكواكم وسيتم العمل على حل المشكلة خلال أسبوع",
+          "createdAt": "2024-01-16T10:00:00Z"
+        }
+      ],
+      "createdAt": "2024-01-15T08:00:00Z",
+      "updatedAt": "2024-01-16T10:00:00Z"
+    }
+  ],
+  "notifications": [
+    {
+      "id": 1,
+      "parentId": 1,
+      "title": "تم الرد على شكواك",
+      "message": "تم الرد على شكوتك بخصوص تأخير الحافلة المدرسية",
+      "type": "complaint_update",
+      "read": false,
+      "relatedId": 1,
+      "relatedType": "complaint",
+      "createdAt": "2024-01-16T10:05:00Z"
+    },
+    {
+      "id": 2,
+      "parentId": 1,
+      "title": "تقرير شهري جديد",
+      "message": "تم رفع التقرير الشهري لمدرسة النجاح",
+      "type": "school_report",
+      "read": false,
+      "relatedId": 2,
+      "relatedType": "school",
+      "createdAt": "2024-01-15T14:00:00Z"
+    },
+    {
+      "id": 3,
+      "parentId": 1,
+      "title": "تذكير بتقييم المدرسة",
+      "message": "لم تقم بتقييم مدرسة الفجر المتوسطة بعد",
+      "type": "evaluation_reminder",
+      "read": true,
+      "relatedId": 2,
+      "relatedType": "school",
+      "createdAt": "2024-01-14T09:00:00Z"
+    }
+  ],
+  "chats": [
+    {
+      "id": 1,
+      "parentId": 1,
+      "schoolId": 1,
+      "schoolName": "مدرسة النور الابتدائية",
+      "managerName": "أ. عبدالله الأحمد",
+      "managerAvatar": null,
+      "lastMessage": {
+        "id": 3,
+        "message": "شكراً لك، سنتابع الموضوع",
+        "senderId": 10,
+        "senderType": "manager",
+        "createdAt": "2024-01-16T15:30:00Z"
+      },
+      "unreadCount": 0,
+      "status": "active",
+      "createdAt": "2024-01-10T10:00:00Z",
+      "updatedAt": "2024-01-16T15:30:00Z"
+    },
+    {
+      "id": 2,
+      "parentId": 1,
+      "schoolId": 3,
+      "schoolName": "مدرسة الأمل الثانوية",
+      "managerName": "د. محمد العتيبي",
+      "managerAvatar": null,
+      "lastMessage": {
+        "id": 5,
+        "message": "أهلاً بك، كيف يمكنني مساعدتك؟",
+        "senderId": 12,
+        "senderType": "manager",
+        "createdAt": "2024-01-12T11:00:00Z"
+      },
+      "unreadCount": 1,
+      "status": "active",
+      "createdAt": "2024-01-12T11:00:00Z",
+      "updatedAt": "2024-01-12T11:00:00Z"
+    }
+  ],
+  "messages": [
+    {
+      "id": 1,
+      "chatId": 1,
+      "senderId": 1,
+      "senderType": "parent",
+      "senderName": "أحمد محمد السعد",
+      "message": "السلام عليكم، أريد الاستفسار عن برنامج الموهوبين",
+      "type": "text",
+      "attachments": [],
+      "read": true,
+      "createdAt": "2024-01-16T14:00:00Z"
+    },
+    {
+      "id": 2,
+      "chatId": 1,
+      "senderId": 10,
+      "senderType": "manager",
+      "senderName": "أ. عبدالله الأحمد",
+      "message": "وعليكم السلام، برنامج الموهوبين متاح للطلاب المتميزين أكاديمياً",
+      "type": "text",
+      "attachments": [],
+      "read": true,
+      "createdAt": "2024-01-16T14:15:00Z"
+    },
+    {
+      "id": 3,
+      "chatId": 1,
+      "senderId": 1,
+      "senderType": "parent",
+      "senderName": "أحمد محمد السعد",
+      "message": "ما هي شروط الالتحاق؟",
+      "type": "text",
+      "attachments": [],
+      "read": true,
+      "createdAt": "2024-01-16T14:20:00Z"
+    },
+    {
+      "id": 4,
+      "chatId": 1,
+      "senderId": 10,
+      "senderType": "manager",
+      "senderName": "أ. عبدالله الأحمد",
+      "message": "شكراً لك، سنتابع الموضوع",
+      "type": "text",
+      "attachments": [],
+      "read": true,
+      "createdAt": "2024-01-16T15:30:00Z"
+    },
+    {
+      "id": 5,
+      "chatId": 2,
+      "senderId": 12,
+      "senderType": "manager",
+      "senderName": "د. محمد العتيبي",
+      "message": "أهلاً بك، كيف يمكنني مساعدتك؟",
+      "type": "text",
+      "attachments": [],
+      "read": false,
+      "createdAt": "2024-01-12T11:00:00Z"
+    }
+  ],
+  "schoolReviews": [
+    {
+      "id": 1,
+      "schoolId": 1,
+      "parentId": 1,
+      "parentName": "أحمد محمد السعد",
+      "rating": 4.25,
+      "comment": "مدرسة ممتازة والمعلمين محترفين",
+      "ratings": {
+        "educationQuality": 4,
+        "facilities": 4,
+        "environment": 5,
+        "feesValue": 4
+      },
+      "helpful": 5,
+      "reported": 0,
+      "status": "approved",
+      "createdAt": "2024-01-15T12:00:00Z"
+    }
+  ],
+  "stats": {
+    "totalSchools": 3,
+    "totalEvaluations": 2,
+    "totalComplaints": 1,
+    "averageRating": 4.25,
+    "schoolsByType": {
+      "primary": 1,
+      "middle": 1,
+      "high": 1,
+      "mixed": 0
+    },
+    "evaluationsByMonth": {
+      "2024-01": 2,
+      "2023-12": 0,
+      "2023-11": 1
+    },
+    "complaintsByStatus": {
+      "pending": 0,
+      "in_progress": 1,
+      "resolved": 0,
+      "closed": 0
+    }
+  }
+}

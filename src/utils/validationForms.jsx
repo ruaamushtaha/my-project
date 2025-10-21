@@ -1,14 +1,10 @@
 import * as Yup from "yup";
 
-// Regex to allow English letters only
-const englishNameRegex = /^[A-Za-z]+$/;
-
 // Login form validation schema
 export const loginSchema = Yup.object().shape({
-  name: Yup.string()
-    .required("الاسم مطلوب")
-    .min(3, "يجب أن يكون الاسم 3 أحرف على الأقل")
-    .matches(englishNameRegex, "الاسم يجب أن يكون باللغة الإنجليزية فقط"),
+    email: Yup.string()
+    .email('البريد الإلكتروني غير صالح')
+    .required('البريد الإلكتروني مطلوب'),
   password: Yup.string()
     .required("كلمة المرور مطلوبة")
     .min(6, "كلمة المرور يجب أن تكون 6 أحرف على الأقل")
@@ -20,10 +16,10 @@ export const loginSchema = Yup.object().shape({
 
 // Register form validation schema
 export const registerSchema = Yup.object().shape({
-  name: Yup.string()
-    .required("الاسم مطلوب")
-    .min(3, "يجب أن يكون الاسم 3 أحرف على الأقل")
-    .matches(englishNameRegex, "الاسم يجب أن يكون باللغة الإنجليزية فقط"),
+  username: Yup.string()
+  .required("اسم المستخدم مطلوب")
+  .min(4, "اسم المستخدم يجب أن يكون أكثر من 4 أحرف")
+  .matches(/^[A-Za-z0-9]+$/, "اسم المستخدم يجب أن يكون بالإنجليزية فقط"),
   email: Yup.string()
     .email("صيغة البريد الإلكتروني غير صحيحة")
     .required("البريد الإلكتروني مطلوب"),
@@ -60,4 +56,28 @@ export const resetPasswordSchema = Yup.object().shape({
   confirmPassword: Yup.string()
     .oneOf([Yup.ref("password"), null], "كلمتا المرور غير متطابقتين")
     .required("تأكيد كلمة المرور مطلوب"),
+});
+
+// Contact form validation schema
+export const contactFormSchema = Yup.object().shape({
+  name: Yup.string()
+    .required('الاسم مطلوب')
+    .min(2, 'الاسم يجب أن يكون أكثر من حرفين')
+    .max(50, 'الاسم يجب أن يكون أقل من 50 حرف')
+    .matches(/^[\u0600-\u06FFa-zA-Z\s]+$/, 'الاسم يجب أن يحتوي على أحرف فقط'),
+  
+  email: Yup.string()
+    .email('صيغة البريد الإلكتروني غير صحيحة')
+    .required('البريد الإلكتروني مطلوب')
+    .matches(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'يجب إدخال بريد إلكتروني صحيح'),
+  
+  address: Yup.string()
+    .required('العنوان مطلوب')
+    .min(5, 'العنوان يجب أن يكون أكثر من 5 أحرف')
+    .max(100, 'العنوان يجب أن يكون أقل من 100 حرف'),
+  
+  message: Yup.string()
+    .required('الرسالة مطلوبة')
+    .min(10, 'الرسالة يجب أن تكون أكثر من 10 أحرف')
+    .max(1000, 'الرسالة يجب أن تكون أقل من 1000 حرف')
 });
