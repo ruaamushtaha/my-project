@@ -1,0 +1,79 @@
+================================================================================
+                    START HERE - RUNNING THE PROJECT
+================================================================================
+
+Your Lovable.ai project is now configured and ready to run!
+
+STEP 1: Install Dependencies (if not already done)
+--------------------------------------------------
+npm install --legacy-peer-deps
+
+STEP 2: Start the Development Server
+--------------------------------------------------
+npm run dev:full
+
+This will start:
+  ✅ Vite dev server on http://localhost:8080
+  ✅ Mock API server on http://localhost:3001
+
+STEP 3: Open in Browser
+--------------------------------------------------
+Visit: http://localhost:8080
+
+Demo pages (no login needed):
+  → http://localhost:8080/parents-demo
+  → http://localhost:8080/parents-schools-demo
+  → http://localhost:8080/parents-evaluations-demo
+
+================================================================================
+WHAT WAS CHANGED:
+================================================================================
+
+1. Updated package.json scripts to use Vite
+2. Configured vite.config.ts with proper settings
+3. Installed dependencies with --legacy-peer-deps
+4. Added API proxy for mock server
+
+================================================================================
+ALTERNATIVE COMMANDS:
+================================================================================
+
+Just Vite (no mock server):
+  npm run dev
+
+Just Mock Server:
+  npm run mock-server
+
+Build for Production:
+  npm run build
+
+================================================================================
+TROUBLESHOOTING:
+================================================================================
+
+If npm run dev:full shows errors:
+  1. Check terminal for specific error messages
+  2. Make sure ports 8080 and 3001 are available
+  3. Try clearing cache: npm run dev:full -- --force
+
+If you see import errors:
+  Delete node_modules and reinstall:
+  rm -rf node_modules package-lock.json
+  npm install --legacy-peer-deps
+
+================================================================================
+NEED MORE HELP?
+================================================================================
+
+See these files for detailed documentation:
+  → HOW_TO_RUN.md
+  → SETUP_GUIDE.md
+  → QUICK_START.txt
+
+================================================================================
+
+Now run: npm run dev:full
+Then open: http://localhost:8080
+
+================================================================================
+

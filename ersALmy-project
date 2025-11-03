@@ -1,0 +1,167 @@
+warning: in the working copy of 'src/pages/dashboard/parents/pages/Dashboard.jsx', LF will be replaced by CRLF the next time Git touches it
+[1mdiff --git a/src/pages/dashboard/parents/pages/Dashboard.jsx b/src/pages/dashboard/parents/pages/Dashboard.jsx[m
+[1mindex b7ff936..85d58a0 100644[m
+[1m--- a/src/pages/dashboard/parents/pages/Dashboard.jsx[m
+[1m+++ b/src/pages/dashboard/parents/pages/Dashboard.jsx[m
+[36m@@ -1,10 +1,6 @@[m
+[31m-// =============================================================================[m
+[31m-// Main Dashboard Page for Parents[m
+[31m-// صفحة لوحة التحكم الرئيسية لأولياء الأمور[m
+[31m-// =============================================================================[m
+[31m-[m
+[31m-import React from 'react';[m
+[32m+[m[32mimport React, { useState, useEffect } from 'react';[m
+ import { motion } from 'framer-motion';[m
+[32m+[m[32mimport { useNavigate } from 'react-router-dom';[m
+ import { [m
+   FaSchool,[m
+   FaStar, [m
+[36m@@ -19,12 +15,21 @@[m [mimport {[m
+   FaArrowUp,[m
+   FaArrowDown,[m
+   FaEye,[m
+[31m-  FaHeart[m
+[32m+[m[32m  FaHeart,[m
+[32m+[m[32m  FaPaperPlane,[m
+[32m+[m[32m  FaCog,[m
+[32m+[m[32m  FaUser,[m
+[32m+[m[32m  FaSignOutAlt,[m
+[32m+[m[32m  FaMoon,[m
+[32m+[m[32m  FaSun,[m
+[32m+[m[32m  FaSearch,[m
+[32m+[m[32m  FaChevronDown[m
+ } from 'react-icons/fa';[m
+[32m+[m[32mimport { toast } from 'react-hot-toast';[m
+ [m
+[31m-import Layout from '../components/layout/Layout';[m
+ import { Card, Button, Badge, ProgressBar, Loading } from '../components/ui';[m
+[31m-import { useParentProfile, useDashboardStats, useSchools } from '../hooks/useData';[m
+[32m+[m[32mimport { useParentProfile, useDashboardStats, useSchools, useNotifications, useMessages, useUISettings } from '../hooks/useData';[m
+[32m+[m[32mimport ChatWidget from '../components/ChatWidget';[m
+ [m
+ /**[m
+  * مكون بطاقة الإحصائية[m
+[36m@@ -40,7 +45,7 @@[m [mconst StatsCard = ({ title, value, subtitle, icon: Icon, color, trend, loading =[m
+   };[m
+ [m
+   return ([m
+[31m-    <Card className="relative overflow-hidden">[m
+[32m+[m[32m    <Card className="relative overflow-hidden h-full">[m
+       {/* Background Gradient */}[m
+       <div className={`absolute inset-0 bg-gradient-to-r ${colorClasses[color]} opacity-5`} />[m
+       [m
+[36m@@ -215,14 +220,224 @@[m [mconst QuickSchoolCard = ({ school, index }) => {[m
+   );[m
+ };[m
+ [m
+[32m+[m[32m/**[m
+[32m+[m[32m * مكون الإشعارات المنسدلة[m
+[32m+[m[32m * Notifications Dropdown Component[m
+[32m+[m[32m */[m
+[32m+[m[32mconst NotificationsDropdown = ({ notifications, unreadCount, onMarkAsRead, onMarkAllAsRead, isOpen, onClose }) => {[m
+[32m+[m[32m  const navigate = useNavigate();[m
+[32m+[m
+[32m+[m[32m  if (!isOpen) return null;[m
+[32m+[m
+[32m+[m[32m  const handleNotificationClick = (notification) => {[m
+[32m+[m[32m    onMarkAsRead(notification.id);[m
+[32m+[m[32m    if (notification.actionUrl) {[m
+[32m+[m[32m      navigate(notification.actionUrl);[m
+[32m+[m[32m    }[m
+[32m+[m[32m    onClose();[m
+[32m+[m[32m  };[m
+[32m+[m
+[32m+[m[32m  return ([m
+[32m+[m[32m    <motion.div[m
+[32m+[m[32m      className="absolute left-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-600 overflow-hidden z-50"[m
+[32m+[m[32m      initial={{ opacity: 0, y: -10, scale: 0.95 }}[m
+[32m+[m[32m      animate={{ opacity: 1, y: 0, scale: 1 }}[m
+[32m+[m[32m      exit={{ opacity: 0, y: -10, scale: 0.95 }}[m
+[32m+[m[32m      onClick={(e) => e.stopPropagation()}[m
+[32m+[m[32m    >[m
+[32m+[m[32m      <div className="p-4 border-b border-gray-200 dark:border-gray-600">[m
+[32m+[m[32m        <div className="flex items-center justify-between">[m
+[32m+[m[32m          <h3 className="font-bold text-gray-900 dark:text-white">الإشعارات</h3>[m
+[32m+[m[32m          <span className="text-sm text-gray-500 dark:text-gray-400">[m
+[32m+[m[32m            {unreadCount} غير مقروء[m
+[32m+[m[32m          </span>[m
+[32m+[m[32m        </div>[m
+[32m+[m[32m      </div>[m
+[32m+[m[41m      [m
+[32m+[m[32m      <div className="max-h-80 overflow-y-auto">[m
+[32m+[m[32m        {notifications.slice(0, 5).map((notification) => ([m
+[32m+[m[32m          <motion.div[m
+[32m+[m[32m            key={notification.id}[m
+[32m+[m[32m            className={`p-4 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer ${[m
+[32m+[m[32m              !notification.read ? 'bg-blue-50 dark:bg-blue-900/20' : ''[m
+[32m+[m[32m            }`}[m
+[32m+[m[32m            whileHover={{ x: 5 }}[m
+[32m+[m[32m            onClick={() => handleNotificationClick(notification)}[m
+[32m+[m[32m          >[m
+[32m+[m[32m            <div className="flex items-start space-x-3 space-x-reverse">[m
+[32m+[m[32m              <div className={`w-2 h-2 rounded-full mt-2 ${[m
+[32m+[m[32m                !notification.read ? 'bg-primary-500' : 'bg-gray-300 dark:bg-gray-600'[m
+[32m+[m[32m              }`} />[m
+[32m+[m[32m              <div className="flex-1 min-w-0">[m
+[32m+[m[32m                <p className="text-sm font-medium text-gray-900 dark:text-white truncate">[m
+[32m+[m[32m                  {notification.title}[m
+[32m+[m[32m                </p>[m
+[32m+[m[32m                <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">[m
+[32m+[m[32m                  {notification.message}[m
+[32m+[m[32m                </p>[m
+[32m+[m[32m                <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">[m
+[32m+[m[32m                  {new Date(notification.timestamp).toLocaleDateString('ar-SA')}[m
+[32m+[m[32m                </p>[m
+[32m+[m[32m              </div>[m
+[32m+[m[32m            </div>[m
+[32m+[m[32m          </motion.div>[m
+[32m+[m[32m        ))}[m
+[32m+[m[32m      </div>[m
+[32m+[m
+[32m+[m[32m      <div className="p-4 border-t border-gray-200 dark:border-gray-600">[m
+[32m+[m[32m        <Button[m[41m [m
+[32m+[m[32m          variant="ghost"[m[41m [m
+[32m+[m[32m          size="sm"[m[41m [m
+[32m+[m[32m          className="w-full"[m
+[32m+[m[32m          onClick={() => {[m
+[32m+[m[32m            navigate('/dashboard/parents/notifications');[m
+[32m+[m[32m            onClose();[m
+[32m+[m[32m          }}[m
+[32m+[m[32m        >[m
+[32m+[m[32m          عرض جميع الإشعارات[m
+[32m+[m[32m        </Button>[m
+[32m+[m[32m      </div>[m
+[32m+[m[32m    </motion.div>[m
+[32m+[m[32m  );[m
+[32m+[m[32m};[m
+[32m+[m
+[32m+[m[32m/**[m
+[32m+[m[32m * مكون الإعدادات السريعة[m
+[32m+[m[32m * Quick Settings Component[m
+[32m+[m[32m */[m
+[32m+[m[32mconst QuickSettings = ({ theme, onThemeToggle, onProfileClick, onSettingsClick, onLogout }) => {[m
+[32m+[m[32m  const [isOpen, setIsOpen] = useState(false);[m
+[32m+[m
+[32m+[m[32m  useEffect(() => {[m
+[32m+[m[32m    const handleClickOutside = (event) => {[m
+[32m+[m[32m      if (event.target.closest('.quick-settings-container') === null) {[m
+[32m+[m[32m        setIsOpen(false);[m
+[32m+[m[32m      }[m
+[32m+[m[32m    };[m
+[32m+[m
+[32m+[m[32m    if (isOpen) {[m
+[32m+[m[32m      document.addEventListener('click', handleClickOutside);[m
+[32m+[m[32m      return () => document.removeEventListener('click', handleClickOutside);[m
+[32m+[m[32m    }[m
+[32m+[m[32m  }, [isOpen]);[m
+[32m+[m
+[32m+[m[32m  return ([m
+[32m+[m[32m    <div className="relative quick-settings-container">[m
+[32m+[m[32m      <Button[m
+[32m+[m[32m        variant="ghost"[m
+[32m+[m[32m        size="sm"[m
+[32m+[m[32m        onClick={(e) => {[m
+[32m+[m[32m          e.stopPropagation();[m
+[32m+[m[32m          setIsOpen(!isOpen);[m
+[32m+[m[32m        }}[m
+[32m+[m[32m        clas

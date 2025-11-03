@@ -1,50 +1,58 @@
 import React from "react";
 import { Formik, Form } from "formik";
 import { forgotPasswordSchema } from "../../utils/validationForms";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
-import AuthLayout from "../../components/layout/AuthLayout";
-import TextInput from "../../components/inputs/TextInput";
+import AuthLayout from "../../layouts/AuthLayout";
+import { EmailInput } from "../../components/inputs/FormInput";
 import { getButtonState } from "../../utils/buttonState";
 import { showAlert } from "../../utils/SweetAlert";
 
 import ForgotHero from "../../assets/images/Forgot password.svg";
-import EmailIcon from "../../assets/icons/email.svg";
+// Api Axios
+import { forgotPasswordService } from "../../services/authService";
 
 export default function ForgotPassword() {
+  const navigate = useNavigate();
+
   return (
     <AuthLayout
       expressiveImage={ForgotHero}
       title="نسيت كلمة المرور؟"
+      userPhotoClassName="mt-28"
     >
       <Formik
         initialValues={{ email: "" }}
         validationSchema={forgotPasswordSchema}
+        //api
         onSubmit={async (values, { setSubmitting, validateForm }) => {
           const errors = await validateForm();
-          const errorMessages = Object.values(errors);
-          if (errorMessages.length === 0) {
-            showAlert(
-              "success",
-              "تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني!"
-            );
-            console.log("Forgot password email:", values.email);
+          if (Object.keys(errors).length === 0) {
+            try {
+              //  استخدام خدمة forgotPasswordService
+              await forgotPasswordService(values.email);
+        
+              showAlert("success", "تم إرسال رابط إعادة التعيين إلى بريدك!");
+              navigate("/reset-success");
+            } catch (error) {
+              showAlert("error", "فشل إرسال البريد! حاول مجددًا");
+              console.error(error);
+            }
           }
           setSubmitting(false);
-        }}
+        }}        
       >
         {({ values, handleChange, handleBlur, errors, touched, isSubmitting }) => {
           const btnState = getButtonState(!values.email);
 
           return (
-            <Form className="w-full">
+            <Form className="w-full mt-10">
               {/* Email input */}
-              <TextInput
+              <EmailInput
                 value={values.email}
                 onChange={handleChange("email")}
                 onBlur={handleBlur("email")}
                 placeholder="أدخل بريدك الإلكتروني الخاص بالحساب"
-                icon={EmailIcon}
                 error={touched.email && errors.email ? errors.email : ""}
               />
 
@@ -59,7 +67,7 @@ export default function ForgotPassword() {
 
               {/* Link to login page */}
               <div className="text-center text-sm font-cairo">
-                <span className="text-black font-medium">العودة إلى تسجيل الدخول؟ </span>
+                <span className="text-black font-bold">العودة إلى تسجيل الدخول؟ </span>
                 <Link
                   to="/login"
                   className="text-primary mr-2 font-medium hover:underline"
