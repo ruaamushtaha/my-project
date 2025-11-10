@@ -12,8 +12,8 @@ import LoginHero from "../../assets/images/login-hero.svg";
 
 // Context for auth
 import { AuthContext } from "../../contexts/AuthContext";
-// Api Axios
-import { loginService } from "../../services/authService";
+// Api Service
+import { login } from "../../services/auth/authService";
 
 // Google Icon Component
 const GoogleIcon = () => (
@@ -47,8 +47,8 @@ export default function Login() {
           if (Object.keys(errors).length === 0) {
             try {
               // 🔹 استخدام الخدمة الجاهزة
-              const data = await loginService(values);
-        
+              const data = await login(values);
+
               // 🔹 حفظ التوكن والدور
               const token = data.token;
               const role = data.role;

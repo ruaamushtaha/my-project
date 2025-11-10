@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { useRatings } from "../index";
 import Infinity from "../../../../assets/icons/Infinity.svg";
 import SchoolCard from "./SchoolCard";
+import { useNavigate } from "react-router-dom";
 
 // Custom hook for fade-in animation on scroll
 const useFadeInAnimation = (threshold = 0.1) => {
@@ -38,7 +39,17 @@ export default function EvaluationCriteria({ data }) {
   const [titleRef, isTitleVisible] = useFadeInAnimation(0.2);
   const [filteredSchools, setFilteredSchools] = useState(data?.schools || []);
   const [showCriteriaDetails, setShowCriteriaDetails] = useState(false);
-
+ const [isButtonHovered, setIsButtonHovered] = useState(false);
+ const handleEvaluateClick = () => {
+   
+  // Navigate to ratings page or evaluation form
+    window.location.href = '/ratings';
+  };
+   const navigate = useNavigate();
+  
+    const goToEvaluateProfile = () => {
+      navigate("/evaluateSchool"); 
+    };
   // Update filtered schools when data changes
   useEffect(() => {
     setFilteredSchools(data?.schools || []);
@@ -88,12 +99,12 @@ export default function EvaluationCriteria({ data }) {
                 : 'opacity-0 translate-y-8'
             }`}
           >
-            <img 
+            {/* <img 
               src={Infinity} 
               alt="رمز لا نهائي يمثل الاستمرارية" 
               className="transition-transform duration-500 hover:scale-110"
-            />
-            <h2 className="absolute top-1/2 transform -translate-y-1/2 text-4xl font-bold text-primary z-10 mr-8">
+            /> */}
+            <h2 className="  mb-9 text-4xl font-bold text-secondary z-10 mr-8">
               {data.title || "معايير التقييم:"}
             </h2>
           </div>
@@ -125,6 +136,23 @@ export default function EvaluationCriteria({ data }) {
 
         </div>
       </section>
+      <div className="flex justify-center mt-8">
+  <button 
+    className={`bg-primary text-white px-20 py-4 rounded-lg text-lg font-medium transform transition-all duration-300 shadow-lg ${
+      isButtonHovered 
+        ? 'bg-primary-dark scale-105 shadow-xl' 
+        : 'hover:bg-primary-dark hover:scale-105 hover:shadow-xl'
+    }`}
+    onMouseEnter={() => setIsButtonHovered(true)}
+    onMouseLeave={() => setIsButtonHovered(false)}
+    // onClick={handleEvaluateClick}
+            onClick={goToEvaluateProfile} 
+
+  >
+    قيّم مدرستك الآن
+  </button>
+</div>
+
     </div>
   );
 }

@@ -65,7 +65,7 @@ export default function StatisticsSection({ data }) {
   const { loading } = useRatings();
   const [titleRef, isTitleVisible] = useFadeInAnimation(0.2);
   const [cardsRef, visibleCards] = useStaggeredAnimation(data?.stats || [], 300);
-
+ 
   // Loading state
   if (loading || !data) {
     return (
@@ -87,7 +87,7 @@ export default function StatisticsSection({ data }) {
   }
 
   return (
-    <div className="font-cairo bg-white text-black" dir="rtl">
+    <div className="font-cairo bg-white text-black mb-36" dir="rtl">
       <section className="bg-white py-16 px-4">
         {/* Animated Title */}
         <div 
@@ -98,11 +98,11 @@ export default function StatisticsSection({ data }) {
               : 'opacity-0 translate-y-8'
           }`}
         >
-          <img 
+          {/* <img 
             src={Infinity} 
             alt="رمز اللانهاية يدل على الاستمرارية" 
             className="transition-transform duration-500 hover:scale-110"
-          />
+          /> */}
           <h2 className="absolute top-1/2 transform -translate-y-1/2 text-4xl font-bold text-secondary z-10 mr-8">
             إحصائيات عامّة
           </h2>
@@ -110,36 +110,51 @@ export default function StatisticsSection({ data }) {
 
         {/* Statistics Cards */}
         <div className="max-w-6xl mx-auto" ref={cardsRef}>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
-            {data.stats.map((stat, index) => {
-              const isVisible = visibleCards.has(index);
-              
-              return (
-                <div
-                  key={stat.id}
-                  className={`transition-all duration-700 ${
-                    isVisible 
-                      ? 'opacity-100 translate-y-0 scale-100' 
-                      : 'opacity-0 translate-y-12 scale-95'
-                  }`}
-                  style={{ transitionDelay: `${index * 100}ms` }}
-                >
-                  <StatCard
-                    icon={iconMap[stat.icon]}
-                    value={stat.value}
-                    valueType={stat.valueType}
-                    description={stat.description}
-                    animationConfig={stat.animationConfig}
-                    isVisible={isVisible}
-                    index={index}
-                  />
-                </div>
-              );
-            })}
-          </div>
+         <div className="relative max-w-6xl mx-auto h-[300px]">
+  {data.stats.map((stat, index) => {
+    const isVisible = visibleCards.has(index);
+    const highlight = index === 1; 
+
+    let customStyle = {};
+    if(index === 0) {
+      customStyle = { right: 0, top: '50px', position: 'absolute' }; 
+    }
+    if(index === 1) {
+      customStyle = { right: '420px', top: '200px', position: 'absolute', zIndex: 20 }; 
+    }
+    if(index === 2) {
+      customStyle = { right: '800px', top: '0px', position: 'absolute' }; 
+    }
+
+    return (
+      <div
+        key={stat.id}
+        className={`transition-all duration-700 ${
+          isVisible 
+            ? 'opacity-100 scale-100' 
+            : 'opacity-0 scale-95'
+        }`}
+        style={{ transitionDelay: `${index * 100}ms`, ...customStyle }}
+      >
+        <StatCard
+          icon={iconMap[stat.icon]}
+          value={stat.value}
+          valueType={stat.valueType}
+          title={stat.title}
+          description={stat.description}
+          animationConfig={stat.animationConfig}
+          isVisible={isVisible}
+          index={index}
+          highlight={highlight}
+        />
+      </div>
+    );
+  })}
+</div>
+
         </div>
 
-     
+   
 
     
       </section>

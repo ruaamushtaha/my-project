@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { SchoolsContext } from "../context/SchoolsContext";
+import { useNavigate } from "react-router-dom";
 
 import alfajr from "../../../../assets/images/alfajr.png";
 import alqema from "../../../../assets/images/alqema.png";
@@ -113,7 +114,11 @@ const AddedSchoolCard = ({ school, index, isVisible, onViewDetails, onQuickActio
   const [isHovered, setIsHovered] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
+const navigate = useNavigate();
 
+  const goToSchoolProfile = () => {
+    navigate("/schoolProfile"); 
+  };
   return (
     <div
       className={`bg-white rounded-lg shadow-md overflow-hidden p-4 transform transition-all duration-700 ${
@@ -222,8 +227,10 @@ const AddedSchoolCard = ({ school, index, isVisible, onViewDetails, onQuickActio
                 ? 'bg-primary text-secondary border-primary shadow-md transform scale-105' 
                 : 'hover:bg-primary/5'
             }`}
-            onClick={() => onViewDetails && onViewDetails(school.id)}
-            aria-label={`عرض تفاصيل ${school.name}`}
+                                    onClick={goToSchoolProfile} 
+
+            // onClick={() => onViewDetails && onViewDetails(school.id)}
+            // aria-label={`عرض تفاصيل ${school.name}`}
           >
             عرض التفاصيل
           </button>
@@ -374,7 +381,7 @@ export default function AddedSchools() {
             </h2>
            
           </div>
-          <button 
+          {/* <button 
             className="bg-primary text-white px-6 py-3 rounded-lg hover:bg-primary-dark transition-all duration-300 transform hover:scale-105 hover:shadow-lg font-medium"
             onClick={handleViewAll}
             aria-label="عرض جميع المدارس المضافة حديثاً"
@@ -385,7 +392,7 @@ export default function AddedSchools() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
             </span>
-          </button>
+          </button> */}
         </div>
 
         {/* البطاقات */}

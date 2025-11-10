@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import Infinity from "../../../../assets/icons/Infinity.svg";
+// import Infinity from "../../../../assets/icons/Infinity.svg";
 
 // Custom hook for animated counter with enhanced features
 const useAnimatedCounter = (targetValue, duration = 2000, delay = 0, startAnimation = false) => {
@@ -173,7 +173,7 @@ export default function StatisticsSection({ data }) {
           }`}
         >
 <div className="relative w-full pr-8">
-  <img src={Infinity} alt="Infinity" />
+  {/* <img src={Infinity} alt="Infinity" /> */}
   <h2 className="absolute top-1/2 transform -translate-y-1/2 text-4xl font-bold text-secondary z-10 mr-11">
     الإحصائيات
   </h2>

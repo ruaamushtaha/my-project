@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiMapPin, FiNavigation, FiMaximize, FiExternalLink, FiRefreshCw, FiSearch, FiX, FiStar, FiUsers, FiBook, FiGlobe } from 'react-icons/fi';
+import { useNavigate } from "react-router-dom";
 
 // Comprehensive Palestinian Schools Data - All Educational Areas with Directorates
 const palestinianSchools = [
@@ -642,7 +643,11 @@ const MapSection = ({ data }) => {
   const [selectedSchool, setSelectedSchool] = useState(null);
   const [showSchoolDetails, setShowSchoolDetails] = useState(false);
   const [activeFilter, setActiveFilter] = useState('all');
-
+ const navigate = useNavigate();
+  
+        const goToSchoolProfile = () => {
+          navigate("/SchoolProfile"); 
+        };
   // Default map data centered on Palestine (West Bank and Gaza)
   const defaultMapData = {
     coordinates: {
@@ -1263,7 +1268,9 @@ const MapSection = ({ data }) => {
                 
                 <div className="flex gap-3">
                   <motion.button
-                    onClick={() => navigateToSchoolPage(school)}
+                                                  onClick={goToSchoolProfile} 
+
+                    // onClick={() => navigateToSchoolPage(school)}
                     className="flex-1 bg-gradient-to-r from-primary to-blue-600 text-white py-3 px-4 rounded-2xl text-sm font-bold hover:from-blue-600 hover:to-indigo-700 transition-all duration-300 shadow-lg hover:shadow-xl"
                     whileHover={{ scale: 1.02, y: -1 }}
                     whileTap={{ scale: 0.98 }}

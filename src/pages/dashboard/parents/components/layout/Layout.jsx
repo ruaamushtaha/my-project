@@ -1,6 +1,3 @@
-
-
-
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -9,6 +6,7 @@ import ParentsHeader from './Header';
 import Footer from './Footer';
 import { ParentProfileProvider, useParentProfileContext } from '../../contexts/ParentProfileContext';
 import { useUISettings, useNotifications } from '../../hooks/useData';
+import usePageTitle from '../../hooks/usePageTitle';
 
 /**
  * مكون التخطيط الرئيسي مع إدارة الحالات والتبديل
@@ -19,6 +17,9 @@ const Layout = ({ children, title, subtitle, breadcrumbs = [] }) => {
   const { settings, toggleTheme } = useUISettings();
   const { profile, loading: profileLoading } = useParentProfileContext();
   const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
+  
+  // Use the page title hook
+  usePageTitle();
   
   const [sidebarOpen, setSidebarOpen] = useState(!settings.sidebarCollapsed);
   // Update sidebar state when settings change

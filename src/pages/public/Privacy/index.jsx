@@ -3,8 +3,8 @@ import { motion } from 'framer-motion';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import headerimg from '../../../assets/images/headerimg1.png';
-import focus1 from '../../../assets/images/focus1.jpeg';
-import focus2 from '../../../assets/images/focus2.jpeg';
+import focus1 from '../../../assets/images/focus1.png';
+import focus2 from '../../../assets/images/focus2.png';
 
 const containerVariants = {
   hidden: { opacity: 0 },

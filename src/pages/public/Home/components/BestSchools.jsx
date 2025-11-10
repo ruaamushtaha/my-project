@@ -1,9 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import School1 from '../../../../assets/images/School 4.jpeg';
+import School1 from '../../../../assets/images/School 4.png';
 import { FaStar, FaUsers, FaGraduationCap, FaIdCard } from 'react-icons/fa';
 import { motion } from 'framer-motion';
+import { useNavigate } from "react-router-dom";
 
 const BestSchools = () => {
+   const navigate = useNavigate();
+  
+    const goToSchoolProfile = () => {
+      navigate("/schoolProfile"); 
+    };
+     const goTocontactPage = () => {
+      navigate("/Contact"); 
+    };
+
   const [imageError, setImageError] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -111,6 +121,9 @@ const BestSchools = () => {
             {/* الأزرار */}
             <div className="flex gap-4 mt-6">
               <motion.button
+                                    onClick={goTocontactPage} 
+
+              
                 className="bg-primary text-white px-20 py-2 rounded-lg hover:bg-primary/80 transition"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -118,6 +131,8 @@ const BestSchools = () => {
                 تواصل معنا
               </motion.button>
               <motion.button
+                      onClick={goToSchoolProfile} 
+
                 className="border border-primary text-primary px-20 py-2 rounded-lg hover:bg-primary hover:text-white transition"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}

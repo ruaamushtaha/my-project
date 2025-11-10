@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 
-import logo from "../../../../assets/icons/LOGO.svg";
+import logo from "../../../../assets/icons/whiteLogo.svg";
 import females from "../../../../assets/images/females.png";
 
 // Custom hook for fade-in animation
@@ -111,12 +111,12 @@ export default function GoalVisionSection({ data }) {
               alt="صورة لطالبات فلسطينيات"
               className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 hover:scale-110"
             />
-            <div className="absolute inset-0 bg-blue-950/60 z-0 transition-opacity duration-500"></div>
+            <div className="absolute inset-0 bg-gray-950/50 z-0 transition-opacity duration-500"></div>
             <div className="absolute inset-0 flex items-center justify-center z-10">
               <img
                 src={logo}
                 alt="شعار منصة رؤى"
-                className="w-20 md:w-24 lg:w-32 h-auto transition-transform duration-700 hover:scale-110"
+                className="w-20 md:w-24 lg:w-80 h-auto transition-transform duration-700 hover:scale-110"
               />
             </div>
           </div>

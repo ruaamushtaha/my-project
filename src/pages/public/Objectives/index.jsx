@@ -47,45 +47,56 @@ const objectivesApiService = {
         image: "greenschool"
       },
       secondaryGoals: {
-        title: "الأهداف الفرعيّة",
-        goals: [
-          {
-            id: 1,
-            icon: "fileSchool",
-            text: "تطوير بيئة تعليميّة عادلة وشفّافة\nعبر مقاييس موحّدة وموثوقة",
-            category: "quality"
-          },
-          {
-            id: 2,
-            icon: "monitor2",
-            text: "تجميع البيانات: نظام موحّد لجمع\nوتنظيم تقييمات المدارس",
-            category: "data"
-          },
-          {
-            id: 3,
-            icon: "folders",
-            text: "معايير مُوحَّدة: جودة أكاديميّة، بيئة\nتعليميّة، مرافق..",
-            category: "standards"
-          },
-          {
-            id: 4,
-            icon: "connection",
-            text: "التفاعل: تعزيز قنوات التواصل بين\nالأهالي والمشرفين والمدارس",
-            category: "communication"
-          },
-          {
-            id: 5,
-            icon: "www",
-            text: "التقارير: تقارير دورية دائمة للمتابعة.",
-            category: "reporting"
-          },
-          {
-            id: 6,
-            icon: "ok",
-            text: "الموثوقية والشفافية: آليّات تحقّق\nومراجعة دقيقة.",
-            category: "reliability"
-          }
-        ]
+       title: "الأهداف الفرعيَّة لإطلاق منصّة رؤى التعليم المستقبليّة",
+    goals: [
+      {
+        id: 1,
+        icon: "fileSchool",
+        title:"تطوير البيئة التعليميَّة",
+        text: "تطوير بيئة تعليميّة عادلة وشفّافة\nعبر مقاييس موحّدة وموثوقة",
+        category: "quality"
+      },
+      {
+        id: 2,
+        icon: "www",
+                title:"تجميع البيانات",
+
+        text: " نظام موحّد لجمع وتنظيم تقييمات المدارس",
+        category: "data"
+      },
+      {
+        id: 3,
+        icon: "folders",
+                title:"معايير موحَّدة",
+
+        text: "جودة التعليم، البيئة التعليميَّة، الإدارة \n والانضباط المدرسي، المرافق والخدمات..",
+        category: "standards"
+      },
+      {
+        id: 4,
+        icon: "connection",
+                title:"التفاعل",
+
+        text: "تعزيز التواصل بين أولياء الأمور والمعلمين \n المشرفين والمدارس " ,
+        category: "communication"
+      },
+      {
+        id: 5,
+        icon: "monitor2",
+                title:"التقارير",
+
+        text: "تقارير دوريَّة دائمة للمتابعة..",
+        category: "reporting"
+      },
+      {
+        id: 6,
+        icon: "ok",
+                title:"الموثوقيَّة والشفافيَّة",
+
+        text: "آليَّات تحقّق ومراجعة دقيقة..",
+        category: "reliability"
+      }
+    ]
       },
       impactSections: {
         educational: {
@@ -142,31 +153,31 @@ const objectivesApiService = {
         }
       },
       futureVision: {
-        title: "الرؤية المستقبلية",
+        title: "الرؤية المُستقبليَّة",
         visionItems: [
           {
             id: 1,
-            text: "توسيع نطاق التقييم ليشمل المعلمين والطلاب..",
+            text: " إطلاق المنصَّة النسخة الأولى.",
             priority: "high",
-            timeline: "2024-2025"
+            timeline: "نوفمبر 2025."
           },
           {
             id: 2,
-            text: "إدخال أدوات ذكاء اصطناعي للتوصية بالمدارس بناءً على تفضيلات الأسرة.",
+            text: "  توسيع نطاق التقييم ليشمل المعلمين والطلاب.",
             priority: "medium",
-            timeline: "2025-2026"
+            timeline: "يناير 2026."
           },
           {
             id: 3,
-            text: "تطوير تطبيق محمول لسهولة الوصول للتقييمات والبيانات.",
+            text: " إدخال أدوات ذكاء اصطناعي للتوصية بالمدارس بناءً على تفضيلات الأسرة ",
             priority: "high",
-            timeline: "2024"
+            timeline: "مارس 2026."
           },
           {
             id: 4,
-            text: "ربط النظام بمنصات تعليمية أخرى على المستوى الوطني.",
+            text: "تطوير تطبيق محمول لسهولة الوصول للتقييمات والبيانات.",
             priority: "medium",
-            timeline: "2025"
+            timeline: "يونيو 2026."
           }
         ]
       }

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Formik, Form } from "formik";
-import { useParams, Link, useNavigate } from "react-router-dom"; // <--- أضف useNavigate
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { resetPasswordSchema } from "../../utils/validationForms";
 
 import AuthLayout from "../../layouts/AuthLayout";
@@ -9,8 +9,8 @@ import { getButtonState } from "../../utils/buttonState";
 import { showAlert } from "../../utils/SweetAlert";
 
 import ResetHero from "../../assets/images/Reset password.svg";
-// Api Axios
-import { resetPasswordService } from "../../services/authService";
+// Api Service
+import { resetPassword } from "../../services/auth/authService";
 
 export default function ResetPassword() {
   const { token } = useParams();
@@ -33,8 +33,8 @@ export default function ResetPassword() {
           if (Object.keys(errors).length === 0) {
             try {
               //  استخدام خدمة resetPasswordService
-              await resetPasswordService(token, values);
-        
+              await resetPassword(token, values);
+
               showAlert("success", "تم تغيير كلمة المرور بنجاح!");
               navigate("/reset-success");
             } catch (error) {
@@ -44,7 +44,6 @@ export default function ResetPassword() {
           }
           setSubmitting(false);
         }}
-        
       >
         {({ values, handleChange, handleBlur, errors, touched, isSubmitting }) => {
           const btnState = getButtonState(

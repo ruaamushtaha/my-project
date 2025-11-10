@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useRatings } from "../index";
 import person from "../../../../assets/images/person.png";
+import { useNavigate } from "react-router-dom";
 
 // Custom hook for fade-in animation on scroll
 const useFadeInAnimation = (threshold = 0.1) => {
@@ -234,7 +235,11 @@ const RatingForm = ({ onSubmit, isSubmitting }) => {
     schoolName: ''
   });
   const [isFormVisible, setIsFormVisible] = useState(false);
+const navigate = useNavigate();
 
+  const goToEvaluateProfile = () => {
+    navigate("/evaluateSchool"); 
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (formData.rating === 0 || !formData.comment.trim()) return;
@@ -247,7 +252,9 @@ const RatingForm = ({ onSubmit, isSubmitting }) => {
   return (
     <div className="mt-8">
       <button
-        onClick={() => setIsFormVisible(!isFormVisible)}
+        onClick={goToEvaluateProfile} 
+
+        // onClick={() => setIsFormVisible(!isFormVisible)}
         className={`
           bg-primary w-[320px] font-medium text-white px-6 py-3 rounded-md 
           transition-all duration-300 transform

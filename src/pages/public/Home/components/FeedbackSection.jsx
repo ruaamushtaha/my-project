@@ -63,7 +63,7 @@ const FeedbackSection = () => {
 
   return (
     <div className="min-h-screen bg-background font-cairo" dir="rtl">
-      <div className="bg-primary py-16 px-8">
+      <div className="bg-[#AEC8DE] py-16 px-8">
         <div className="max-w-2xl mx-auto text-center">
           <motion.h2 
             className="text-3xl font-bold text-white mb-4"
@@ -75,7 +75,7 @@ const FeedbackSection = () => {
           </motion.h2>
           
           <motion.p 
-            className="text-blue-100 mb-8"
+            className="text-white mb-8"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
@@ -98,7 +98,7 @@ const FeedbackSection = () => {
             ) : (
               <>
                 <motion.h3 
-                  className="text-gray-800 font-semibold text-lg mb-6 text-right"
+                  className="text-gray-800 font-semibold text-lg mb-6 text-center"
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.5, delay: 0.3 }}
@@ -189,7 +189,7 @@ const FeedbackSection = () => {
                 <motion.button
                   onClick={handleSubmitFeedback}
                   disabled={isSubmitting}
-                  className={`w-full bg-primary hover:bg-cyan-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center gap-2 ${
+                  className={`w-full bg-secondary hover:bg-cyan-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center gap-2 ${
                     isSubmitting ? "opacity-70 cursor-not-allowed" : ""
                   }`}
                   whileHover={{ scale: isSubmitting ? 1 : 1.02 }}

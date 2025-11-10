@@ -2,12 +2,20 @@ import { motion } from 'framer-motion';
 import instagram from "../../../assets/icons/instagram.svg";
 import facebook from "../../../assets/icons/facebook.svg";
 import twitter from "../../../assets/icons/twitter.svg";
+import logo from "../../../assets/icons/whiteLogo.svg";
 
 
 export default function Footer() {
   return (
-    <footer className="bg-babyBlue text-black py-12 mt-16 font-cairo" dir="rtl">
-      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 px-6">
+    <footer className="bg-secondary text-white py-12 mt-16 font-cairo" dir="rtl">
+      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 px-6">
+      <div className="border-l border-gray-300 pl-4">
+<img
+                src={logo}
+                alt="شعار منصة رؤى"
+                className="w-20 md:w-24 lg:w-80 h-auto transition-transform duration-700 hover:scale-110"
+              />
+      </div>
         {/* Platform Sections */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -37,7 +45,7 @@ export default function Footer() {
               </a>
             </li>
             <li>
-              <a href="/evaluate" className="hover:text-blue-600 transition-colors flex items-center gap-2 group">
+              <a href="/ratings" className="hover:text-blue-600 transition-colors flex items-center gap-2 group">
                 <span className="w-1.5 h-1.5 bg-blue-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>
                 التقييمات
               </a>
@@ -62,13 +70,13 @@ export default function Footer() {
           <h3 className="text-lg font-semibold pb-2 mr-7">روابط سريعة</h3>
           <ul className="space-y-3">
             <li>
-              <a href="/" className="hover:text-blue-600 transition-colors flex items-center gap-2 group">
+              <a href="/Privacy" className="hover:text-blue-600 transition-colors flex items-center gap-2 group">
                 <span className="w-1.5 h-1.5 bg-blue-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>
                 سياسة الخصوصيّة
               </a>
             </li>
             <li>
-              <a href="/" className="hover:text-blue-600 transition-colors flex items-center gap-2 group">
+              <a href="/#faq" className="hover:text-blue-600 transition-colors flex items-center gap-2 group">
                 <span className="w-1.5 h-1.5 bg-blue-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>
                 الأسئلة الشائعة
               </a>
@@ -87,23 +95,23 @@ export default function Footer() {
           <h3 className="text-lg font-semibold pb-2 mr-7">تواصل معنا</h3>
           <ul className="space-y-3 ">
             <li>
-              <a href="/" className="hover:text-blue-600 transition-colors flex items-center gap-2 group">
+              <a href="mailto:futurevisions.o.e@gmail.com" className="hover:text-blue-600 transition-colors flex items-center gap-2 group">
                 <span className="w-1.5 h-1.5 bg-blue-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>
                 البريد الإلكتروني
               </a>
             </li>
             <li>
-              <a href="/" className="hover:text-blue-600 transition-colors flex items-center gap-2 group">
+              <a href="/contact" className="hover:text-blue-600 transition-colors flex items-center gap-2 group">
                 <span className="w-1.5 h-1.5 bg-blue-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>
                 اتصل بنا
               </a>
             </li>
-            <li>
+            {/* <li>
               <a href="/" className="hover:text-blue-600 transition-colors flex items-center gap-2 group">
                 <span className="w-1.5 h-1.5 bg-blue-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>
                 الشكاوي
               </a>
-            </li>
+            </li> */}
           </ul>
         </motion.div>
 
@@ -113,7 +121,7 @@ export default function Footer() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.3 }}
-  className="space-y-6 border-l border-gray-300 pl-4 mr-8"
+  className="space-y-6  pl-4 mr-8"
         >
           <h3 className="text-lg font-semibold pb-2 ">تابعنا</h3>
           <div className="grid gap-2 mt-4">
@@ -145,7 +153,7 @@ export default function Footer() {
         className="max-w-6xl mx-auto px-6 mt-12 pt-6 border-t border-gray-300"
       >
         <div
-          className="text-center text-sm text-gray-600"
+          className="text-left text-sm text-white"
           style={{ direction: "ltr", unicodeBidi: "plaintext" }}
         >
           © {new Date().getFullYear()} Ru'a Platform, All Rights Reserved.

@@ -99,12 +99,12 @@ export default function StatisticsSection({ data }) {
               : 'opacity-0 translate-y-8'
           }`}
         >
-          <img 
+          {/* <img 
             src={Infinity} 
             alt="رمز اللانهاية يدل على الاستمرارية" 
             className="transition-transform duration-500 hover:scale-110"
             loading="lazy" 
-          />
+          /> */}
           <h2 className="absolute top-1/2 transform -translate-y-1/2 text-4xl font-bold text-secondary z-10 mr-8">
             {data.title || "إحصائيات عامّة"}
           </h2>

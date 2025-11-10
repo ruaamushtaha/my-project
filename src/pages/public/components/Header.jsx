@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import Logo from "../../../assets/icons/LOGO.svg";
 import { motion, AnimatePresence } from "framer-motion";
@@ -20,13 +20,22 @@ export default function Header({
     { to: "/Ratings", label: "التقييمات" },
     { to: "/Contact", label: "تواصل معنا" }
   ];
+useEffect(() => {
+  if (title) {
+    document.title = `الشعار   | ${title}`;
+  } else {
+    document.title = "رؤى التعليم المستقبلية"; 
+  }
+}, [title]);
+
 
   return (
+    
     <header
       className={`relative text-white font-cairo font-arabic ${
         variant === 'transparent' 
           ? 'absolute w-full top-0 z-50 bg-transparent' 
-          : 'h-[210px] bg-gradient-to-b from-blue-950/90 to-blue-950/50'
+          : 'h-[210px] bg-gradient-to-b from-gray-950/50 to-gray-950/50'
       }`}
       dir="rtl"
     >
@@ -48,12 +57,12 @@ export default function Header({
                   to={to}
                   className={({ isActive }) =>
                     isActive
-                      ? "block py-2 px-1 md:px-2 text-yellow-300 font-bold"
-                      : "block py-2 px-1 md:px-2 text-white hover:text-yellow-300 transition duration-300"
+                      ? "block py-2 px-1 md:px-2 text-[#64C8CC] font-bold"
+                      : "block py-2 px-1 md:px-2 text-white hover:text-[#64C8CC] transition duration-300"
                   }
                 >
                   {label}
-                  <span className="absolute bottom-0 right-0 w-0 h-0.5 bg-yellow-300 transition-all duration-300 group-hover:w-full"></span>
+                  <span className="absolute bottom-0 right-0 w-0 h-0.5 bg-[#64C8CC] transition-all duration-300 group-hover:w-full"></span>
                 </NavLink>
               </motion.li>
             ))}
@@ -110,7 +119,7 @@ export default function Header({
                       onClick={toggleMenu}
                       className={({ isActive }) =>
                         isActive
-                          ? "block py-3 px-4 text-yellow-300 font-bold rounded-lg"
+                          ? "block py-3 px-4 text-[#64C8CC] font-bold rounded-lg"
                           : "block py-3 px-4 text-white hover:bg-white/10 rounded-lg transition-colors duration-200 text-right"
                       }
                     >

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { FiUser, FiMail, FiMapPin, FiMessageSquare, FiSend, FiCheck, FiAlertCircle } from 'react-icons/fi';
+import { FiUser, FiMail, FiMapPin, FiMessageSquare, FiSend, FiCheck, FiAlertCircle,FiPhone } from 'react-icons/fi';
 import { useContactData } from '../index';
 
 // Enhanced FormInput Component with Modern Styling
@@ -329,7 +329,7 @@ const ContactForm = ({ data }) => {
 
         {/* Contact Form */}
         <motion.div 
-          className="bg-[#CADBEA] backdrop-blur-sm rounded-3xl shadow-2xl p-10 border border-gray-100"
+          className="bg-white backdrop-blur-sm rounded-3xl shadow-2xl p-10 border border-gray-100"
           initial={{ opacity: 0, scale: 0.95, y: 30 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
@@ -375,45 +375,65 @@ const ContactForm = ({ data }) => {
             {({ isValid, dirty }) => (
               <Form className="space-y-6 flex flex-col items-start" noValidate>
                   <motion.p 
-            className="text-4xl text-primary font-bold mb-4 max-w-2xl mx-auto leading-relaxed"
+            className="text-4xl text-slate-700 font-normal mb-4 max-w-2xl mx-auto leading-relaxed"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.3 }}
           >
             {data?.subtitle || 'شاركنا ما تودّ إخبارنا به!'}
           </motion.p>
-                {/* Name Field */}
-                <ContactFormInput
-                  label="الاسم الكامل"
-                  name="name"
-                  type="text"
-                  placeholder="اسم المستخدم"
-                  icon={FiUser}
-                  required
-                  autoComplete="name"
-                />
+               
+  {/* صف الاسم + البريد */}
+  <div className="flex gap-6 w-full">
+    <div className="flex-1">
+      <ContactFormInput
+        label="الاسم الكامل"
+        name="name"
+        type="text"
+        placeholder="اسم المستخدم"
+        icon={FiUser}
+        required
+        autoComplete="name"
+      />
+    </div>
+    <div className="flex-1">
+      <ContactFormInput
+        label="البريد الإلكتروني"
+        name="email"
+        type="email"
+        placeholder="البريد الإلكتروني"
+        icon={FiMail}
+        required
+        autoComplete="email"
+      />
+    </div>
+  </div>
 
-                {/* Email Field */}
-                <ContactFormInput
-                  label="البريد الإلكتروني"
-                  name="email"
-                  type="email"
-                  placeholder="البريد الإلكتروني"
-                  icon={FiMail}
-                  required
-                  autoComplete="email"
-                />
-
-                {/* Address Field */}
-                <ContactFormInput
-                  label="العنوان"
-                  name="address"
-                  type="text"
-                  placeholder="العنوان"
-                  icon={FiMapPin}
-                  required
-                  autoComplete="address"
-                />
+  {/* صف العنوان + الهاتف */}
+  <div className="flex gap-6 w-full">
+    <div className="flex-1">
+      <ContactFormInput
+        label="العنوان"
+        name="address"
+        type="text"
+        placeholder="العنوان"
+        icon={FiMapPin}
+        required
+        autoComplete="address"
+      />
+    </div>
+    <div className="flex-1">
+      <ContactFormInput
+        label="الهاتف"
+        name="phone"
+        type="text"
+        placeholder=" الهاتف"
+        icon={FiPhone}
+        required
+        autoComplete="tel"
+      />
+    </div>
+  </div>
 
                 {/* Message Field */}
                 <ContactTextArea
@@ -424,13 +444,14 @@ const ContactForm = ({ data }) => {
                 />
 
                 {/* Submit Button */}
-                <div className="w-full flex justify-center mt-10">
-                  <motion.button
+<div className="w-full mt-10">
+                    <motion.button
                     type="submit"
                     disabled={isSubmitting || !isValid || !dirty}
                     className={`
-                      relative overflow-hidden group flex items-center gap-3 px-8 py-4 rounded-2xl text-base font-semibold 
-                      transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-offset-2 min-w-[180px]
+                      
+                      w-full relative overflow-hidden group flex items-center justify-center gap-3 px-8 py-4 rounded-2xl text-base font-semibold transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-offset-2
+      bg-primary text-white hover:from-blue-600 hover:to-primary focus:ring-primary/30 shadow-lg hover:shadow-xl
                       ${
                         isSubmitting || !isValid || !dirty
                           ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
@@ -491,7 +512,7 @@ const ContactForm = ({ data }) => {
                             whileHover={{ x: 5 }}
                             transition={{ duration: 0.2 }}
                           >
-                            <FiSend className="w-5 h-5" />
+                            {/* <FiSend className="w-5 h-5" /> */}
                           </motion.div>
                           <span>تواصل معنا</span>
                         </motion.div>

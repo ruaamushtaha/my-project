@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 
 import storyImage from "../../../../assets/images/girl.png";
-import Infinity from "../../../../assets/icons/Infinity.svg";
+// import Infinity from "../../../../assets/icons/Infinity.svg";
 import twoTrue from "../../../../assets/icons/twoTrue.svg";
 
 // Custom hook for fade-in animation
@@ -110,8 +110,8 @@ export default function StorySection({ data }) {
 
 
 <div className="relative w-full pl-10">
-              <img src={Infinity} alt="Infinity" />
-              <h2 className="absolute top-1/2 transform -translate-y-1/2 text-4xl font-bold text-secondary z-10 mr-8">
+              {/* <img src={Infinity} alt="Infinity" /> */}
+              <h2 className=" top-1/2  text-4xl font-bold text-secondary z-10 mr-8">
               {storyData.title}
               </h2>
             </div>

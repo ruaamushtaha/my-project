@@ -113,50 +113,33 @@ const UpdateSection = () => {
             {currentNewsItems.map((news, index) => (
               <motion.div
                 key={news.id || currentSlide * 2 + index}
-                className="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 group"
-                initial={{ opacity: 0, y: 50, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{ 
-                  duration: 0.6, 
-                  delay: index * 0.15,
-                  ease: [0.16, 1, 0.3, 1],
-                }}
-                whileHover={{ 
-                  y: -12, 
-                  scale: 1.02,
-                  boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
-                  transition: { duration: 0.3, ease: [0.16, 1, 0.3, 1] }
-                }}
+                className="bg-white rounded-lg overflow-hidden shadow-md border border-gray-200"
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                whileHover={{ y: -10 }}
               >
-                <div className="aspect-video bg-gradient-to-br from-blue-50 to-indigo-100 overflow-hidden relative">
-                  <motion.img
+                <div className="aspect-video bg-gray-100">
+                  <img
                     src={news.image || "/placeholder.svg"}
                     alt={news.title}
                     className="w-full h-full object-cover"
-                    whileHover={{ scale: 1.1 }}
-                    transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
                     onError={(e) => {
                       e.target.src = "/placeholder.svg";
                     }}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 </div>
                 <div className="p-6">
-                  <motion.h3 
-                    className="text-gray-800 font-semibold text-lg mb-4 leading-relaxed text-right"
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.15 + 0.3 }}
-                  >
+                  <h3 className="text-gray-800 font-semibold text-lg mb-4 leading-relaxed text-right">
                     {news.title}
-                  </motion.h3>
+                  </h3>
                   <div className="flex justify-between items-center flex-row-reverse">
                     <div className="flex gap-2">
                       <motion.button
                         onClick={nextSlide}
-                        className="p-2 rounded-full bg-blue-50 hover:bg-blue-100 transition-colors"
+                        className="p-1 rounded-full hover:bg-blue-200 transition-colors"
                         aria-label="Next news"
-                        whileHover={{ scale: 1.15, rotate: 5 }}
+                        whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
                       >
                         <ChevronRight className="w-4 h-4 text-blue-600" />
@@ -164,11 +147,10 @@ const UpdateSection = () => {
                     </div>
                     <motion.a 
                       href="#" 
-                      className="text-[#7F7F7F] hover:text-primary text-sm font-medium relative group"
+                      className="text-[#7F7F7F] hover:text-gray-500 text-sm"
                       whileHover={{ x: -5 }}
                     >
                       {news.description}
-                      <span className="absolute bottom-0 right-0 w-0 h-0.5 bg-primary group-hover:w-full transition-all duration-300" />
                     </motion.a>
                   </div>
                 </div>

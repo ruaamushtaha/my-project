@@ -20,12 +20,12 @@ import Contact from '../pages/public/Contact/index';
 import Privacy from '../pages/public/Privacy/index';
 import Terms from '../pages/public/Terms/index';
 import EvaluateSchool from '../pages/public/EvaluateSchool/index';
+import SchoolProfile from '../pages/public/SchoolProfile/index';
 
 // Dashboard Components - New System
 import ParentsDashboardLayout from '../pages/dashboard/parents/ParentsDashboardLayout';
-import SupervisorDashboard from '../pages/dashboard/supervisor/SupervisorDashboard';
-import SchoolManagerDashboard from '../pages/dashboard/school-manager/SchoolManagerDashboard';
-
+import SupervisorDashboard from '../pages/dashboard/Supervisors/SupervisorsDashboardLayout';
+import SchoolManagerDashboard from '../pages/dashboard/Schools/SchoolsDashboardLayout';
 // Error Page
 import NotFound from '../pages/error/NotFound404';
 
@@ -55,9 +55,13 @@ export default function AppRoutes() {
       <Route path="/Terms" element={<Terms />} />
       <Route path="/evaluate-school" element={<EvaluateSchool />} />
       <Route path="/EvaluateSchool" element={<EvaluateSchool />} />
+      <Route path="/school-profile" element={<SchoolProfile />} />
+      <Route path="/SchoolProfile" element={<SchoolProfile />} />
       <Route path="/dashboard/parents/*" element={<ParentsDashboardLayout />} />
+      <Route path="/dashboard/Supervisors/*" element={<SupervisorDashboard />} />
+      <Route path="/dashboard/Schools/*" element={<SchoolManagerDashboard />} />
 
-      {/* Auth routes (without layout) */}
+      {/* Auth routes  */}
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />

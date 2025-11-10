@@ -3,9 +3,10 @@ import { motion } from 'framer-motion';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
   FaHome, FaSchool, FaComments, FaBell, FaUser, FaCog,
-  FaChevronLeft, FaChevronRight, FaGraduationCap, FaBars,
+  FaChevronLeft, FaChevronRight, FaBars,
   FaExclamationTriangle, FaFileAlt, FaCalendarAlt
 } from 'react-icons/fa';
+import Logo from '../../../../../assets/icons/LOGO.svg';
 
 const navigationItems = [
   { id: 'dashboard', label: 'لوحة التحكم', icon: FaHome, path: '/dashboard/parents/dashboard' },
@@ -29,7 +30,7 @@ const NavItem = ({ item, isActive, isCollapsed, onItemClick, index }) => {
     <motion.button
       onClick={() => onItemClick(item)}
       className={`
-        w-full flex flex-row-reverse items-center gap-2 px-3 py-2 rounded-lg transition-all duration-200
+        w-full flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-200
         ${isActive
           ? 'bg-[#E0F4F5] text-[#30A1DB] shadow'
           : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white'
@@ -138,26 +139,24 @@ useEffect(() => {
         transition={{ type: "tween", duration: 0.3 }}
       >
         <div className={`p-4 border-b border-gray-200 dark:border-gray-700 ${isCollapsed ? 'px-3' : ''}`}>
-          <div className="flex items-center justify-between">
-            <div className={`flex items-center gap-3 ${isCollapsed ? 'justify-center' : ''}`}>
-              <motion.div
-                className="w-8 h-8 bg-primary-500 rounded-lg flex items-center justify-center text-white font-bold"
-                whileHover={{ rotate: 5 }}
-              >
-<FaGraduationCap className="text-black w-5 h-5 dark:text-white " />              </motion.div>
-              {!isCollapsed && (
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
-                  <h1 className="font-bold text-gray-900 dark:text-white">تقييم المدارس</h1>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">لوحة أولياء الأمور</p>
-                </motion.div>
-              )}
-            </div>
+          <div className={`flex items-center gap-3 ${isCollapsed ? 'justify-center' : ''}`}>
+            <motion.div
+              className="w-8 h-8 bg-primary-500 rounded-lg flex items-center justify-center text-white font-bold"
+              whileHover={{ rotate: 5 }}
+            >
+<img src={Logo} alt="Logo" className="w-8 h-8" />            </motion.div>
             {!isCollapsed && (
-              <Button variant="ghost" size="sm" onClick={handleCollapseToggle} className="hidden lg:flex">
-                <FaChevronRight />
-              </Button>
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
+                <h1 className="font-bold text-gray-900 dark:text-white">تقييم المدارس</h1>
+                <p className="text-xs text-gray-500 dark:text-gray-400">لوحة أولياء الأمور</p>
+              </motion.div>
             )}
           </div>
+          {!isCollapsed && (
+            <Button variant="ghost" size="sm" onClick={handleCollapseToggle} className="hidden lg:flex">
+              <FaChevronRight />
+            </Button>
+          )}
         </div>
 
         {isCollapsed && (

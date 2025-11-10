@@ -9,8 +9,8 @@ import { getButtonState } from "../../utils/buttonState";
 import { showAlert } from "../../utils/SweetAlert";
 
 import ForgotHero from "../../assets/images/Forgot password.svg";
-// Api Axios
-import { forgotPasswordService } from "../../services/authService";
+// Api Service
+import { forgotPassword } from "../../services/auth/authService";
 
 export default function ForgotPassword() {
   const navigate = useNavigate();
@@ -30,8 +30,8 @@ export default function ForgotPassword() {
           if (Object.keys(errors).length === 0) {
             try {
               //  استخدام خدمة forgotPasswordService
-              await forgotPasswordService(values.email);
-        
+              await forgotPassword(values.email);
+
               showAlert("success", "تم إرسال رابط إعادة التعيين إلى بريدك!");
               navigate("/reset-success");
             } catch (error) {

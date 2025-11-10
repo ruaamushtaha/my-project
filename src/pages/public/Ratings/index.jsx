@@ -34,6 +34,7 @@ const ratingsApiService = {
           {
             id: 1,
             icon: "building",
+           title: ' المدارس التي تمَّ تقييمها ',
             value: 23,
             description: "تمكّنا حتى الآن من تقييم ثلاث وعشرون مدارس مختلفة، مما يوفّر صورة أوّلية عن جودة التعليم والخدمات المقدّمة",
             animationConfig: {
@@ -45,6 +46,8 @@ const ratingsApiService = {
           {
             id: 2,
             icon: "transparency",
+                       title: ' أعداد المُقَيِّمين  ',
+
             value: 1142,
             description: "أُجري حتى الآن عشرات التقييمات تفصيلية من قِبل المشرفين والأهالي لتغطية مختلف الجوانب التعليمية والإدارية",
             animationConfig: {
@@ -57,6 +60,8 @@ const ratingsApiService = {
           {
             id: 3,
             icon: "improvement",
+                       title: ' الأداء العام  ',
+
             value: 85,
             valueType: "percentage",
             description: "المؤشرات تُظهر أن الأداء العام للمدارس مصنّف عند مستوى \"جيد جداً\"، مع فرص للتحسين نحو التميّز.",

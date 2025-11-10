@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
 import { SchoolsContext } from "../context/SchoolsContext";
+import { useNavigate } from "react-router-dom";
 
 import staryallow from "../../../../assets/icons/staryallow.svg";
 import alamal from "../../../../assets/images/alamal.png";
@@ -66,7 +67,15 @@ const BestSchoolCard = ({ school, index, isVisible, onRate, onViewDetails }) => 
   const [isHovered, setIsHovered] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [showAchievements, setShowAchievements] = useState(false);
+const navigate = useNavigate();
 
+  const goToSchoolProfile = () => {
+    navigate("/schoolProfile"); 
+  };
+    
+      const goToEvaluateProfile = () => {
+        navigate("/evaluateSchool"); 
+      };
   const handleRate = () => {
     onRate(school);
   };
@@ -196,7 +205,9 @@ const BestSchoolCard = ({ school, index, isVisible, onRate, onViewDetails }) => 
       {/* Action Buttons */}
       <div className="flex justify-between gap-2">
         <button 
-          onClick={handleRate}
+                    onClick={goToEvaluateProfile} 
+
+          // onClick={handleRate}
           className={`
             w-1/2 py-2 rounded-lg font-medium transition-all duration-300 transform
             ${isHovered 
@@ -208,7 +219,9 @@ const BestSchoolCard = ({ school, index, isVisible, onRate, onViewDetails }) => 
           قيّم الآن
         </button>
         <button 
-          onClick={handleViewDetails}
+                        onClick={goToSchoolProfile} 
+
+          // onClick={handleViewDetails}
           className={`
             w-1/2 border py-2 rounded-lg font-medium transition-all duration-300 transform
             ${isHovered 

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 
 import greenschool from "../../../../assets/images/greenschool.png";
 
@@ -34,7 +35,11 @@ const useFadeInAnimation = () => {
 export default function PrimaryGoal({ data }) {
   const [buttonHover, setButtonHover] = useState(false);
   const { isVisible, elementRef } = useFadeInAnimation();
+  const navigate = useNavigate();
   
+        const goToEvaluateProfile = () => {
+          navigate("/evaluateSchool"); 
+        };
   // Fallback to default data if no data prop provided
   const defaultData = {
     title: "الهدف الأساسي",
@@ -84,7 +89,9 @@ export default function PrimaryGoal({ data }) {
           </div>
 
           <button 
-            onClick={handleButtonClick}
+                              onClick={goToEvaluateProfile} 
+
+            // onClick={handleButtonClick}
             onMouseEnter={() => setButtonHover(true)}
             onMouseLeave={() => setButtonHover(false)}
             disabled={!primaryGoalData.callToAction?.enabled}

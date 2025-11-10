@@ -54,24 +54,31 @@ const SecondaryGoalCard = ({ goal, index, isVisible }) => {
 
   return (
     <div
-      className={`flex items-center gap-4 p-4 border-r-8 border-primary rounded-r-xl rounded-l-xl h-[100px] cursor-pointer transform transition-all duration-500 ${
-        isVisible ? 'translate-x-0 opacity-100' : 'translate-x-8 opacity-0'
-      } ${isHovered ? 'scale-105 shadow-lg' : 'shadow-sm'}`}
+      className={`flex flex-col items-start text-right gap-2 p-6 min-h-[200px] rounded-lg cursor-pointer transform transition-all duration-500 ${
+    isVisible? 'translate-x-0 opacity-100': 'translate-x-8 opacity-0'
+} ${isHovered? 'scale-105 shadow-lg': 'shadow-sm'}`}
       style={{ 
-        background: 'linear-gradient(to left, #F1F4F8, #CFD8E8)',
+        // background: 'linear-gradient(to left, #F1F4F8, #CFD8E8)',
         animationDelay: `${index * 150}ms`
       }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       <div className={`transition-transform duration-300 ${isHovered ? 'scale-110' : ''}`}>
-        <img 
-          src={getIconSrc(goal.icon)} 
-          alt={`${goal.category} icon`} 
-          className="w-10 h-10" 
-        />
+        <div className="bg-babyBlue p-3 rounded-md flex items-center justify-center shadow-sm">
+      <img
+        src={getIconSrc(goal.icon)}
+        alt={`${goal.category} icon`}
+        className="w-10 h-10"
+      />
+    </div>
       </div>
-      <p className={`text-primary font-semibold whitespace-pre-line transition-all duration-300 ${
+      <p className={`text-slate-950 font-semibold whitespace-pre-line transition-all duration-300 ${
+        isHovered ? 'text-blue-700' : ''
+      }`}>
+        {goal.title}
+      </p>
+      <p className={`text-[#263238] font-light whitespace-pre-line transition-all duration-300 ${
         isHovered ? 'text-blue-700' : ''
       }`}>
         {goal.text}
@@ -85,42 +92,53 @@ export default function SecondaryGoals({ data }) {
   
   // Fallback to default data if no data prop provided
   const defaultData = {
-    title: "الأهداف الفرعيّة",
+    title: "الأهداف الفرعيَّة لإطلاق منصّة رؤى التعليم المستقبليّة",
     goals: [
       {
         id: 1,
         icon: "fileSchool",
+        title:"تطوير البيئة التعليميَّة",
         text: "تطوير بيئة تعليميّة عادلة وشفّافة\nعبر مقاييس موحّدة وموثوقة",
         category: "quality"
       },
       {
         id: 2,
-        icon: "monitor2",
-        text: "تجميع البيانات: نظام موحّد لجمع\nوتنظيم تقييمات المدارس",
+        icon: "www",
+                title:"تجميع البيانات",
+
+        text: " نظام موحّد لجمع وتنظيم تقييمات المدارس",
         category: "data"
       },
       {
         id: 3,
         icon: "folders",
-        text: "معايير مُوحَّدة: جودة أكاديميّة، بيئة\nتعليميّة، مرافق..",
+                title:"معايير موحَّدة",
+
+        text: "جودة التعليم، البيئة التعليميَّة، الإدارة \n والانضباط المدرسي، المرافق والخدمات..",
         category: "standards"
       },
       {
         id: 4,
         icon: "connection",
-        text: "التفاعل: تعزيز قنوات التواصل بين\nالأهالي والمشرفين والمدارس",
+                title:"التفاعل",
+
+        text: "تعزيز التواصل بين أولياء الأمور والمعلمين \n المشرفين والمدارس " ,
         category: "communication"
       },
       {
         id: 5,
-        icon: "www",
-        text: "التقارير: تقارير دورية دائمة للمتابعة.",
+        icon: "monitor2",
+                title:"التقارير",
+
+        text: "تقارير دوريَّة دائمة للمتابعة..",
         category: "reporting"
       },
       {
         id: 6,
         icon: "ok",
-        text: "الموثوقية والشفافية: آليّات تحقّق\nومراجعة دقيقة.",
+                title:"الموثوقيَّة والشفافيَّة",
+
+        text: "آليَّات تحقّق ومراجعة دقيقة..",
         category: "reliability"
       }
     ]
@@ -129,23 +147,31 @@ export default function SecondaryGoals({ data }) {
   const secondaryGoalsData = data || defaultData;
 
   // Split goals into two columns
- // Split goals into two columns (reordered)
 const leftColumnGoals = [
   secondaryGoalsData.goals.find(g => g.id === 1), // تطوير بيئة تعليميّة عادلة وشفّافة
-  secondaryGoalsData.goals.find(g => g.id === 3), // معايير مُوحَّدة: جودة أكاديميّة...
-  secondaryGoalsData.goals.find(g => g.id === 5)  // التقارير: تقارير دورية دائمة
+   secondaryGoalsData.goals.find(g => g.id === 4), // التفاعل: تعزيز قنوات التواصل...
+
+ 
+
+];
+
+const centerColumnGoals = [
+  secondaryGoalsData.goals.find(g => g.id === 2), // تجميع البيانات: نظام موحّد...
+    secondaryGoalsData.goals.find(g => g.id === 5) , // التقارير: تقارير دورية دائمة
+
+
 ];
 
 const rightColumnGoals = [
-  secondaryGoalsData.goals.find(g => g.id === 2), // تجميع البيانات: نظام موحّد...
-  secondaryGoalsData.goals.find(g => g.id === 4), // التفاعل: تعزيز قنوات التواصل...
+    secondaryGoalsData.goals.find(g => g.id === 3), // معايير مُوحَّدة: جودة أكاديميّة...
+
   secondaryGoalsData.goals.find(g => g.id === 6)  // الموثوقية والشفافية: آليَّات تحقّق...
 ];
 
 
   return (
     <div className="font-cairo bg-white text-black" dir="rtl">
-      <section className="bg-primary py-20 px-4">
+      <section className="bg-white py-20 px-4">
         <div 
           ref={elementRef}
           className={`w-full max-w-[1200px] mx-auto bg-white rounded-lg shadow-lg p-8 transform transition-all duration-1000 ${
@@ -154,7 +180,7 @@ const rightColumnGoals = [
         >
           {/* العنوان */}
           <h2
-            className={`text-3xl font-semibold text-center text-primary mb-10 underline decoration-[#D9D9D9] transform transition-all duration-700 delay-200 ${
+            className={`text-3xl font-semibold text-center text-primary mb-10   transform transition-all duration-700 delay-200 ${
               isVisible ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
             }`}
             style={{ textUnderlineOffset: '10px' }}
@@ -163,7 +189,7 @@ const rightColumnGoals = [
           </h2>
 
           {/* المستطيلات */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* العمود الأول */}
             <div className="space-y-4">
               {leftColumnGoals.map((goal, index) => (
@@ -175,7 +201,17 @@ const rightColumnGoals = [
                 />
               ))}
             </div>
-
+{/* العمود الثالث */}
+            <div className="space-y-4">
+              {centerColumnGoals.map((goal, index) => (
+                <SecondaryGoalCard 
+                  key={goal.id} 
+                  goal={goal} 
+                  index={index + 3} 
+                  isVisible={isVisible}
+                />
+              ))}
+            </div>
             {/* العمود الثاني */}
             <div className="space-y-4">
               {rightColumnGoals.map((goal, index) => (
@@ -187,6 +223,12 @@ const rightColumnGoals = [
                 />
               ))}
             </div>
+
+
+
+ 
+
+
           </div>
         </div>
       </section>

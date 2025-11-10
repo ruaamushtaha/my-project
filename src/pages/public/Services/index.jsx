@@ -3,10 +3,15 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import ServicesSection from "./components/ServicesSection";
 import headerimg from '../../../assets/images/headerimg1.png';
+import { useNavigate } from "react-router-dom";
 
 export default function Services() {
   const [isButtonHovered, setIsButtonHovered] = useState(false);
+const navigate = useNavigate();
 
+  const goToEvaluateProfile = () => {
+    navigate("/evaluateSchool"); 
+  };
   const handleEvaluateClick = () => {
     // Navigate to ratings page or evaluation form
     window.location.href = '/ratings';
@@ -46,7 +51,9 @@ export default function Services() {
             }`}
             onMouseEnter={() => setIsButtonHovered(true)}
             onMouseLeave={() => setIsButtonHovered(false)}
-            onClick={handleEvaluateClick}
+            // onClick={handleEvaluateClick}
+                                                onClick={goToEvaluateProfile} 
+
           >
             قيّم مدرستك الآن
           </button>

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 import Infinity from "../../../../assets/icons/Infinity.svg";
 import alofoq from "../../../../assets/images/alofoq.png";
@@ -61,43 +62,51 @@ export default function Briefsummary() {
   const [activeIndex, setActiveIndex] = useState(0);
 
   return (
-    <div className="w-full">
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, delay: 0.2 }}
+      className="w-full"
+    >
       {/* العنوان   */}
-     
-
-
-<div className="relative w-full py-8">
-          <img src={Infinity} alt="Infinity" loading="lazy" />
-          <h2 className="absolute top-1/2 transform -translate-y-1/2 text-4xl font-bold text-primary z-10 mr-8"> نبذة عن المدرسة:          </h2>
-        </div>
-
-      <div className="relative w-full h-[553px] rounded-xl overflow-hidden">
+      <div className="relative w-full h-[553px] rounded-xl overflow-hidden mt-14">
         {/* الصورة */}
-        <img
-          src={slides[activeIndex].image}
-          alt="school"
-          className="w-full h-full object-cover"
-        />
+        <AnimatePresence mode="wait">
+          <motion.img
+            key={activeIndex}
+            src={slides[activeIndex].image}
+            alt="school"
+            className="w-full h-full object-cover"
+            initial={{ opacity: 0, scale: 1.1 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            transition={{ duration: 0.5 }}
+          />
+        </AnimatePresence>
 
         {/* Overlay شفاف */}
         <div className="absolute inset-0 bg-black bg-opacity-40"></div>
 
         {/* النص في وسط الصورة */}
-
-
-
-
-        
         <div className="absolute inset-0 flex items-center justify-center">
-          <h2 className=" text-right px-4">
-            {slides[activeIndex].text}
-          </h2>
+          <AnimatePresence mode="wait">
+            <motion.h2
+              key={activeIndex}
+              className="text-right px-4"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.5 }}
+            >
+              {slides[activeIndex].text}
+            </motion.h2>
+          </AnimatePresence>
         </div>
 
         {/* الدوائر بأسفل يسار الصورة */}
         <div className="absolute bottom-4 left-4 flex gap-2">
           {slides.map((_, idx) => (
-            <button
+            <motion.button
               key={idx}
               onClick={() => setActiveIndex(idx)}
               className={`transition-all duration-300 rounded-full ${
@@ -105,10 +114,12 @@ export default function Briefsummary() {
                   ? "w-20 h-4 bg-white" 
                   : "w-3 h-3 bg-gray-300"  
               }`}
+              whileHover={{ scale: 1.2 }}
+              whileTap={{ scale: 0.9 }}
             />
           ))}
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

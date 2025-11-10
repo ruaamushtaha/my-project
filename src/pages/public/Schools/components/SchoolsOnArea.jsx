@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
 import { SchoolsContext } from "../context/SchoolsContext";
 
-import Infinity from "../../../../assets/icons/Infinity.svg";
+// import Infinity from "../../../../assets/icons/Infinity.svg";
 import mapimg from "../../../../assets/images/mapimg.png";
 
 // Custom hook for fade-in animation
@@ -261,12 +261,12 @@ export default function SchoolsOnArea({ data }) {
               }
             `}
           >
-            <img 
+            {/* <img 
               src={Infinity} 
               alt="رمز اللانهاية" 
               className="transition-transform duration-500 hover:scale-110"
-            />
-            <h2 className="absolute top-1/2 transform -translate-y-1/2 text-2xl font-cairo font-bold text-secondary z-10 mr-8">
+            /> */}
+            <h2 className=" top-1/2 transform -translate-y-1/2 text-2xl font-cairo font-bold text-secondary z-10 mr-8">
               {data.title || "المدارس حسب المنطقة / المديرية"}
             </h2>
           </div>

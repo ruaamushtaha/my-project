@@ -3,8 +3,13 @@ import { motion } from "framer-motion";
 import Plus from "../../../../assets/icons/plus.svg";
 import QuestionMark from "../../../../assets/icons/quetion_mark.svg"; 
 import Dots from "../../../../assets/icons/points2.svg"; 
+import { useNavigate } from "react-router-dom";
 
 const FQAsection = () => {
+     const navigate = useNavigate();
+   const goTocontactPage = () => {
+      navigate("/Contact"); 
+    };
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [faqs, setFaqs] = useState([]);
@@ -94,7 +99,7 @@ const FQAsection = () => {
           transition={{ duration: 0.5 }}
         >
           <motion.h2 
-            className="text-2xl md:text-3xl font-bold text-[#2A6FA8]"
+            className="text-2xl md:text-3xl font-bold text-primary"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
@@ -128,13 +133,13 @@ const FQAsection = () => {
   >
     {item.id === 1 ? (
       // السؤال الأول يظهر في سطر واحد
-      <p className="text-[#2A6FA8] font-medium text-lg">
+      <p className="text-primary font-medium text-lg">
         "{item.q}"  <span className="text-gray-700 font-normal">{item.a}</span>
       </p>
     ) : (
       // باقي الأسئلة تبقى كما هي
       <>
-        <p className="font-medium text-[#2A6FA8] text-lg">"{item.q}"</p>
+        <p className="font-medium text-primary text-lg">"{item.q}"</p>
         <p className="text-gray-700 mt-2">"{item.a}"</p>
       </>
     )}
@@ -143,6 +148,8 @@ const FQAsection = () => {
 
 
           <motion.div 
+                                              onClick={goTocontactPage} 
+
             className="bg-[#E5F5F9] rounded-lg py-4 px-6 text-center flex items-center justify-center gap-2 font-medium text-black text-xl cursor-pointer hover:bg-[#d9eef4] transition relative"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}

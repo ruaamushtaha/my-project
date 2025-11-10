@@ -11,7 +11,7 @@ const Header = () => {
   const navItems = ['الرئيسية', 'عن المنصّة', 'الخدمات', 'الأهداف', 'المدارس','التقييمات', 'تواصل معنا'];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 font-cairo" dir="rtl">
+    <div className="min-h-screen  font-cairo" dir="rtl">
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-transparent transition-all duration-300 hover:bg-white/5 hover:backdrop-blur-sm">
         <nav className="container mx-auto px-4 py-6 flex items-center justify-between">
@@ -68,7 +68,7 @@ const Header = () => {
         <AnimatePresence>
           {isMenuOpen && (
             <motion.div
-              className="md:hidden bg-gradient-to-b from-blue-900/95 to-indigo-900/95 backdrop-blur-lg"
+              className="md:hidden bg-gradient-to-b from-gray-950/50 to-gray-900/50 backdrop-blur-lg"
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}

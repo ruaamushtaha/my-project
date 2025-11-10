@@ -11,8 +11,8 @@ import { showAlert } from "../../utils/SweetAlert";
 
 import RegisterHero from "../../assets/images/Sign up.svg";
 import { AuthContext } from "../../contexts/AuthContext";// Auth context
-// Api Axios
-import { registerService } from "../../services/authService";
+// Api Service
+import { register } from "../../services/auth/authService";
 
 export default function Registration() {
   const [showPassword, setShowPassword] = useState(false);
@@ -41,8 +41,8 @@ export default function Registration() {
           if (Object.keys(errors).length === 0) {
             try {
               // استخدام خدمة التسجيل الجاهزة
-              const data = await registerService(values);
-        
+              const data = await register(values);
+
               // حفظ التوكن والدور
               const token = data.token;
               const role = data.role;

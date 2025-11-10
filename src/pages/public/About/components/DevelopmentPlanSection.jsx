@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from "react";
 import star from "../../../../assets/icons/star.svg";
 import school from "../../../../assets/icons/school.svg";
 import location from "../../../../assets/icons/location.svg";
-import Infinity from "../../../../assets/icons/Infinity.svg";
+// import Infinity from "../../../../assets/icons/Infinity.svg";
 
 // Custom hook for fade-in animation
 const useFadeInAnimation = (threshold = 0.1) => {
@@ -305,8 +305,8 @@ export default function DevelopmentPlanSection({ data }) {
           }`}
         >
           <div className="relative w-full mb-4 mr-8">
-          <img src={Infinity} alt="Infinity" />
-          <h2 className="absolute top-1/2 transform -translate-y-1/2 text-4xl font-bold text-black z-10 mr-6">
+          {/* <img src={Infinity} alt="Infinity" /> */}
+          <h2 className="absolute top-1/2 transform -translate-y-1/2 text-4xl font-bold text-black z-10 mr-10">
             خطة التطوير المستقبلية
           </h2>
         </div>

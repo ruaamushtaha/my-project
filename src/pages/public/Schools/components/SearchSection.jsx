@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useContext } from "react";
 import { SchoolsContext } from "../context/SchoolsContext";
+import { useNavigate } from "react-router-dom";
 
 import building from "../../../../assets/icons/buildingsblack.svg";
 import students from "../../../../assets/icons/studentss.svg";
@@ -45,7 +46,11 @@ const useFadeInAnimation = (threshold = 0.1) => {
 const SchoolCard = ({ school, index, isVisible, onViewDetails }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
+const navigate = useNavigate();
 
+  const goToSchoolProfile = () => {
+    navigate("/schoolProfile"); 
+  };
   const imageMap = {
     "School 1.jpg": school,
     "School 2.jpg": school2,
@@ -113,7 +118,9 @@ const SchoolCard = ({ school, index, isVisible, onViewDetails }) => {
 
         {/* Action Button */}
         <button 
-          onClick={() => onViewDetails && onViewDetails(school)}
+                onClick={goToSchoolProfile} 
+
+          // onClick={() => onViewDetails && onViewDetails(school)}
           className={`w-full font-medium border py-2 rounded-lg transition-all duration-300 transform ${
             isHovered 
               ? 'bg-primary text-white border-primary scale-105' 

@@ -1,6 +1,6 @@
 // =============================================================================
 // Enhanced Schools Management Page for Parents
-// صفحة إدارة المدارس المتطورة لأولياء الأمور
+// صفحة إدارة المدارس المتطورة  Parents
 // =============================================================================
 
 import React, { useState } from 'react';
@@ -105,7 +105,7 @@ src={school1}
 
             {/* وصف المدرسة */}
             <p className="text-sm text-gray-500 dark:text-gray-400 text-right mt-2">
-              {school.description || 'مدرسة النجاح الابتدائيَّة هي إحدى المدارس الرائدة في منطقة البريج، تتميّز بالتعليم الحديث والبيئة التعليميَّة المحفزة. نسعى لتقديم تعليم متميّز يهدف لإعداد جيل واعٍ ومبدِع.'}
+              {school.description || 'مدرسة النجاح الابتدائيَّة هي إحدى المدارس الرائدة في منطقة البريج، تتميّز بالتعليم الحديث والبيئة التعليميَّة المحفزة. نسعى لتقديم تعليم متميّز يهدف لإعداد جيل واعٍ ومبدِع.'}
             </p>
 
             {/* الأزرار */}
@@ -125,6 +125,14 @@ src={school1}
               >
                 تقييم المدرسة
               </Button>
+              
+              <Button 
+                variant="outline" 
+                className="w-full bg-white border-gray-300 text-gray-700 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300"
+                onClick={() => onCompare(school)}
+              >
+                مقارنة
+              </Button>
             </div>
           </div>
         </div>
@@ -134,7 +142,7 @@ src={school1}
 };
 
 /**
- * الصفحة الرئيسية لإدارة مدارس الأبناء
+ * الصفحة الرئيسية لإدارة مدارس أولياء الأمور
  */
 const SchoolsPage = () => {
   const navigate = useNavigate();
@@ -160,36 +168,37 @@ const SchoolsPage = () => {
   };
 
   return (
-    <div className="container mx-auto p-4 bg-white dark:bg-gray-900 transition-colors duration-300">
+    <div className="container mx-auto p-4 bg-white dark:bg-gray-900 transition-colors duration-300" dir="rtl">
       {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="mb-8"
-      >
-        <div className="text-right flex flex-col items-end mb-6">
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
-            مدارس أبناؤك
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-2">
-            . المدارس المُسجَّل بها أبناؤك حاليًّا
-          </p>
-        </div>
+<motion.div
+  initial={{ opacity: 0, y: -20 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.5 }}
+  className="mb-8"
+>
+  {/* Header */}
+  <div className="w-full text-right mb-6">
+    <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
+      مدارس أبناؤك
+    </h1>
+    <p className="text-gray-600 dark:text-gray-400 mt-2">
+. المدارس المُسجَّل بها أبناؤك حاليًّا    </p>
+  </div>
 
-        {/* Search Input */}
-        <div className="flex justify-end">
-          <div className="w-7/12">
-            <Input
-              placeholder="...بحث سريع"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              icon={<FaSearch />}
-              className="w-full text-right placeholder:text-left bg-[#F3F3F5] text-[#717182] rounded-md"
-            />
-          </div>
-        </div>
-      </motion.div>
+  {/* Search Input */}
+  <div className="flex justify-end mb-4">
+    <div className="relative w-full">
+      <Input
+        placeholder="...بحث سريع"
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="w-full text-right pr-10 bg-[#F3F3F5] text-[#717182] rounded-md placeholder:text-gray-400"
+      />
+      <FaSearch className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-500" />
+    </div>
+  </div>
+</motion.div>
+
 
       {/* Schools Grid */}
       {loading ? (
@@ -197,23 +206,25 @@ const SchoolsPage = () => {
           <Loading size="lg" text="جاري تحميل المدارس..." />
         </div>
       ) : filteredSchools.length > 0 ? (
-        <motion.div
-          className="flex flex-wrap justify-end gap-6"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-        >
-          {filteredSchools.map((school, index) => (
-            <SchoolCard
-              key={school.id}
-              school={school}
-              index={index}
-              onViewDetails={handleViewDetails}
-              onEvaluateSchool={handleEvaluateSchool}
-              onCompare={handleCompare}
-            />
-          ))}
-        </motion.div>
+        <div className="flex flex-col items-end">
+          <motion.div
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 justify-items-end"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            {filteredSchools.map((school, index) => (
+              <SchoolCard
+                key={school.id}
+                school={school}
+                index={index}
+                onViewDetails={handleViewDetails}
+                onEvaluateSchool={handleEvaluateSchool}
+                onCompare={handleCompare}
+              />
+            ))}
+          </motion.div>
+        </div>
       ) : (
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
@@ -225,7 +236,7 @@ const SchoolsPage = () => {
             لا توجد مدارس
           </h3>
           <p className="text-gray-600 dark:text-gray-400 mb-6">
-            لم يتم العثور على مدارس لأبنائك
+            لم يتم العثور على مدارس
           </p>
         </motion.div>
       )}

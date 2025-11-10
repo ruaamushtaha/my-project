@@ -1,13 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { FaStar, FaMapMarkerAlt, FaUsers, FaGraduationCap } from 'react-icons/fa';
 import { motion } from 'framer-motion';
+import { useNavigate } from "react-router-dom";
 
 import School1 from '../../../../assets/images/School 1.jpg';
 import School2 from '../../../../assets/images/School 2.jpg';
 import School3 from '../../../../assets/images/School 3.jpg';
 import search2 from "../../../../assets/icons/search2.svg";
-
+  
 const SchoolSection = () => {
+  const navigate = useNavigate();
+
+  const goToSchoolProfile = () => {
+    navigate("/schoolProfile"); 
+  };
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredSchools, setFilteredSchools] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -189,13 +195,14 @@ const SchoolSection = () => {
                       <span className="font-normal">{school.levels}</span>
                     </div>
                   </div>
-                  <motion.button
-                    className="w-full font-medium text-primary border border-primary py-2 rounded-lg hover:bg-primary hover:text-white transition"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    عرض التفاصيل
-                  </motion.button>
+                   <motion.button
+        onClick={goToSchoolProfile} 
+        className="w-full font-medium text-primary border border-primary py-2 rounded-lg hover:bg-primary hover:text-white transition"
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+      >
+        عرض التفاصيل
+      </motion.button>
                 </div>
               </motion.div>
             ))
