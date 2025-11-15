@@ -96,13 +96,75 @@ const AdminHeader = ({ title, subtitle, breadcrumbs = [], onMenuClick }) => {
 >
   <div className="w-full px-4 lg:px-6">
     <div className="flex items-center justify-between h-16 lg:h-20">
-
-      
+      {/* Right Section - Logo + System Name */}
+      <div className="flex items-center space-x-3 space-x-reverse pr-0 mr-0">
+        <img src={logo} alt="Logo" className="w-10 h-10 ml-1" />
+        <span className="text-lg font-bold text-gray-900 dark:text-white mr-2">
+نظام مدير النظام         </span>
+      </div>
 
       {/* Left Section - Actions */}
-      <div className="flex items-center space-x-4 space-x-reverse pl-0 ml-0">
+      <motion.div 
+        className="flex items-center space-x-4 space-x-reverse pl-0 ml-0"
+        initial="hidden"
+        animate="visible"
+        variants={{
+          hidden: { opacity: 0 },
+          visible: {
+            opacity: 1,
+            transition: {
+              staggerChildren: 0.1
+            }
+          }
+        }}
+      >
+        {/* Theme Toggle */}
+        <motion.div variants={{ hidden: { opacity: 0, y: -10 }, visible: { opacity: 1, y: 0 } }}>
+          <ThemeToggle />
+        </motion.div>
+        
+        {/* Notifications */}
+        <motion.div variants={{ hidden: { opacity: 0, y: -10 }, visible: { opacity: 1, y: 0 } }}>
+          <div className="relative">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              setNotificationsOpen(!notificationsOpen);
+              setProfileMenuOpen(false);
+            }}
+            className="relative"
+          >
+            <FaBell className="text-gray-700 dark:text-gray-300" />
+            {unreadCount > 0 && (
+              <motion.span
+                className="absolute -top-1 -right-1 bg-red-700 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center"
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ type: 'spring', stiffness: 500 }}
+              >
+                {unreadCount > 9 ? '9+' : unreadCount}
+              </motion.span>
+            )}
+          </Button>
+          {/* Notifications Dropdown */}
+          <AnimatePresence>
+            {notificationsOpen && (
+              <NotificationsDropdown
+                notifications={notifications}
+                unreadCount={unreadCount}
+                isOpen={notificationsOpen}
+                onClose={() => setNotificationsOpen(false)}
+              />
+            )}
+          </AnimatePresence>
+        </div>
+      </motion.div>
+
         {/* User Icon + Name */}
-        <div className="relative">
+        <motion.div variants={{ hidden: { opacity: 0, y: -10 }, visible: { opacity: 1, y: 0 } }}>
+          <div className="relative">
           <Button
             variant="ghost"
             size="sm"
@@ -112,13 +174,13 @@ const AdminHeader = ({ title, subtitle, breadcrumbs = [], onMenuClick }) => {
             }}
             className="flex items-center space-x-2 space-x-reverse"
           >
+            <FaUser className="text-gray-700 dark:text-gray-300" />
             <div className="flex flex-col items-start text-left">
               <span className="text-black dark:text-gray-300 font-medium truncate">
                 {profileLoading ? '...' : profile?.fullName?.split(' ')[0]}
               </span>
-              <span className="text-sm text-gray-400 dark:text-gray-500">أدمن  </span>
+              <span className="text-sm text-gray-400 dark:text-gray-500">مدير النظام  </span>
             </div>
-            <FaUser className="text-gray-700 dark:text-gray-300" />
           </Button>
 
           {/* Profile Dropdown */}
@@ -131,8 +193,7 @@ const AdminHeader = ({ title, subtitle, breadcrumbs = [], onMenuClick }) => {
                 exit={{ opacity: 0, y: -10, scale: 0.95 }}
                 onClick={(e) => e.stopPropagation()}
               >
-                                    {/* Profile Info */}
-
+                {/* Profile Info */}
                 <div className="p-4 border-b border-gray-200 dark:border-gray-600 w-fit">
                   <div className="flex items-center space-x-3 space-x-reverse">
                     <div className="w-12 h-12 rounded-full bg-black flex items-center justify-center text-white text-lg font-bold mr-2">
@@ -140,7 +201,7 @@ const AdminHeader = ({ title, subtitle, breadcrumbs = [], onMenuClick }) => {
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="font-medium text-gray-900 dark:text-white truncate">
-                        {profile?.fullName || 'أدمن '}
+                        {profile?.fullName || 'مدير النظام '}
                       </p>
                       <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
                         {profile?.email || 'email@example.com'}
@@ -190,55 +251,8 @@ const AdminHeader = ({ title, subtitle, breadcrumbs = [], onMenuClick }) => {
             )}
           </AnimatePresence>
         </div>
-
-        {/* Notifications */}
-        <div className="relative">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={(e) => {
-              e.stopPropagation();
-              setNotificationsOpen(!notificationsOpen);
-              setProfileMenuOpen(false);
-            }}
-            className="relative"
-          >
-            <FaBell className="text-gray-700 dark:text-gray-300" />
-            {unreadCount > 0 && (
-              <motion.span
-                className="absolute -top-1 -right-1 bg-red-700 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center"
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ type: 'spring', stiffness: 500 }}
-              >
-                {unreadCount > 9 ? '9+' : unreadCount}
-              </motion.span>
-            )}
-          </Button>
-              {/* Notifications Dropdown */}
-
-          <AnimatePresence>
-            {notificationsOpen && (
-              <NotificationsDropdown
-                notifications={notifications}
-                unreadCount={unreadCount}
-                isOpen={notificationsOpen}
-                onClose={() => setNotificationsOpen(false)}
-              />
-            )}
-          </AnimatePresence>
-        </div>
-
-        {/* Theme Toggle */}
-        <ThemeToggle />
-      </div>
-      {/* Right Section - Logo + System Name */}
-      <div className="flex items-center space-x-3 space-x-reverse pr-0 mr-0">
-        <span className="text-lg font-bold text-gray-900 dark:text-white mr-2">
-نظام الأدمن        </span>
-                <img src={logo} alt="Logo" className="w-10 h-10 ml-1" />
-
-      </div>
+      </motion.div>
+    </motion.div>
     </div>
   </div>
 </motion.header>

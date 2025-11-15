@@ -5,6 +5,7 @@ import {
   FaHome, FaSchool, FaComments, FaBell, FaUser, FaCog,
   FaChevronLeft, FaChevronRight, FaGraduationCap, FaBars,
   FaExclamationTriangle, FaFileAlt, FaCalendarAlt,FaUserFriends,FaUserTie, FaHeadphones} from 'react-icons/fa';
+import Logo from '../../../../../assets/icons/LOGO.svg';
 
 const navigationItems = [
   { id: 'dashboard', label: 'لوحة التحكم', icon: FaHome, path: '/dashboard/Admin/dashboard' },
@@ -16,7 +17,6 @@ const navigationItems = [
   { id: 'complaints', label: ' الشكاوي', icon: FaExclamationTriangle, path: '/dashboard/Admin/complaints' },
 
   { id: 'support', label: 'الدعم الفني ', icon: FaHeadphones, path: '/dashboard/Admin/SupportPage' },
-
 ];
 
 const bottomItems = [
@@ -33,7 +33,7 @@ const NavItem = ({ item, isActive, isCollapsed, onItemClick, index }) => {
     <motion.button
       onClick={() => onItemClick(item)}
       className={`
-        w-full flex flex-row-reverse items-center gap-2 px-3 py-2 rounded-lg transition-all duration-200
+        w-full flex flex-row items-center gap-2 px-3 py-2 rounded-lg transition-all duration-200
         ${isActive
           ? 'bg-[#E0F4F5] text-[#30A1DB] shadow'
           : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white'
@@ -47,12 +47,12 @@ const NavItem = ({ item, isActive, isCollapsed, onItemClick, index }) => {
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.3, delay: index * 0.1 }}
     >
-      <div className="flex-shrink-0 flex items-center justify-center">
+      <div className="flex-shrink-0 flex items-center justify-center mr-2">
         <IconComponent className={`${isCollapsed ? 'text-xl' : 'text-lg'} ${isActive ? 'text-[#30A1DB]' : ''}`} />
       </div>
       {!isCollapsed && (
         <motion.span
-          className="text-right font-medium truncate"
+          className="flex-1 text-right font-medium truncate"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.3, delay: 0.2 }}
@@ -82,33 +82,66 @@ const Button = ({ children, variant = 'ghost', size = 'md', onClick, className =
   </motion.button>
 );
 
-const Sidebar = ({ isOpen, onToggle }) => {
+const Sidebar = ({ isOpen, onToggle, isCollapsed, setIsCollapsed }) => {
   const [activeItem, setActiveItem] = useState('schools');
-  const [isCollapsed, setIsCollapsed] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
   // Update active item based on current location
 useEffect(() => {
-    const path = location.pathname;
-    // More precise matching - check if the path ends with the item's path segment
-    const currentItem = navigationItems.find(item => {
+  const path = location.pathname;
+
+  // تعيين العنوان حسب المسار الحالي
+  switch (path) {
+    case '/dashboard/Admin/dashboard':
+      document.title = 'لوحة التحكم   ';
+      break;
+    case '/dashboard/Admin/UsersPage':
+      document.title = 'المستخدمون ';
+      break;
+    case '/dashboard/Admin/InvitationsPage':
+      document.title = 'دعوات المشرفين   ';
+      break;
+    case '/dashboard/Admin/reports':
+      document.title = 'التقارير ';
+      break;
+    case '/dashboard/Admin/complaints':
+      document.title = 'الشكاوي ';
+      break;
+    case '/dashboard/Admin/SupportPage':
+      document.title = 'الدعم الفني ';
+      break;
+    case '/dashboard/Admin/profile':
+      document.title = 'الملف الشخصي  ';
+      break;
+    case '/dashboard/Admin/settings':
+      document.title = 'الإعدادات ';
+      break;
+    default:
+      document.title = ' لوحة مدير النظام';
+      break;
+  }
+
+  // تحديث العنصر النشط في السايد بار
+  const currentItem =
+    navigationItems.find(item => {
       const itemPathSegments = item.path.split('/');
       const lastSegment = itemPathSegments[itemPathSegments.length - 1];
       return path.endsWith('/' + lastSegment) || path.endsWith('/' + lastSegment + '/');
-    }) || bottomItems.find(item => {
+    }) ||
+    bottomItems.find(item => {
       const itemPathSegments = item.path.split('/');
       const lastSegment = itemPathSegments[itemPathSegments.length - 1];
       return path.endsWith('/' + lastSegment) || path.endsWith('/' + lastSegment + '/');
     });
-    
-    if (currentItem) {
-      setActiveItem(currentItem.id);
-    } else if (path === '/dashboard/Admin' || path === '/dashboard/Admin/') {
-      // Default to schools page for the base path
-      setActiveItem('Admin');
-    }
-  }, [location.pathname]);
+
+  if (currentItem) {
+    setActiveItem(currentItem.id);
+  } else if (path === '/dashboard/Admin' || path === '/dashboard/Admin/') {
+    setActiveItem('Admin');
+  }
+}, [location.pathname]);
+
 
   const handleItemClick = (item) => {
     setActiveItem(item.id);
@@ -131,28 +164,35 @@ useEffect(() => {
       </motion.button>
 
       <motion.aside
+        dir="rtl"
         className={`
           fixed right-0 top-0 z-40 h-full bg-[#FFFFFF] dark:bg-gray-800/80 shadow-lg
           border-l border-gray-200 dark:border-gray-700 flex flex-col transition-all duration-300
           ${isOpen ? (isCollapsed ? 'translate-x-0 w-20' : 'translate-x-0 w-64') : 'translate-x-full w-64'}
           lg:translate-x-0
         `}
-        initial={{ x: '100%' }}
-        animate={{ x: isOpen ? 0 : '100%' }}
-        transition={{ type: "tween", duration: 0.3 }}
+        initial={{ x: '100%', opacity: 0 }}
+        animate={{ x: isOpen ? 0 : '100%', opacity: isOpen ? 1 : 0 }}
+        exit={{ x: '100%', opacity: 0 }}
+        transition={{ type: "spring", damping: 25, stiffness: 300 }}
       >
         <div className={`p-4 border-b border-gray-200 dark:border-gray-700 ${isCollapsed ? 'px-3' : ''}`}>
           <div className="flex items-center justify-between">
             <div className={`flex items-center gap-3 ${isCollapsed ? 'justify-center' : ''}`}>
               <motion.div
-                className="w-8 h-8 bg-primary-500 rounded-lg flex items-center justify-center text-white font-bold"
-                whileHover={{ rotate: 5 }}
+                className="flex items-center justify-center"
+                whileHover={{ scale: 1.05 }}
               >
-<FaGraduationCap className="text-black w-5 h-5 dark:text-white " />              </motion.div>
+                <img 
+                  src={Logo} 
+                  alt="Logo" 
+                  className="w-10 h-10 object-contain" 
+                />
+              </motion.div>
               {!isCollapsed && (
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
                   <h1 className="font-bold text-gray-900 dark:text-white">تقييم المدارس</h1>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">لوحة الأدمن </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">لوحة مدير النظام </p>
                 </motion.div>
               )}
             </div>

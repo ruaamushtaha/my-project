@@ -37,8 +37,8 @@ export default function PrimaryGoal({ data }) {
   const { isVisible, elementRef } = useFadeInAnimation();
   const navigate = useNavigate();
   
-        const goToEvaluateProfile = () => {
-          navigate("/evaluateSchool"); 
+        const goToLogin = () => {
+          navigate("/login"); 
         };
   // Fallback to default data if no data prop provided
   const defaultData = {
@@ -46,7 +46,7 @@ export default function PrimaryGoal({ data }) {
     description: "تمكين الأهالي من اختيار المدارس المناسبة\nلأبنائهم من خلال تقييمات موثوقة وشفّافة",
     callToAction: {
       text: "قيّم مدرستك الآن",
-      link: "/evaluate",
+      link: "/login",
       enabled: true
     },
     motivationalText: {
@@ -89,7 +89,7 @@ export default function PrimaryGoal({ data }) {
           </div>
 
           <button 
-                              onClick={goToEvaluateProfile} 
+                              onClick={goToLogin} 
 
             // onClick={handleButtonClick}
             onMouseEnter={() => setButtonHover(true)}

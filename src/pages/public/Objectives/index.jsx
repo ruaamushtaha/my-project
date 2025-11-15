@@ -36,7 +36,7 @@ const objectivesApiService = {
         description: "تمكين الأهالي من اختيار المدارس المناسبة\nلأبنائهم من خلال تقييمات موثوقة وشفّافة",
         callToAction: {
           text: "قيّم مدرستك الآن",
-          link: "/evaluate",
+          link: "/login",
           enabled: true
         },
         motivationalText: {

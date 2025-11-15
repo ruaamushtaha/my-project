@@ -21,12 +21,8 @@ const Layout = ({ children, title, subtitle, breadcrumbs = [] }) => {
   // Use the page title hook
   usePageTitle();
   
-  const [sidebarOpen, setSidebarOpen] = useState(!settings.sidebarCollapsed);
-  // Update sidebar state when settings change
-
-  useEffect(() => {
-    setSidebarOpen(!settings.sidebarCollapsed);
-  }, [settings.sidebarCollapsed]);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   return (
     <div
@@ -60,23 +56,27 @@ const Layout = ({ children, title, subtitle, breadcrumbs = [] }) => {
         <Sidebar
           isOpen={sidebarOpen}
           onToggle={() => setSidebarOpen(!sidebarOpen)}
+          isCollapsed={sidebarCollapsed}
+          setIsCollapsed={setSidebarCollapsed}
         />
- {/* Sidebar Overlay for Mobile */}
-      <AnimatePresence>
-        {sidebarOpen && (
-          <motion.div
-            className="fixed inset-0 z-30 bg-black bg-opacity-50 lg:hidden"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setSidebarOpen(false)}
-          />
-        )}
-      </AnimatePresence>
+        {/* Sidebar Overlay for Mobile */}
+        <AnimatePresence>
+          {sidebarOpen && (
+            <motion.div
+              className="fixed inset-0 z-30 bg-black bg-opacity-50 lg:hidden"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSidebarOpen(false)}
+            />
+          )}
+        </AnimatePresence>
         {/* Page Content */}
         <motion.main
           className={`flex-1 transition-all duration-300 p-4 lg:p-6 ${
-            sidebarOpen ? 'lg:mr-64' : 'lg:mr-20'
+            sidebarOpen 
+              ? (sidebarCollapsed ? 'lg:mr-20' : 'lg:mr-64') 
+              : 'lg:mr-0'
           }`}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -84,9 +84,6 @@ const Layout = ({ children, title, subtitle, breadcrumbs = [] }) => {
         >
           <div className="max-w-7xl mx-auto">{children}</div>
         </motion.main>
-
-
-
       </div>
 
       <footer className="relative z-[9999]">

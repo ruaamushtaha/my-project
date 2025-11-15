@@ -1,234 +1,346 @@
 import React, { useState } from "react";
-import { FaEdit, FaTrash, FaPlus, FaUserTie, FaUserShield, FaChalkboardTeacher, FaUserFriends } from "react-icons/fa";
+import { motion } from "framer-motion";
+import { FaTrash, FaEdit, FaPlus, FaTimes } from "react-icons/fa";
+import * as Yup from "yup";
+import { useUsers } from "../hooks/useAdminData";
 
-const usersData = {
-  all: [
-    { name: "أحمد محمد", email: "ahmed@mail.com", role: "أدمن ", status: "نشط" },
-    { name: "ليلى محمد", email: "leila@mail.com", role: "مشرف", status: "معلق" },
-    { name: "سامي خالد", email: "sami@mail.com", role: "مدير مدرسة", status: "نشط" },
-    { name: "منى حسن", email: "mona@mail.com", role: "ولي أمر", status: "معلق" },
-  ],
-  admin: [
-    { name: "أحمد محمد", email: "ahmed@mail.com", role: "أدمن ", status: "نشط" },
-  ],
-  supervisor: [
-    { name: "ليلى علي", email: "leila@mail.com", role: "مشرف", status: "معلق" },
-  ],
-  schoolManager: [
-    { name: "سامي خالد", email: "sami@mail.com", role: "مدير مدرسة", status: "نشط" },
-  ],
-  parent: [
-    { name: "منى حسن", email: "mona@mail.com", role: "ولي أمر", status: "معلق" },
-  ],
-};
+// Validation schema for user form
+const userSchema = Yup.object().shape({
+  name: Yup.string()
+    .required('الاسم مطلوب')
+    .min(2, 'الاسم يجب أن يكون أكثر من حرفين')
+    .max(50, 'الاسم يجب أن يكون أقل من 50 حرف'),
+  email: Yup.string()
+    .email('صيغة البريد الإلكتروني غير صحيحة')
+    .required('البريد الإلكتروني مطلوب'),
+  role: Yup.string()
+    .required('الدور مطلوب'),
+  phone: Yup.string()
+    .matches(/^05\d{8}$/, 'رقم الهاتف يجب أن يكون بصيغة صحيحة (05xxxxxxxx)')
+});
 
-const UsersPage = () => {
-  const [currentTable, setCurrentTable] = useState("all");
+export default function UsersPage() {
+  const { users, loading, error, createUser, updateUser, deleteUser } = useUsers();
   const [showModal, setShowModal] = useState(false);
-  const [newUser, setNewUser] = useState({ name: "", email: "", role: "", phone: "" });
-
-  const getRoleIcon = (role) => {
-    const iconClass = "w-4 h-4"; 
-    const circleClass = "flex items-center justify-center w-6 h-6 rounded-full bg-gray-200 mx-2 dark:bg-gray-700";
-
-    switch (role) {
-      case "أدمن ":
-        return <div className={circleClass}><FaUserTie className={`${iconClass} text-black dark:text-white`} /></div>;
-      case "مشرف":
-        return <div className={circleClass}><FaUserShield className={`${iconClass} text-black dark:text-white`} /></div>;
-      case "مدير مدرسة":
-        return <div className={circleClass}><FaChalkboardTeacher className={`${iconClass} text-black dark:text-white`} /></div>;
-      case "ولي أمر":
-        return <div className={circleClass}><FaUserFriends className={`${iconClass} text-black dark:text-white`} /></div>;
-      default:
-        return null;
-    }
-  };
-
-  const renderStatus = (status) => {
-    const isActive = status === "نشط";
-    const bgColor = isActive ? "#F0FEED" : "#FFF7BF";
-    const textColor = isActive ? "#259800" : "#72511B";
-
-    return (
-      <div
-        className="inline-flex items-center gap-2 px-3 py-1 rounded-lg font-medium text-sm"
-        style={{ backgroundColor: bgColor, color: textColor }}
-      >
-        <span className="w-2 h-2 rounded-full inline-block" style={{ backgroundColor: textColor }}></span>
-        {status}
-      </div>
-    );
-  };
+  const [editingUser, setEditingUser] = useState(null);
+  const [newUser, setNewUser] = useState({
+    name: "",
+    email: "",
+    role: "",
+    phone: ""
+  });
+  const [errors, setErrors] = useState({});
 
   const handleInputChange = (e) => {
-    setNewUser({ ...newUser, [e.target.name]: e.target.value });
-  };
-
-  const handleCreateUser = () => {
-    if(newUser.name && newUser.email && newUser.role){
-      usersData.all.push({ ...newUser, status: "نشط" });
-      setShowModal(false);
-      setNewUser({ name: "", email: "", role: "", phone: "" });
+    const { name, value } = e.target;
+    setNewUser(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: ""
+      }));
     }
   };
 
+  const validateForm = async () => {
+    try {
+      await userSchema.validate(newUser, { abortEarly: false });
+      setErrors({});
+      return true;
+    } catch (validationErrors) {
+      const newErrors = {};
+      validationErrors.inner.forEach(error => {
+        newErrors[error.path] = error.message;
+      });
+      setErrors(newErrors);
+      return false;
+    }
+  };
+
+  const handleCreateUser = async () => {
+    const isValid = await validateForm();
+    if (!isValid) return;
+
+    try {
+      if (editingUser) {
+        await updateUser(editingUser.id, newUser);
+      } else {
+        await createUser(newUser);
+      }
+      setNewUser({ name: "", email: "", role: "", phone: "" });
+      setEditingUser(null);
+      setShowModal(false);
+    } catch (err) {
+      setErrors({ submit: err.message });
+    }
+  };
+
+  const handleEditUser = (user) => {
+    setEditingUser(user);
+    setNewUser({
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      phone: user.phone || ""
+    });
+    setShowModal(true);
+  };
+
+  const handleDeleteUser = async (userId) => {
+    if (window.confirm("هل أنت متأكد من حذف هذا المستخدم؟")) {
+      try {
+        await deleteUser(userId);
+      } catch (err) {
+        alert("حدث خطأ أثناء حذف المستخدم: " + err.message);
+      }
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+        <strong className="font-bold">خطأ! </strong>
+        <span className="block sm:inline">{error}</span>
+      </div>
+    );
+  }
+
   return (
-    <div className="p-6 font-cairo bg-white dark:bg-gray-900 min-h-screen text-gray-900 dark:text-gray-100" dir="rtl">
-      {/* Header */}
+    <motion.div 
+      className="container mx-auto p-4 bg-white dark:bg-gray-900"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      dir="rtl"
+    >
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">إدارة المستخدمين</h1>
-        <button
-          className="bg-[#17A34A] hover:bg-green-500 text-white px-4 py-2 rounded flex items-center gap-2"
-          onClick={() => setShowModal(true)}
+        <motion.h1 
+          className="text-2xl font-bold text-gray-900 dark:text-white"
+          initial={{ y: -20 }}
+          animate={{ y: 0 }}
+          transition={{ duration: 0.5 }}
         >
-          <FaPlus />
-          إضافة مستخدم جديد
-        </button>
+          إدارة المستخدمين
+        </motion.h1>
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => {
+            setEditingUser(null);
+            setNewUser({ name: "", email: "", role: "", phone: "" });
+            setErrors({});
+            setShowModal(true);
+          }}
+          className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
+        >
+          <FaPlus /> إضافة مستخدم
+        </motion.button>
       </div>
 
-     <div className="mb-6 border-b-2 border-gray-300 dark:border-gray-700">
-  <div className="flex gap-4">
-    {[
-      { key: "all", label: "جميع المستخدمين" },
-      { key: "admin", label: "مديرو النظام " },
-      { key: "supervisor", label: "المشرفون" },
-      { key: "schoolManager", label: "مديرو المدارس" },
-      { key: "parent", label: "أولياء الأمور" },
-    ].map((tab) => {
-      let selectedColorClass = "";
-      if (tab.key === "all" || tab.key === "schoolManager" || tab.key === "parent") {
-        selectedColorClass = "text-blue-600 border-blue-600";
-      } else if (tab.key === "admin") {
-        selectedColorClass = "text-red-600 border-red-600";
-      } else if (tab.key === "supervisor") {
-        selectedColorClass = "text-green-600 border-green-600";
-      }
-
-      return (
-        <button
-          key={tab.key}
-          onClick={() => setCurrentTable(tab.key)}
-          className={`px-4 py-2 font-medium transition-colors duration-200 border-b-2 ${
-            currentTable === tab.key
-              ? `${selectedColorClass} -mb-[2px]`
-              : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-          }`}
-        >
-          {tab.label}
-        </button>
-      );
-    })}
-  </div>
-</div>
-
-
-
-      {/* Table */}
-      <div className="overflow-x-auto">
-        <table className="min-w-full bg-white dark:bg-gray-800 border rounded-lg">
-          <thead>
-            <tr className="bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-200 font-bold">
-              <th className="py-2 px-4 border">الاسم</th>
-              <th className="py-2 px-4 border">البريد الإلكتروني</th>
-              <th className="py-2 px-4 border">الدور</th>
-              <th className="py-2 px-4 border">الحالة</th>
-              <th className="py-2 px-4 border">الإجراءات</th>
+      <motion.div 
+        className="overflow-x-auto rounded-lg border border-gray-300 dark:border-gray-700"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+      >
+        <table className="w-full text-right border-collapse rounded-lg">
+          <thead className="bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-200">
+            <tr className="border-b border-gray-300 dark:border-gray-700">
+              <th className="px-4 py-3 font-bold">الاسم</th>
+              <th className="px-4 py-3 font-bold">البريد الإلكتروني</th>
+              <th className="px-4 py-3 font-bold">الدور</th>
+              <th className="px-4 py-3 font-bold">رقم الهاتف</th>
+              <th className="px-4 py-3 font-bold">الإجراءات</th>
             </tr>
           </thead>
           <tbody>
-            {usersData[currentTable].map((user, index) => (
-              <tr key={index} className="text-center border-b hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                <td className="py-2 px-4 flex items-center justify-center">
-                  {getRoleIcon(user.role)}
-                  <span className="mr-2">{user.name}</span>
+            {users.map((user, index) => (
+              <motion.tr 
+                key={user.id}
+                className="border-b border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800 transition"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.3, delay: index * 0.1 }}
+                whileHover={{ scale: 1.02 }}
+              >
+                <td className="px-4 py-3">{user.name}</td>
+                <td className="px-4 py-3 text-gray-500 dark:text-gray-400">{user.email}</td>
+                <td className="px-4 py-3">
+                  <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
+                    {user.role}
+                  </span>
                 </td>
-                <td className="py-2 px-4">{user.email}</td>
-                <td className="py-2 px-4">{user.role}</td>
-                <td className="py-2 px-4">{renderStatus(user.status)}</td>
-                <td className="py-2 px-4 flex justify-center gap-2">
-                  <button className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300">
-                    <FaEdit />
-                  </button>
-                  <button className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300">
-                    <FaTrash />
-                  </button>
+                <td className="px-4 py-3 text-gray-500 dark:text-gray-400">{user.phone || "-"}</td>
+                <td className="px-4 py-3">
+                  <div className="flex gap-3 justify-center">
+                    <motion.button
+                      whileHover={{ scale: 1.2 }}
+                      whileTap={{ scale: 0.9 }}
+                      onClick={() => handleEditUser(user)}
+                      className="text-blue-500 hover:text-blue-700"
+                      aria-label="تعديل"
+                    >
+                      <FaEdit />
+                    </motion.button>
+                    <motion.button
+                      whileHover={{ scale: 1.2 }}
+                      whileTap={{ scale: 0.9 }}
+                      onClick={() => handleDeleteUser(user.id)}
+                      className="text-red-500 hover:text-red-700"
+                      aria-label="حذف"
+                    >
+                      <FaTrash />
+                    </motion.button>
+                  </div>
                 </td>
-              </tr>
+              </motion.tr>
             ))}
           </tbody>
         </table>
-      </div>
+      </motion.div>
 
       {/* Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md text-gray-900 dark:text-gray-100">
-            <h2 className="text-xl font-bold mb-4">إضافة مستخدم جديد</h2>
+        <motion.div 
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+        >
+          <motion.div
+            className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md text-gray-900 dark:text-gray-100"
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+          >
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold">
+                {editingUser ? "تعديل مستخدم" : "إضافة مستخدم جديد"}
+              </h2>
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={() => setShowModal(false)}
+                className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+              >
+                <FaTimes />
+              </motion.button>
+            </div>
             
-            <label className="block mt-2">الاسم</label>
-            <input
-              type="text"
-              name="name"
-              value={newUser.name}
-              placeholder="اسم المستخدم"
-              onChange={handleInputChange}
-              className="w-full border px-3 py-2 rounded mt-1 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600"
-            />
+            {errors.submit && (
+              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                {errors.submit}
+              </div>
+            )}
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block mb-1">الاسم</label>
+                <input
+                  type="text"
+                  name="name"
+                  value={newUser.name}
+                  placeholder="اسم المستخدم"
+                  onChange={handleInputChange}
+                  className={`w-full border px-3 py-2 rounded mt-1 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600 ${
+                    errors.name ? "border-red-500" : ""
+                  }`}
+                />
+                {errors.name && (
+                  <p className="text-red-500 text-sm mt-1">{errors.name}</p>
+                )}
+              </div>
 
-            <label className="block mt-2">البريد الإلكتروني</label>
-            <input
-              type="email"
-              name="email"
-              value={newUser.email}
-              placeholder="البريد الإلكتروني للمستخدم"
-              onChange={handleInputChange}
-              className="w-full border px-3 py-2 rounded mt-1 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600"
-            />
+              <div>
+                <label className="block mb-1">البريد الإلكتروني</label>
+                <input
+                  type="email"
+                  name="email"
+                  value={newUser.email}
+                  placeholder="البريد الإلكتروني للمستخدم"
+                  onChange={handleInputChange}
+                  className={`w-full border px-3 py-2 rounded mt-1 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600 ${
+                    errors.email ? "border-red-500" : ""
+                  }`}
+                />
+                {errors.email && (
+                  <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+                )}
+              </div>
 
-            <label className="block mt-2">الدور</label>
-            <select
-              name="role"
-              value={newUser.role}
-              onChange={handleInputChange}
-              className="w-full border px-3 py-2 rounded mt-1 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600"
-            >
-              <option value="">اختر الدور</option>
-              <option value="أدمن ">أدمن  </option>
-              <option value="مشرف">مشرف</option>
-              <option value="مدير مدرسة">مدير مدرسة</option>
-              <option value="ولي أمر">ولي أمر</option>
-            </select>
+              <div>
+                <label className="block mb-1">الدور</label>
+                <select
+                  name="role"
+                  value={newUser.role}
+                  onChange={handleInputChange}
+                  className={`w-full border px-3 py-2 rounded mt-1 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600 ${
+                    errors.role ? "border-red-500" : ""
+                  }`}
+                >
+                  <option value="">اختر الدور</option>
+                  <option value="مدير النظام">مدير النظام</option>
+                  <option value="مشرف">مشرف</option>
+                  <option value="مدير مدرسة">مدير مدرسة</option>
+                  <option value="ولي أمر">ولي أمر</option>
+                </select>
+                {errors.role && (
+                  <p className="text-red-500 text-sm mt-1">{errors.role}</p>
+                )}
+              </div>
 
-            <label className="block mt-2">رقم الهاتف</label>
-            <input
-              type="text"
-              name="phone"
-              value={newUser.phone}
-              placeholder="رقم هاتف المستخدم"
-              onChange={handleInputChange}
-              className="w-full border px-3 py-2 rounded mt-1 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600"
-            />
+              <div>
+                <label className="block mb-1">رقم الهاتف</label>
+                <input
+                  type="text"
+                  name="phone"
+                  value={newUser.phone}
+                  placeholder="رقم هاتف المستخدم"
+                  onChange={handleInputChange}
+                  className={`w-full border px-3 py-2 rounded mt-1 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600 ${
+                    errors.phone ? "border-red-500" : ""
+                  }`}
+                />
+                {errors.phone && (
+                  <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
+                )}
+              </div>
+            </div>
 
-           <div className="flex justify-between items-center mt-4">
-                    <button
-                      onClick={handleCreateUser}
-                      className="bg-green-600 text-white px-8 py-2 text-xl min-w-[180px] rounded-lg hover:bg-green-700"
-                    >
-                      إنشاء الرابط
-                    </button>
-                    <button
-                      onClick={() => setShowModal(false)}
-                      className="border border-green-600 text-green-600 dark:text-green-400 dark:border-green-400 px-8 py-2 text-xl min-w-[180px] rounded-lg hover:bg-green-700 hover:text-white"
-                    >
-                      إلغاء
-                    </button>
-                  </div>
-          </div>
-        </div>
+            <div className="flex justify-between items-center mt-6">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={handleCreateUser}
+                className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors"
+              >
+                {editingUser ? "تحديث" : "إنشاء"}
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setShowModal(false)}
+                className="border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 px-6 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              >
+                إلغاء
+              </motion.button>
+            </div>
+          </motion.div>
+        </motion.div>
       )}
-    </div>
+    </motion.div>
   );
-};
-
-export default UsersPage;
+}

@@ -9,8 +9,8 @@ export default function Services() {
   const [isButtonHovered, setIsButtonHovered] = useState(false);
 const navigate = useNavigate();
 
-  const goToEvaluateProfile = () => {
-    navigate("/evaluateSchool"); 
+  const goToLogin= () => {
+    navigate("/login"); 
   };
   const handleEvaluateClick = () => {
     // Navigate to ratings page or evaluation form
@@ -52,7 +52,7 @@ const navigate = useNavigate();
             onMouseEnter={() => setIsButtonHovered(true)}
             onMouseLeave={() => setIsButtonHovered(false)}
             // onClick={handleEvaluateClick}
-                                                onClick={goToEvaluateProfile} 
+                                                onClick={goToLogin} 
 
           >
             قيّم مدرستك الآن

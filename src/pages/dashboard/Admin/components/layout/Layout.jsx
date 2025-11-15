@@ -1,9 +1,6 @@
-
-
-
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import AdminHeader from './Header';
 import Footer from './Footer';
@@ -16,11 +13,13 @@ import { useUISettings, useNotifications } from '../../hooks/useData';
  */
 const Layout = ({ children, title, subtitle, breadcrumbs = [] }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { settings, toggleTheme } = useUISettings();
   const { profile, loading: profileLoading } = useParentProfileContext();
   const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
   
   const [sidebarOpen, setSidebarOpen] = useState(!settings.sidebarCollapsed);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   // Update sidebar state when settings change
 
   useEffect(() => {
@@ -28,7 +27,7 @@ const Layout = ({ children, title, subtitle, breadcrumbs = [] }) => {
   }, [settings.sidebarCollapsed]);
 
   return (
-    <div
+    <motion.div
       className={`
         min-h-screen flex flex-col 
         bg-[#F9FAFB]
@@ -36,6 +35,9 @@ const Layout = ({ children, title, subtitle, breadcrumbs = [] }) => {
         transition-all duration-300 rtl
         ${settings.compactMode ? 'text-sm' : ''}
       `}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
     >
       {/* Background Pattern */}
       <div className="fixed inset-0 opacity-5 pointer-events-none -z-10">
@@ -59,9 +61,10 @@ const Layout = ({ children, title, subtitle, breadcrumbs = [] }) => {
         <Sidebar
           isOpen={sidebarOpen}
           onToggle={() => setSidebarOpen(!sidebarOpen)}
+          isCollapsed={sidebarCollapsed}
+          setIsCollapsed={setSidebarCollapsed}
         />
- {/* Sidebar Overlay for Mobile */}
-      <AnimatePresence>
+ {/* Sidebar Overlay for Mobile - Removed AnimatePresence to prevent input focus issues */}
         {sidebarOpen && (
           <motion.div
             className="fixed inset-0 z-30 bg-black bg-opacity-50 lg:hidden"
@@ -71,27 +74,35 @@ const Layout = ({ children, title, subtitle, breadcrumbs = [] }) => {
             onClick={() => setSidebarOpen(false)}
           />
         )}
-      </AnimatePresence>
-        {/* Page Content */}
+        {/* Page Content - Removed AnimatePresence to prevent input focus issues */}
         <motion.main
+          key={location.pathname}
           className={`flex-1 transition-all duration-300 p-4 lg:p-6 ${
-            sidebarOpen ? 'lg:mr-64' : 'lg:mr-20'
+            sidebarOpen ? (sidebarCollapsed ? 'lg:mr-20' : 'lg:mr-64') : 'lg:mr-20'
           }`}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, delay: 0.1 }}
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -20 }}
+          transition={{ duration: 0.3 }}
         >
-          <div className="max-w-7xl mx-auto">{children}</div>
+          {/* Removed AnimatePresence wrapper that was causing input focus issues */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+            className="max-w-7xl mx-auto"
+          >
+            {children}
+          </motion.div>
         </motion.main>
-
-
 
       </div>
 
       <footer className="relative z-[9999]">
         <Footer />
       </footer>
-    </div>
+    </motion.div>
   );
 };
 // Wrap the Layout component with ParentProfileProvider

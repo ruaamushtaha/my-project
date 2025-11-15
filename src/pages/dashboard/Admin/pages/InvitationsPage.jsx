@@ -1,149 +1,174 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { FaUserTie, FaTrash, FaEdit, FaCopy, FaPlus, FaCheck, FaTimes ,FaLink} from "react-icons/fa";
-import { Card, Loading } from '../components/ui';
+import { FaTrash, FaEdit, FaCopy, FaCheck, FaTimes, FaPlus } from "react-icons/fa";
+import * as Yup from "yup";
+import { useInvitations, useRegistrationRequests } from "../hooks/useAdminData";
 
+// Validation schema for invitation form
+const invitationSchema = Yup.object().shape({
+  institution: Yup.string()
+    .required('المؤسسة/المديريّة مطلوبة')
+    .min(3, 'اسم المؤسسة يجب أن يكون أكثر من 3 أحرف'),
+  expiration: Yup.date()
+    .nullable(),
+  usages: Yup.number()
+    .nullable()
+    .min(1, 'عدد الاستخدامات يجب أن يكون على الأقل 1')
+    .max(100, 'عدد الاستخدامات يجب ألا يتجاوز 100')
+});
 
-// ======= StatsCard Component =======
-const StatsCard = ({ title, value, icon: Icon, color, loading = false, suffix }) => {
-  const colorClasses = {
-    blue: 'text-sky-700',
-    success: 'text-green-500', 
-    danger: 'text-green-200',
-    info: 'text-yellow-500',
-    purple:'text-purple-500',
-  };
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-      whileHover={{ y: -5 }}
-    >
-      <Card className="relative overflow-hidden h-full group bg-[#F9F9FA] dark:bg-gray-700 transition-colors">
-        <div className="absolute inset-0 bg-slate-200 dark:bg-gray-600 opacity-30 group-hover:opacity-70 transition-opacity" />
-        <div className="relative z-10 flex flex-col h-full justify-between">
-          <div className="flex justify-end mb-2">
-            <div className={`${colorClasses[color]}`}>
-              <Icon className="text-2xl" />
-            </div>
-          </div>
-          <div className="space-y-1 mt-auto text-center">
-            <p
-              className="text-lg text-gray-900 dark:text-white font-bold truncate overflow-hidden whitespace-nowrap"
-              title={title}
-            >
-              {title}
-            </p>
-            <h3
-              className="text-sm font-thin text-gray-500 dark:text-gray-300 truncate overflow-hidden whitespace-nowrap"
-              title={value}
-            >
-              {loading ? <Loading type="spinner" size="sm" /> : `${value} ${suffix || ''}`}
-            </h3>
-          </div>
-        </div>
-      </Card>
-    </motion.div>
-  );
-};
-const InvitationsPage = () => {
+export default function InvitationsPage() {
+  const { invitations, loading: invitationsLoading, error: invitationsError, createInvitation } = useInvitations();
+  const { requests, loading: requestsLoading, error: requestsError, acceptRequest, rejectRequest } = useRegistrationRequests();
   const [activeTab, setActiveTab] = useState("links");
   const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState({
     institution: "",
     expiration: "",
-    usages: "",
+    usages: ""
   });
-
-  const invitationsData = [
-    { school: "مديريّة شرق غزة", status: "نشط", usages: "1/1", expiration: "July 1, 2024" },
-  ];
-
-  const requestsData = [
-    { name: "قاسم عبد العال", email: "re@gmail.com", usages: "1/1", date: "July 1, 2024" },
-    { name: "قاسم عبد العال", email: "re@gmail.com", usages: "1/1", date: "July 1, 2024" },
-    { name: "قاسم عبد العال", email: "re@gmail.com", usages: "1/1", date: "July 1, 2024" },
-    { name: "قاسم عبد العال", email: "re@gmail.com", usages: "1/1", date: "July 1, 2024" },
-    { name: "قاسم عبد العال", email: "re@gmail.com", usages: "1/1", date: "July 1, 2024" },
-  ];
+  const [errors, setErrors] = useState({});
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: ""
+      }));
+    }
   };
 
-  const handleCreateLink = () => {
-    console.log("إنشاء الرابط:", formData);
-    setShowModal(false);
-    setFormData({ institution: "", manager: "", expiration: "", usages: "" });
+  const validateForm = async () => {
+    try {
+      await invitationSchema.validate(formData, { abortEarly: false });
+      setErrors({});
+      return true;
+    } catch (validationErrors) {
+      const newErrors = {};
+      validationErrors.inner.forEach(error => {
+        newErrors[error.path] = error.message;
+      });
+      setErrors(newErrors);
+      return false;
+    }
   };
+
+  const handleCreateLink = async () => {
+    const isValid = await validateForm();
+    if (!isValid) return;
+
+    try {
+      await createInvitation(formData);
+      setFormData({ institution: "", expiration: "", usages: "" });
+      setShowModal(false);
+    } catch (err) {
+      setErrors({ submit: err.message });
+    }
+  };
+
+  const copyToClipboard = (text) => {
+    navigator.clipboard.writeText(text);
+    // You could add a toast notification here
+  };
+
+  if (invitationsLoading || requestsLoading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+
+  if (invitationsError || requestsError) {
+    return (
+      <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+        <strong className="font-bold">خطأ! </strong>
+        <span className="block sm:inline">{invitationsError || requestsError}</span>
+      </div>
+    );
+  }
 
   return (
-    <motion.div
-      className="p-6 text-right min-h-screen bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-200"
+    <motion.div 
+      className="container mx-auto p-4 bg-white dark:bg-gray-900"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
       dir="rtl"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
     >
-      {/* العنوان */}
-      <div className="flex flex-col mb-6">
-        <h1 className="text-xl font-extrabold">دعوات  المشرفيين</h1>
-        <span className="text-sm font-medium text-gray-500 dark:text-gray-400 mt-1">
-          قم بإنشاء وإدارة روابط الدعوة ومراجعة طلبات المشرفيين المعلقة
-        </span>
-      </div>
-<motion.div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-  <StatsCard title="إجمالي الروابط" value={ 4}  icon={FaLink} color="purple"  />
-  <StatsCard title=" الروابط النشطة" value={3} icon={FaLink} color="danger" />
-  <StatsCard title=" الروابط المنتهية" value={1} icon={FaLink} color="info" />
-  <StatsCard title="  الروابط المستخدمة" value={0}  icon={FaLink} color="success" />
-</motion.div>
-      {/* التبويبات */}
-      <div className="mb-6 border-b-2 border-gray-300 dark:border-gray-700">
-        <div className="flex gap-4 justify-start">
-          <button
-            onClick={() => setActiveTab("links")}
-            className={`px-4 py-2 font-medium transition-colors duration-200 ${
-              activeTab === "links"
-                ? "text-green-600 dark:text-green-500 border-b-2 border-green-600 dark:border-green-500 -mb-[2px]"
-                : "text-gray-800 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-500"
-            }`}
-          >
-            روابط الدعوة
-          </button>
+      <motion.h1 
+        className="text-2xl font-bold text-gray-900 dark:text-white mb-6"
+        initial={{ y: -20 }}
+        animate={{ y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        إدارة الدعوات والطلبات
+      </motion.h1>
 
-          <button
-            onClick={() => setActiveTab("requests")}
-            className={`px-4 py-2 font-medium transition-colors duration-200 ${
-              activeTab === "requests"
-                ? "text-green-600 dark:text-green-500 border-b-2 border-green-600 dark:border-green-500 -mb-[2px]"
-                : "text-gray-800 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-500"
-            }`}
-          >
-            طلبات تسجيل مشرفيين  ({requestsData.length})
-          </button>
-        </div>
-      </div>
+      {/* Tabs */}
+      <motion.div 
+        className="flex mb-6 border-b border-gray-300 dark:border-gray-700"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+      >
+        <button
+          className={`px-4 py-2 font-medium ${
+            activeTab === "links"
+              ? "border-b-2 border-blue-500 text-blue-600 dark:text-blue-400"
+              : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+          }`}
+          onClick={() => setActiveTab("links")}
+        >
+          روابط الدعوات
+        </button>
+        <button
+          className={`px-4 py-2 font-medium ${
+            activeTab === "requests"
+              ? "border-b-2 border-blue-500 text-blue-600 dark:text-blue-400"
+              : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+          }`}
+          onClick={() => setActiveTab("requests")}
+        >
+          طلبات التسجيل
+        </button>
+      </motion.div>
 
-      {/* محتوى روابط الدعوة */}
+      {/* محتوى روابط الدعوات */}
       {activeTab === "links" && (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
-          <div className="flex justify-between items-center mb-4">
-            <button
-              onClick={() => setShowModal(true)}
-              className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+        >
+          <div className="flex justify-end mb-4">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => {
+                setFormData({ institution: "", expiration: "", usages: "" });
+                setErrors({});
+                setShowModal(true);
+              }}
+              className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
             >
-              <FaPlus /> رابط دعوة مشرف  جديد
-            </button>
-            <button className="flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700">
-              <FaTrash /> حذف الكل
-            </button>
+              <FaPlus /> إنشاء رابط دعوة
+            </motion.button>
           </div>
 
-          <div className="overflow-x-auto rounded-lg border border-gray-300 dark:border-gray-700">
+          <motion.div 
+            className="overflow-x-auto rounded-lg border border-gray-300 dark:border-gray-700"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+          >
             <table className="w-full text-right border-collapse rounded-lg">
               <thead className="bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-200">
                 <tr className="border-b border-gray-300 dark:border-gray-700">
@@ -156,12 +181,16 @@ const InvitationsPage = () => {
               </thead>
 
               <tbody>
-                {invitationsData.map((inv, index) => (
-                  <tr
-                    key={index}
+                {invitations.map((inv, index) => (
+                  <motion.tr
+                    key={inv.id}
                     className="border-b border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800 transition"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.3, delay: index * 0.1 }}
+                    whileHover={{ scale: 1.01 }}
                   >
-                    <td className="px-4 py-3 rounded-s-lg">{inv.school}</td>
+                    <td className="px-4 py-3 rounded-s-lg">{inv.institution}</td>
                     <td className="px-4 py-3">
                       {inv.status === "نشط" ? (
                         <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900 text-sm font-medium">
@@ -169,88 +198,184 @@ const InvitationsPage = () => {
                           {inv.status}
                         </span>
                       ) : (
-                        inv.status
+                        <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-900 text-sm font-medium">
+                          <span className="w-2 h-2 rounded-full bg-red-600 dark:bg-red-400 inline-block"></span>
+                          {inv.status}
+                        </span>
                       )}
                     </td>
                     <td className="px-4 py-3 text-gray-500 dark:text-gray-400">{inv.usages}</td>
-                    <td className="px-4 py-3 text-gray-500 dark:text-gray-400">{inv.expiration}</td>
+                    <td className="px-4 py-3 text-gray-500 dark:text-gray-400">{inv.expiration || "غير محدد"}</td>
                     <td className="px-4 py-3 rounded-e-lg">
                       <div className="flex gap-3 justify-start">
-                        <button className="text-red-500 hover:text-red-700"><FaTrash /></button>
-                        <button className="text-blue-500 hover:text-blue-700"><FaEdit /></button>
-                        <button className="text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-500"><FaCopy /></button>
+                        <motion.button
+                          whileHover={{ scale: 1.2 }}
+                          whileTap={{ scale: 0.9 }}
+                          className="text-red-500 hover:text-red-700"
+                          aria-label="حذف"
+                        >
+                          <FaTrash />
+                        </motion.button>
+                        <motion.button
+                          whileHover={{ scale: 1.2 }}
+                          whileTap={{ scale: 0.9 }}
+                          className="text-blue-500 hover:text-blue-700"
+                          aria-label="تعديل"
+                        >
+                          <FaEdit />
+                        </motion.button>
+                        <motion.button
+                          whileHover={{ scale: 1.2 }}
+                          whileTap={{ scale: 0.9 }}
+                          onClick={() => copyToClipboard(`https://example.com/invite/${inv.id}`)}
+                          className="text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-500"
+                          aria-label="نسخ الرابط"
+                        >
+                          <FaCopy />
+                        </motion.button>
                       </div>
                     </td>
-                  </tr>
+                  </motion.tr>
                 ))}
               </tbody>
             </table>
-          </div>
+          </motion.div>
 
           {/* النافذة المنبثقة */}
           {showModal && (
-            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+            <motion.div 
+              className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.3 }}
+            >
               <motion.div
                 className="bg-white dark:bg-gray-900 rounded-lg p-6 w-full max-w-md text-right text-gray-900 dark:text-gray-200"
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.8, opacity: 0 }}
+                transition={{ type: "spring", stiffness: 300, damping: 30 }}
               >
                 <div className="flex justify-between items-center mb-4">
                   <h2 className="text-lg font-bold">إنشاء رابط دعوة مشرف جديد</h2>
-                  <button onClick={() => setShowModal(false)} className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">
+                  <motion.button
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => setShowModal(false)}
+                    className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+                  >
                     <FaTimes />
-                  </button>
+                  </motion.button>
                 </div>
-                <div className="flex flex-col gap-3">
-                  {["institution","expiration","usages"].map((field)=>(
-
-                    <label key={field} className="flex flex-col">
-                      {field === "institution" ? "المؤسسة/المديريّة" : field === "expiration" ? "تاريخ الانتهاء (اختياري)" : "عدد الاستخدامات المسموحة (اختياري)"}
-                      <input
-                        type={field==="expiration"?"date":field==="usages"?"number":"text"}
-                        name={field}
-                        value={formData[field]}
-                        onChange={handleInputChange}
-                        className="mt-1 px-3 py-2 border rounded-lg bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-200"
-                        placeholder={field==="institution"?"اسم المؤسسة/المديرية":"غير محدود"}
-                      />
-                    </label>
-                  ))}
-                  <div className="flex justify-between items-center mt-4">
-                    <button
-                      onClick={handleCreateLink}
-                      className="bg-green-600 text-white px-8 py-2 text-xl min-w-[180px] rounded-lg hover:bg-green-700"
-                    >
-                      إنشاء الرابط
-                    </button>
-                    <button
-                      onClick={() => setShowModal(false)}
-                      className=" dark:bg-gray-800 text-green-600 dark:text-green-500 border border-green-600 dark:border-green-500 px-8 py-2 text-xl min-w-[180px] rounded-lg hover:bg-green-700 hover:text-white"
-                    >
-                      إلغاء
-                    </button>
+                
+                {errors.submit && (
+                  <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                    {errors.submit}
+                  </div>
+                )}
+                
+                <div className="space-y-4">
+                  <div>
+                    <label className="block mb-1">المؤسسة/المديريّة</label>
+                    <input
+                      type="text"
+                      name="institution"
+                      value={formData.institution}
+                      onChange={handleInputChange}
+                      className={`w-full px-3 py-2 border rounded-lg bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-200 ${
+                        errors.institution ? "border-red-500" : ""
+                      }`}
+                      placeholder="اسم المؤسسة/المديرية"
+                    />
+                    {errors.institution && (
+                      <p className="text-red-500 text-sm mt-1">{errors.institution}</p>
+                    )}
+                  </div>
+                  
+                  <div>
+                    <label className="block mb-1">تاريخ الانتهاء (اختياري)</label>
+                    <input
+                      type="date"
+                      name="expiration"
+                      value={formData.expiration}
+                      onChange={handleInputChange}
+                      className="w-full px-3 py-2 border rounded-lg bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-200"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block mb-1">عدد الاستخدامات المسموحة (اختياري)</label>
+                    <input
+                      type="number"
+                      name="usages"
+                      value={formData.usages}
+                      onChange={handleInputChange}
+                      className={`w-full px-3 py-2 border rounded-lg bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-200 ${
+                        errors.usages ? "border-red-500" : ""
+                      }`}
+                      placeholder="غير محدود"
+                      min="1"
+                      max="100"
+                    />
+                    {errors.usages && (
+                      <p className="text-red-500 text-sm mt-1">{errors.usages}</p>
+                    )}
                   </div>
                 </div>
+                
+                <div className="flex justify-between items-center mt-6">
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={handleCreateLink}
+                    className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors"
+                  >
+                    إنشاء الرابط
+                  </motion.button>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => setShowModal(false)}
+                    className="border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 px-6 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                  >
+                    إلغاء
+                  </motion.button>
+                </div>
               </motion.div>
-            </div>
+            </motion.div>
           )}
         </motion.div>
       )}
 
       {/* محتوى طلبات التسجيل */}
       {activeTab === "requests" && (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+        >
           <div className="flex gap-4 mb-4 justify-between items-center">
-            <button className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
-              <FaCheck /> قبول الكل ({requestsData.length})
-            </button>
-            <button className="flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
+            >
+              <FaCheck /> قبول الكل ({requests.length})
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
+            >
               <FaTrash /> حذف الكل
-            </button>
+            </motion.button>
           </div>
 
-          <div className="overflow-x-auto rounded-lg border border-gray-300 dark:border-gray-700">
+          <motion.div 
+            className="overflow-x-auto rounded-lg border border-gray-300 dark:border-gray-700"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+          >
             <table className="w-full text-right border-collapse rounded-lg">
               <thead className="bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-200">
                 <tr className="border-b border-gray-300 dark:border-gray-700">
@@ -262,25 +387,46 @@ const InvitationsPage = () => {
                 </tr>
               </thead>
               <tbody>
-                {requestsData.map((req, index) => (
-                  <tr key={index} className="border-b border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800 transition">
+                {requests.map((req, index) => (
+                  <motion.tr 
+                    key={req.id}
+                    className="border-b border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800 transition"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.3, delay: index * 0.1 }}
+                    whileHover={{ scale: 1.01 }}
+                  >
                     <td className="px-4 py-2">{req.name}</td>
                     <td className="px-4 py-2 text-gray-500 dark:text-gray-400">{req.email}</td>
                     <td className="px-4 py-2 text-gray-500 dark:text-gray-400">{req.usages}</td>
                     <td className="px-4 py-2 text-gray-500 dark:text-gray-400">{req.date}</td>
                     <td className="px-4 py-2 flex gap-2 justify-start">
-                      <button className="text-red-500 hover:text-red-700"><FaTrash /></button>
-                      <button className="text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-500"><FaCheck /></button>
+                      <motion.button
+                        whileHover={{ scale: 1.2 }}
+                        whileTap={{ scale: 0.9 }}
+                        onClick={() => rejectRequest(req.id)}
+                        className="text-red-500 hover:text-red-700"
+                        aria-label="رفض"
+                      >
+                        <FaTrash />
+                      </motion.button>
+                      <motion.button
+                        whileHover={{ scale: 1.2 }}
+                        whileTap={{ scale: 0.9 }}
+                        onClick={() => acceptRequest(req.id)}
+                        className="text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-500"
+                        aria-label="قبول"
+                      >
+                        <FaCheck />
+                      </motion.button>
                     </td>
-                  </tr>
+                  </motion.tr>
                 ))}
               </tbody>
             </table>
-          </div>
+          </motion.div>
         </motion.div>
       )}
     </motion.div>
   );
-};
-
-export default InvitationsPage;
+}

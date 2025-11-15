@@ -23,6 +23,7 @@ import EvaluateSchool from '../pages/public/EvaluateSchool/index';
 import SchoolProfile from '../pages/public/SchoolProfile/index';
 
 // Dashboard Components - New System
+import AdminDashboardLayout from '../pages/dashboard/Admin/AdminDashboardLayout';
 import ParentsDashboardLayout from '../pages/dashboard/parents/ParentsDashboardLayout';
 import SupervisorDashboard from '../pages/dashboard/Supervisors/SupervisorsDashboardLayout';
 import SchoolManagerDashboard from '../pages/dashboard/Schools/SchoolsDashboardLayout';
@@ -57,6 +58,9 @@ export default function AppRoutes() {
       <Route path="/EvaluateSchool" element={<EvaluateSchool />} />
       <Route path="/school-profile" element={<SchoolProfile />} />
       <Route path="/SchoolProfile" element={<SchoolProfile />} />
+      
+      {/* Dashboard routes  */}
+      <Route path="/dashboard/Admin/*" element={<AdminDashboardLayout />} />
       <Route path="/dashboard/parents/*" element={<ParentsDashboardLayout />} />
       <Route path="/dashboard/Supervisors/*" element={<SupervisorDashboard />} />
       <Route path="/dashboard/Schools/*" element={<SchoolManagerDashboard />} />
