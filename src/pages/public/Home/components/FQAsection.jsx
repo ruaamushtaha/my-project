@@ -125,24 +125,17 @@ const FQAsection = () => {
           {faqs.map((item, index) => (
   <motion.div
     key={item.id}
-    className="bg-[#E5F5F9] rounded-lg py-6 px-6 shadow-sm flex flex-col items-start justify-center text-right pr-20"
+    className="bg-[#E5F5F9] rounded-lg py-3 px-6 shadow-sm flex flex-col items-start justify-center text-right pr-60"
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.5, delay: 0.1 * index }}
     whileHover={{ scale: 1.02 }}
   >
-    {item.id === 1 ? (
-      // السؤال الأول يظهر في سطر واحد
-      <p className="text-primary font-medium text-lg">
-        "{item.q}"  <span className="text-gray-700 font-normal">{item.a}</span>
-      </p>
-    ) : (
-      // باقي الأسئلة تبقى كما هي
-      <>
-        <p className="font-medium text-primary text-lg">"{item.q}"</p>
-        <p className="text-gray-700 mt-2">"{item.a}"</p>
-      </>
-    )}
+    <>
+  <p className="font-medium text-primary text-lg">"{item.q}"</p>
+  <p className="text-gray-700 mt-2">"{item.a}"</p>
+</>
+
   </motion.div>
 ))}
 
@@ -150,7 +143,7 @@ const FQAsection = () => {
           <motion.div 
                                               onClick={goTocontactPage} 
 
-            className="bg-[#E5F5F9] rounded-lg py-4 px-6 text-center flex items-center justify-center gap-2 font-medium text-black text-xl cursor-pointer hover:bg-[#d9eef4] transition relative"
+            className="bg-[#E5F5F9] rounded-lg py-10 px-6 text-center flex items-center justify-center gap-2 font-medium text-black text-2xl cursor-pointer hover:bg-[#d9eef4] transition relative"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.4 }}
@@ -160,7 +153,7 @@ const FQAsection = () => {
             <img 
               src={Plus} 
               alt="plus icon" 
-              className="w-5 h-5" 
+              className="w-8 h-8" 
               onError={(e) => {
                 e.target.style.display = 'none';
               }}

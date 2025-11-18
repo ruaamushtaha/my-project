@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, memo, useCallback } from 'react';
 import { useUISettings } from '../hooks/useData';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -18,6 +18,139 @@ import {
   FaCheckCircle,
   FaTimes
 } from 'react-icons/fa';
+
+// Account settings component moved outside to prevent re-creation
+const AccountSettings = memo(({ 
+  tempSettings, 
+  errors, 
+  showPassword, 
+  isSaving, 
+  successMessage, 
+  updateTempSetting, 
+  setShowPassword, 
+  handleChangePassword 
+}) => (
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.3 }}
+    className="space-y-6"
+  >
+    {/* Success Message */}
+    <AnimatePresence>
+      {successMessage && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4 flex items-center"
+        >
+          <FaCheckCircle className="text-green-500 dark:text-green-400 mr-2" />
+          <span className="text-green-800 dark:text-green-200">{successMessage}</span>
+        </motion.div>
+      )}
+    </AnimatePresence>
+
+    {/* Change Password */}
+    <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">تغيير كلمة المرور</h3>
+      
+      <form onSubmit={handleChangePassword} className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            كلمة المرور الحالية
+          </label>
+          <div className="relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              value={tempSettings.currentPassword || ''}
+              onChange={(e) => updateTempSetting('currentPassword', e.target.value)}
+              className={`w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                errors.currentPassword ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+              }`}
+              placeholder="أدخل كلمة المرور الحالية"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400"
+            >
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
+            </button>
+          </div>
+          {errors.currentPassword && (
+            <p className="mt-1 text-sm text-red-600 dark:text-red-400 flex items-center">
+              <FaExclamationTriangle className="ml-1" />
+              {errors.currentPassword}
+            </p>
+          )}
+        </div>
+        
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            كلمة المرور الجديدة
+          </label>
+          <input
+            type="password"
+            value={tempSettings.newPassword || ''}
+            onChange={(e) => updateTempSetting('newPassword', e.target.value)}
+            className={`w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+              errors.newPassword ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+            }`}
+            placeholder="أدخل كلمة المرور الجديدة"
+          />
+          {errors.newPassword && (
+            <p className="mt-1 text-sm text-red-600 dark:text-red-400 flex items-center">
+              <FaExclamationTriangle className="ml-1" />
+              {errors.newPassword}
+            </p>
+          )}
+        </div>
+        
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            تأكيد كلمة المرور الجديدة
+          </label>
+          <input
+            type="password"
+            value={tempSettings.confirmPassword || ''}
+            onChange={(e) => updateTempSetting('confirmPassword', e.target.value)}
+            className={`w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+              errors.confirmPassword ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
+            }`}
+            placeholder="أدخل كلمة المرور الجديدة مرة أخرى"
+          />
+          {errors.confirmPassword && (
+            <p className="mt-1 text-sm text-red-600 dark:text-red-400 flex items-center">
+              <FaExclamationTriangle className="ml-1" />
+              {errors.confirmPassword}
+            </p>
+          )}
+        </div>
+        
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          type="submit"
+          disabled={isSaving}
+          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center disabled:opacity-50"
+        >
+          {isSaving ? (
+            <>
+              <svg className="animate-spin ml-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              جاري الحفظ...
+            </>
+          ) : (
+            'تغيير كلمة المرور'
+          )}
+        </motion.button>
+      </form>
+    </div>
+  </motion.div>
+));
 
 const SettingsPage = () => {
   const { settings, updateSetting } = useUISettings();
@@ -44,7 +177,7 @@ const SettingsPage = () => {
   }, [successMessage]);
 
   // Validate form fields
-  const validateForm = () => {
+  const validateForm = useCallback(() => {
     const newErrors = {};
 
     // Validate password change form if fields are filled
@@ -66,27 +199,28 @@ const SettingsPage = () => {
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  };
+  }, [tempSettings.currentPassword, tempSettings.newPassword, tempSettings.confirmPassword]);
 
   // Update temporary settings
-  const updateTempSetting = (key, value) => {
+  const updateTempSetting = useCallback((key, value) => {
     setTempSettings(prev => ({
       ...prev,
       [key]: value
     }));
 
     // Clear error for this field when user starts typing
-    if (errors[key]) {
-      setErrors(prev => {
+    setErrors(prev => {
+      if (prev[key]) {
         const newErrors = { ...prev };
         delete newErrors[key];
         return newErrors;
-      });
-    }
-  };
+      }
+      return prev;
+    });
+  }, []);
 
   // Handle password change
-  const handleChangePassword = (e) => {
+  const handleChangePassword = useCallback((e) => {
     e.preventDefault();
     
     if (!validateForm()) {
@@ -109,7 +243,7 @@ const SettingsPage = () => {
         confirmPassword: ''
       }));
     }, 1500);
-  };
+  }, [validateForm]);
 
   // Save settings
   const handleSaveSettings = () => {
@@ -135,130 +269,6 @@ const SettingsPage = () => {
     setErrors({});
     setSuccessMessage('');
   };
-
-  // Account settings section
-  const AccountSettings = () => (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-      className="space-y-6"
-    >
-      {/* Success Message */}
-      <AnimatePresence>
-        {successMessage && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4 flex items-center"
-          >
-            <FaCheckCircle className="text-green-500 dark:text-green-400 mr-2" />
-            <span className="text-green-800 dark:text-green-200">{successMessage}</span>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Change Password */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">تغيير كلمة المرور</h3>
-        
-        <form onSubmit={handleChangePassword} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              كلمة المرور الحالية
-            </label>
-            <div className="relative">
-              <input
-                type={showPassword ? "text" : "password"}
-                value={tempSettings.currentPassword || ''}
-                onChange={(e) => updateTempSetting('currentPassword', e.target.value)}
-                className={`w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                  errors.currentPassword ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
-                }`}
-                placeholder="أدخل كلمة المرور الحالية"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400"
-              >
-                {showPassword ? <FaEyeSlash /> : <FaEye />}
-              </button>
-            </div>
-            {errors.currentPassword && (
-              <p className="mt-1 text-sm text-red-600 dark:text-red-400 flex items-center">
-                <FaExclamationTriangle className="ml-1" />
-                {errors.currentPassword}
-              </p>
-            )}
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              كلمة المرور الجديدة
-            </label>
-            <input
-              type="password"
-              value={tempSettings.newPassword || ''}
-              onChange={(e) => updateTempSetting('newPassword', e.target.value)}
-              className={`w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                errors.newPassword ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
-              }`}
-              placeholder="أدخل كلمة المرور الجديدة"
-            />
-            {errors.newPassword && (
-              <p className="mt-1 text-sm text-red-600 dark:text-red-400 flex items-center">
-                <FaExclamationTriangle className="ml-1" />
-                {errors.newPassword}
-              </p>
-            )}
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              تأكيد كلمة المرور الجديدة
-            </label>
-            <input
-              type="password"
-              value={tempSettings.confirmPassword || ''}
-              onChange={(e) => updateTempSetting('confirmPassword', e.target.value)}
-              className={`w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                errors.confirmPassword ? 'border-red-500' : 'border-gray-300 dark:border-gray-600'
-              }`}
-              placeholder="أدخل كلمة المرور الجديدة مرة أخرى"
-            />
-            {errors.confirmPassword && (
-              <p className="mt-1 text-sm text-red-600 dark:text-red-400 flex items-center">
-                <FaExclamationTriangle className="ml-1" />
-                {errors.confirmPassword}
-              </p>
-            )}
-          </div>
-          
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            type="submit"
-            disabled={isSaving}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center disabled:opacity-50"
-          >
-            {isSaving ? (
-              <>
-                <svg className="animate-spin ml-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                جاري الحفظ...
-              </>
-            ) : (
-              'تغيير كلمة المرور'
-            )}
-          </motion.button>
-        </form>
-      </div>
-    </motion.div>
-  );
 
   // Privacy settings section
   const PrivacySettings = () => (
@@ -1050,7 +1060,18 @@ const SettingsPage = () => {
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3 }}
           >
-            {activeTab === 'account' && <AccountSettings />}
+            {activeTab === 'account' && (
+              <AccountSettings
+                tempSettings={tempSettings}
+                errors={errors}
+                showPassword={showPassword}
+                isSaving={isSaving}
+                successMessage={successMessage}
+                updateTempSetting={updateTempSetting}
+                setShowPassword={setShowPassword}
+                handleChangePassword={handleChangePassword}
+              />
+            )}
             {activeTab === 'privacy' && <PrivacySettings />}
             {activeTab === 'notifications' && <NotificationSettings />}
             {activeTab === 'support' && <SupportSettings />}

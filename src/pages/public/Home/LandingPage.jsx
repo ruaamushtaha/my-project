@@ -143,21 +143,23 @@ const LandingPage = () => {
   </div>
 </motion.div>
 
-        
+
         <Header variant="transparent" showTitle={false} />
         <HeroSection />
 
-        <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 flex gap-3 z-20">
+      
+        <div className="absolute bottom-40 left-1/2 transform -translate-x-1/2 flex gap-3 z-20">
           {slides.map((_, index) => (
             <button
               key={index}
-              className={`w-4 h-4 rounded-full transition-all duration-300 ${
-                currentImage === index ? 'bg-primary scale-x-150' : 'bg-white hover:bg-primary'
+              className={` h-4 rounded-full transition-all duration-300 ${
+                currentImage === index ? ' w-10 bg-primary ' : 'w-5 bg-white hover:bg-primary'
               }`}
               onClick={() => setCurrentImage(index)}
             />
           ))}
         </div>
+
       </div>
 
       <main className="flex-1 bg-gradient-to-br from-blue-50 to-indigo-50 relative z-10"> 

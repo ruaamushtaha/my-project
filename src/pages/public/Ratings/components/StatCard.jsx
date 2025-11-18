@@ -78,7 +78,7 @@ export default function StatCard({
       </div>
 
       <div className="flex items-center">
-        <div className="w-32 h-32 relative mr-6">
+        <div className="w-20 h-20 relative mr-6">
           <svg className="absolute top-0 left-0 w-full h-full -rotate-90">
             <circle cx="50%" cy="50%" r="40%" stroke="#E5E7EB" strokeWidth="6" fill="none" />
             <circle

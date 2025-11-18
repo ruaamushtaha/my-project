@@ -62,8 +62,7 @@ export default function ServicesSection() {
           <div className={`text-center mb-12 transition-all duration-1000 ${
             titleVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
           }`}>
-            
-            <p className="text-primary text-lg max-w-3xl mx-auto">
+             <p className="text-[#4682B4] text-2xl max-w-3xl mx-auto">
 نوفر مجموعة من الخدمات لدعم المدارس، المشرفين،<br/>
 وأولياء الأمور في تحسين العملية التعليمية.            </p>
           </div>

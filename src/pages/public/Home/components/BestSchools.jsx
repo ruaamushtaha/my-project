@@ -3,6 +3,13 @@ import School1 from '../../../../assets/images/School 4.png';
 import { FaStar, FaUsers, FaGraduationCap, FaIdCard } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { useNavigate } from "react-router-dom";
+import greenTwoTrue from '../../../../assets/icons/greenTwoTrue.svg';
+
+import personcard from '../../../../assets/icons/personcard.svg';
+import buildingsblack from '../../../../assets/icons/buildingsblack.svg';
+import studentss from '../../../../assets/icons/studentss.svg';
+
+
 
 const BestSchools = () => {
    const navigate = useNavigate();
@@ -26,13 +33,15 @@ const BestSchools = () => {
     <div className="font-cairo bg-babyBlue py-16 px-4" dir="rtl">
       <div className="max-w-full mx-auto space-y-8">
         <motion.h2
-          className="text-3xl font-semibold text-green-600 text-center"
+          className="text-4xl font-semibold text-green-600 text-center flex items-center justify-center"
           initial={{ opacity: 0, y: -20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          ✅ المدرسة المميزة لهذا العام
+                                <img src={greenTwoTrue} alt="icon" className="w-12 h-12" />
+
+           المدرسة المميزة لهذا العام
         </motion.h2>
 
         <div className="flex flex-col lg:flex-row items-center gap-12">
@@ -77,29 +86,35 @@ const BestSchools = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
-            <h3 className="text-2xl font-semibold text-secondary">مدرسة التميز النموذجية</h3>
+            <h3 className="text-2xl font-semibold text-black">مدرسة التميز النموذجية</h3>
 
             <ul className="text-gray-800 font-normal space-y-1">
               <div className="flex items-center gap-1 mb-5">
-                <FaIdCard className="w-4 h-4" />
+                                                <img src={personcard} alt="icon" className="w-[45px] h-[24px]" />
+
+                {/* <FaIdCard className="w-4 h-4" /> */}
                 <li>مدير المدرسة (د. أحمد محمد)</li>
               </div>
 
               <div className="flex gap-9 text-sm mb-8">
                 <div className="flex flex-col items-start text-black">
                   <div className="flex items-center gap-1">
-                    <FaUsers className="w-4 h-4" />
-                    <span className="font-normal">300 طالب</span>
+                                                    <img src={studentss} alt="icon" className="w-[45px] h-[24px] mt-4" />
+
+                    {/* <FaUsers className="w-4 h-4" /> */}
+                    <span className="font-bold">300 طالب</span>
                   </div>
-                  <span className="font-normal mr-5">وطالبة</span>
+                  <span className="font-bold mr-12">وطالبة</span>
                 </div>
 
                 <div className="flex flex-col items-start text-black">
                   <div className="flex items-center gap-1">
-                    <FaGraduationCap className="w-4 h-4" />
-                    <span className="font-normal">المرحلة الإعداديّة</span>
+                                                    <img src={buildingsblack} alt="icon" className="w-[45px] h-[24px]" />
+
+                    {/* <FaGraduationCap className="w-4 h-4" /> */}
+                    <span className="font-bold text-lg">المرحلة الإعداديّة</span>
                   </div>
-                  <span className="font-light ml-5">(من الصف السابع وحتى التاسع)</span>
+                  <span className="font-light mr-2 mt-2">(من الصف السابع وحتى التاسع)</span>
                 </div>
               </div>
             </ul>
@@ -112,10 +127,20 @@ const BestSchools = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: 0.3 }}
             >
-              <p className="font-semibold">ما يُميِّزنا:</p>
-              <p>✅ مناهج تعليميَّة</p>
-              <p>✅ كادر تعليمي مُؤهل وذو خبرة عالية.</p>
-              <p>✅ أنشطة لا منهجيَّة متنوعة.</p>
+              <p className="font-bold">ما يُميِّزنا:</p>
+              <p className="flex items-center gap-2">
+  <img src={greenTwoTrue} alt="icon" className="w-5 h-5" />
+  مناهج تعليميَّة
+</p>
+
+              <p className="flex items-center gap-2">
+                  <img src={greenTwoTrue} alt="icon" className="w-5 h-5" />
+
+                كادر تعليمي مُؤهل وذو خبرة عالية.</p>
+              <p className="flex items-center gap-2">
+                  <img src={greenTwoTrue} alt="icon" className="w-5 h-5" />
+
+                أنشطة لا منهجيَّة متنوعة.</p>
             </motion.div>
 
             {/* الأزرار */}

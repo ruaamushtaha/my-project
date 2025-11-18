@@ -120,11 +120,14 @@ export default function StatisticsSection({ data }) {
       customStyle = { right: 0, top: '50px', position: 'absolute' }; 
     }
     if(index === 1) {
-      customStyle = { right: '420px', top: '200px', position: 'absolute', zIndex: 20 }; 
+      customStyle = { right: '420px', top: '150px', position: 'absolute', zIndex: 20 }; 
     }
     if(index === 2) {
       customStyle = { right: '800px', top: '0px', position: 'absolute' }; 
     }
+
+
+
 
     return (
       <div
@@ -142,7 +145,7 @@ export default function StatisticsSection({ data }) {
           valueType={stat.valueType}
           title={stat.title}
           description={stat.description}
-          animationConfig={stat.animationConfig}
+      animationConfig={{ height: "h-[200px]", width: "w-[450px]", dashArray: 100, dashOffset: 0 }}
           isVisible={isVisible}
           index={index}
           highlight={highlight}

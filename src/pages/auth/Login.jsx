@@ -104,13 +104,23 @@ export default function Login() {
                   هل نسيت كلمة المرور؟
                 </Link>
               </div>
-              <button
-                type="submit"
-                disabled={btnState.disabled || isSubmitting}
-                className={`w-full h-10 mt-5 bg-primary text-white text-lg font-bold font-cairo rounded-full hover:bg-secondary transition ${btnState.className}`}
-              >
-                تسجيل الدخول
-              </button>
+   <button
+  type="submit"
+  disabled={btnState.disabled || isSubmitting}
+  className={`
+    w-full h-10 mt-5
+    bg-buttonDefault 
+    focus:bg-buttonFocus 
+    text-black 
+    text-lg font-bold font-cairo 
+    rounded-full 
+    transition 
+    ${btnState.disabled ? "opacity-50 cursor-not-allowed" : ""}
+  `}
+>
+  تسجيل الدخول
+</button>
+
 
               <div className="flex items-center my-6">
                 <hr className="flex-grow border-gray-300" />

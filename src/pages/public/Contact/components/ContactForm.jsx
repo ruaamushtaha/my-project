@@ -5,6 +5,12 @@ import * as Yup from 'yup';
 import { FiUser, FiMail, FiMapPin, FiMessageSquare, FiSend, FiCheck, FiAlertCircle,FiPhone } from 'react-icons/fi';
 import { useContactData } from '../index';
 
+import email from '../../../../assets/icons/email.svg';
+import person from '../../../../assets/icons/person.svg';
+import telephone from '../../../../assets/icons/telephone.svg';
+import locate from '../../../../assets/icons/locate.svg';
+
+
 // Enhanced FormInput Component with Modern Styling
 const ContactFormInput = ({ 
   label, 
@@ -283,7 +289,7 @@ const ContactForm = ({ data }) => {
 
   return (
     <div className="px-6  bg-gradient-to-br from-blue-50/50 via-white to-indigo-50/30" dir="rtl">
-      <div className="max-w-3xl mx-auto">
+      <div className="max-w-7xl mx-auto">
         
         {/* Form Header */}
         <motion.div 
@@ -329,7 +335,7 @@ const ContactForm = ({ data }) => {
 
         {/* Contact Form */}
         <motion.div 
-          className="bg-white backdrop-blur-sm rounded-3xl shadow-2xl p-10 border border-gray-100"
+          className=" backdrop-blur-sm  p-10"
           initial={{ opacity: 0, scale: 0.95, y: 30 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}

@@ -223,7 +223,7 @@ export default function SearchSection({ data }) {
   return (
     <div className="font-cairo bg-white text-black" dir="rtl">
       {/* Search Section */}
-      <section className="py-10 px-4 bg-white w-full">
+      <section className="pt-10 px-4 bg-white w-full">
         <div 
           ref={searchRef}
           className={`transition-all duration-1000 ${
@@ -253,7 +253,7 @@ export default function SearchSection({ data }) {
 
       {/* Schools Cards Section */}
       <section className="py-16 px-4 bg-white">
-        <div className="max-w-7xl mx-auto">
+        <div className="w-full mx-auto">
           {displaySchools?.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {displaySchools.map((school, index) => (

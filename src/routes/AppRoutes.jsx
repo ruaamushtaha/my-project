@@ -8,6 +8,8 @@ import Register from '../pages/auth/Registration';
 import ForgotPassword from '../pages/auth/ForgotPassword';
 import ResetPassword from '../pages/auth/ResetPassword';
 import PasswordResetSuccess from '../pages/auth/PasswordResetSuccess';
+import VerifyEmail from '../pages/auth/VerifyEmail';
+import CheckingVerification from '../pages/auth/CheckingVerification';
 
 // Public Pages
 import LandingPage from '../pages/public/Home/LandingPage';
@@ -21,6 +23,8 @@ import Privacy from '../pages/public/Privacy/index';
 import Terms from '../pages/public/Terms/index';
 import EvaluateSchool from '../pages/public/EvaluateSchool/index';
 import SchoolProfile from '../pages/public/SchoolProfile/index';
+
+
 
 // Dashboard Components - New System
 import AdminDashboardLayout from '../pages/dashboard/Admin/AdminDashboardLayout';
@@ -58,12 +62,17 @@ export default function AppRoutes() {
       <Route path="/EvaluateSchool" element={<EvaluateSchool />} />
       <Route path="/school-profile" element={<SchoolProfile />} />
       <Route path="/SchoolProfile" element={<SchoolProfile />} />
+      <Route path="/email-verification" element={<VerifyEmail />} />
+      {/* صفحة Checking Verification */}
+        <Route  path="/checking-verification"  element={<CheckingVerification/>}/>
+      
       
       {/* Dashboard routes  */}
       <Route path="/dashboard/Admin/*" element={<AdminDashboardLayout />} />
       <Route path="/dashboard/parents/*" element={<ParentsDashboardLayout />} />
       <Route path="/dashboard/Supervisors/*" element={<SupervisorDashboard />} />
       <Route path="/dashboard/Schools/*" element={<SchoolManagerDashboard />} />
+
 
       {/* Auth routes  */}
       <Route path="/login" element={<Login />} />

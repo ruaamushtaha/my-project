@@ -399,7 +399,7 @@ export default function SchoolCard({
                 rating={rating} 
                 isVisible={isVisible}
               />
-              <span className="text-xs text-gray-500 mt-1">تقييم</span>
+              {/* <span className="text-xs text-gray-500 mt-1">تقييم</span> */}
             </div>
             
             <div className={`

@@ -22,7 +22,7 @@ export default function Header({
   ];
 useEffect(() => {
   if (title) {
-    document.title = `الشعار   | ${title}`;
+    document.title = title;
   } else {
     document.title = "رؤى التعليم المستقبلية"; 
   }

@@ -113,7 +113,7 @@ const UpdateSection = () => {
             {currentNewsItems.map((news, index) => (
               <motion.div
                 key={news.id || currentSlide * 2 + index}
-                className="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 group"
+                className="bg-white rounded-2xl overflow-hidden  group"
                 initial={{ opacity: 0, y: 50, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 transition={{ 

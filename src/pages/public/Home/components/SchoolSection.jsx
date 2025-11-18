@@ -8,6 +8,12 @@ import School2 from '../../../../assets/images/School 2.jpg';
 import School3 from '../../../../assets/images/School 3.jpg';
 import search2 from "../../../../assets/icons/search2.svg";
   
+import locate from '../../../../assets/icons/locate.svg';
+import studentss from '../../../../assets/icons/studentss.svg';
+import buildingsblack from '../../../../assets/icons/buildingsblack.svg';
+
+
+
 const SchoolSection = () => {
   const navigate = useNavigate();
 
@@ -114,8 +120,8 @@ const SchoolSection = () => {
     <div className="bg-white font-cairo flex flex-col items-center" dir="rtl">
 
       {/* قسم البحث */}
-      <section className="py-10 px-4 w-full">
-        <div className="mx-auto max-w-8xl">
+      <section className="pt-10  px-4 w-full">
+        <div className="mx-auto max-w-7xl">
           <motion.form 
             onSubmit={handleSearch}
             className="flex items-center bg-[#F2F3F0] rounded-lg px-4 py-3 shadow-sm"
@@ -183,15 +189,21 @@ const SchoolSection = () => {
                   <h3 className="text-lg font-semibold mb-3">{school.name}</h3>
                   <div className="flex justify-between text-sm text-gray-600 mb-4">
                     <div className="flex items-center gap-1">
-                      <FaMapMarkerAlt className="w-4 h-4" />
+                      <img src={locate} alt="icon" className="w-4 h-4" />
+
+                      {/* <FaMapMarkerAlt className="w-4 h-4" /> */}
                       <span className="font-normal">{school.location}</span>
                     </div>
                     <div className="flex items-center gap-1">
-                      <FaUsers className="w-4 h-4" />
+                                            <img src={studentss} alt="icon" className="w-4 h-4" />
+
+                      {/* <FaUsers className="w-4 h-4" /> */}
                       <span className="font-normal">{school.students} طالب</span>
                     </div>
                     <div className="flex items-center gap-1">
-                      <FaGraduationCap className="w-4 h-4" />
+                                                                  <img src={buildingsblack} alt="icon" className="w-4 h-4" />
+
+                      {/* <FaGraduationCap className="w-4 h-4" /> */}
                       <span className="font-normal">{school.levels}</span>
                     </div>
                   </div>

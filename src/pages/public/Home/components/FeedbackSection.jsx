@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { ReactComponent as ChevronRight } from "../../../../assets/icons/whiteSlide.svg";
+import sadFace from "../../../../assets/icons/sadFace.svg"; 
+import goodFace from "../../../../assets/icons/goodFace.svg"; 
+import excellentFace from "../../../../assets/icons/excellentFace.svg"; 
 
 const FeedbackSection = () => {
   const [selectedRating, setSelectedRating] = useState(null);
@@ -120,7 +123,7 @@ const FeedbackSection = () => {
                     transition={{ duration: 0.5, delay: 0.4 }}
                     aria-label="تقييم ممتاز"
                   >
-                    <div className="text-4xl">😊</div>
+ <img src={excellentFace} alt="icon" className="w-10 h-10" />
                     <span className="text-sm text-gray-600">ممتاز</span>
                   </motion.button>
                   
@@ -137,7 +140,7 @@ const FeedbackSection = () => {
                     transition={{ duration: 0.5, delay: 0.5 }}
                     aria-label="تقييم جيد"
                   >
-                    <div className="text-4xl">😐</div>
+ <img src={goodFace} alt="icon" className="w-10 h-10" />
                     <span className="text-sm text-gray-600">جيد</span>
                   </motion.button>
 
@@ -154,7 +157,7 @@ const FeedbackSection = () => {
                     transition={{ duration: 0.5, delay: 0.6 }}
                     aria-label="يحتاج تحسين"
                   >
-                    <div className="text-4xl">😞</div>
+ <img src={sadFace} alt="icon" className="w-10 h-10" />
                     <span className="text-sm text-gray-600">يحتاج تحسين</span>
                   </motion.button>
                 </div>

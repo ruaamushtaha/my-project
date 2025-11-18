@@ -112,33 +112,40 @@ export default function StatisticsSection({ data }) {
 
         {/* Statistics Cards */}
         <div className="max-w-6xl mx-auto" ref={cardsRef}>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
-            {data.stats.map((stat, index) => {
-              const isVisible = visibleCards.has(index);
-              
-              return (
-                <div
-                  key={stat.id}
-                  className={`transition-all duration-700 ${
-                    isVisible 
-                      ? 'opacity-100 translate-y-0 scale-100' 
-                      : 'opacity-0 translate-y-12 scale-95'
-                  }`}
-                  style={{ transitionDelay: `${index * 100}ms` }}
-                >
-                  <StatCard
-                    icon={iconMap[stat.icon]}
-                    value={stat.value}
-                    label={stat.label}
-                    description={stat.description}
-                    animationConfig={stat.animationConfig}
-                    isVisible={isVisible}
-                    index={index}
-                  />
-                </div>
-              );
-            })}
-          </div>
+       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+  {data.stats.map((stat, index) => {
+    const isVisible = visibleCards.has(index);
+
+    const cardHeight = index === 1 ? "h-[350px]" : "h-[250px]";
+
+    const translateYStyle = (index === 0 || index === 2) ? "translate-y-8" : "translate-y-0";
+
+    return (
+      <div
+        key={stat.id}
+        className={`transition-all duration-700 ${
+          isVisible 
+            ? `opacity-100 scale-100 ${translateYStyle}` 
+            : 'opacity-0 translate-y-12 scale-95'
+        }`}
+        style={{ transitionDelay: `${index * 100}ms` }}
+      >
+        <StatCard
+          icon={iconMap[stat.icon]}
+          value={stat.value}
+          label={stat.label}
+          description={stat.description}
+          height={cardHeight}  
+          animationConfig={stat.animationConfig}
+          isVisible={isVisible}
+          index={index}
+        />
+      </div>
+    );
+  })}
+</div>
+
+
         </div>
 
     

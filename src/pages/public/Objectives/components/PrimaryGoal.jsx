@@ -115,7 +115,7 @@ export default function PrimaryGoal({ data }) {
               alt="green school"
               className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
-            <div className="absolute inset-0 bg-blue-950/20 z-0 transition-all duration-300 group-hover:bg-blue-950/30"></div>
+            <div className="absolute inset-0 bg-[#606060B2] z-0 transition-all duration-300 group-hover:bg-blue-950/30"></div>
 
             {/* النص في منتصف الصورة */}
             <div className="absolute inset-0 flex flex-col justify-center items-center z-10 text-center px-4 space-y-2">

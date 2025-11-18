@@ -56,7 +56,7 @@ const SecondaryGoalCard = ({ goal, index, isVisible }) => {
     <div
       className={`flex flex-col items-start text-right gap-2 p-6 min-h-[200px] rounded-lg cursor-pointer transform transition-all duration-500 ${
     isVisible? 'translate-x-0 opacity-100': 'translate-x-8 opacity-0'
-} ${isHovered? 'scale-105 shadow-lg': 'shadow-sm'}`}
+} ${isHovered? 'scale-105 shadow-lg': ''}`}
       style={{ 
         // background: 'linear-gradient(to left, #F1F4F8, #CFD8E8)',
         animationDelay: `${index * 150}ms`
@@ -174,7 +174,7 @@ const rightColumnGoals = [
       <section className="bg-white py-20 px-4">
         <div 
           ref={elementRef}
-          className={`w-full max-w-[1200px] mx-auto bg-white rounded-lg shadow-lg p-8 transform transition-all duration-1000 ${
+          className={`w-full max-w-[1200px] mx-auto bg-white rounded-lg  p-8 transform transition-all duration-1000 ${
             isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
           }`}
         >
